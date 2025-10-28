@@ -50,7 +50,7 @@ public class Question extends BaseTimeEntity {
     @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(name = "FK_question_user"))
     private User user;
 
-    
+
 
 
 
