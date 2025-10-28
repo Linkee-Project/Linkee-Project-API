@@ -3,8 +3,6 @@ package com.linkee.linkeeapi.category.model.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.ArrayList;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
