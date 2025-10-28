@@ -27,4 +27,5 @@ public class RoomQuestion {
 
     @Column(name = "quiz_order", nullable = false)
     private Integer quizOrder;
+
 }
