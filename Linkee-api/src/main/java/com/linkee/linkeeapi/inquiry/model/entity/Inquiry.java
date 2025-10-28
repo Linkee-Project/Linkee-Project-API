@@ -27,18 +27,19 @@ public class Inquiry {
     @Column(name = "inquiry_content", nullable = false, columnDefinition = "TEXT")
     private String inquiryContent;
 
-    @Column(name = "created_at", nullable = false, columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
-    private LocalDateTime createdAt;
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
 
-    @Column(name = "updated_at", nullable = false, columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
-    private LocalDateTime updatedAt;
+    @Column(name = "updated_at", nullable = false)
+    private LocalDateTime updatedAt = LocalDateTime.now();
+
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "answer_status", nullable = false, columnDefinition = "ENUM('Y','N') DEFAULT 'N'")
+    @Column(name = "answer_status", nullable = false)
     private Status answerStatus = Status.N;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "admin_id", referencedColumnName = "user_id")
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "admin_id")
     private User admin;
 
     @ManyToOne(fetch = FetchType.LAZY)
