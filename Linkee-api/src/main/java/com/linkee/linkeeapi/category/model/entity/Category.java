@@ -21,13 +21,4 @@ public class Category {
 
     @Column(name = "category_name", nullable = false, length = 50)
     private String categoryName;
-
-    @OneToMany(mappedBy = "Category")
-    private List<UserGrade> userGrades = new ArrayList<> ();
-
-    @OneToMany(mappedBy = "Category")
-    private List<Question> questions = new ArrayList<> ();
-
-    @OneToMany(mappedBy = "Category")
-    private List<QuizRoom> quizRooms = new ArrayList<> ();
 }
