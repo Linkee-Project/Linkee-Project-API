@@ -1,5 +1,6 @@
 package com.linkee.linkeeapi.user.model.entity;
 
+import com.linkee.linkeeapi.common.enums.Role;
 import com.linkee.linkeeapi.common.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
@@ -47,4 +48,8 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(name = "user_status", nullable = false, columnDefinition = "ENUM('Y','N') DEFAULT 'Y'")
     private Status userStatus = Status.Y;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "user_role", nullable = false, columnDefinition = "ENUM('USER','ADMIN') DEFAULT 'USER'")
+    private Role userRole = Role.USER;
 }
