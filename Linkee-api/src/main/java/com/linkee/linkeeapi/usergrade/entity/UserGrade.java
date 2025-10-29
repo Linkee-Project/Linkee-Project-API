@@ -1,5 +1,6 @@
 package com.linkee.linkeeapi.usergrade.entity;
 
+import com.linkee.linkeeapi.category.model.entity.Category;
 import com.linkee.linkeeapi.grade.entity.Grade;
 import com.linkee.linkeeapi.user.model.entity.User;
 import jakarta.persistence.Entity;
