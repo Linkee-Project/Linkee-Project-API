@@ -63,4 +63,5 @@ public class QuizRoom extends BaseTimeEntity {
     @Column(name = "room_quiz_limit", nullable = false)
     private Integer roomQuizLimit;
 
+
 }
