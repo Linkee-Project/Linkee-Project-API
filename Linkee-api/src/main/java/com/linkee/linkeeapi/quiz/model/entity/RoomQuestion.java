@@ -17,13 +17,13 @@ public class RoomQuestion {
     @Column(name = "room_question_id")
     private Long roomQuestionId;
 
-    @ManyToOne
-    @JoinColumn(name = "quiz_room_id", nullable = false)
+/*    @ManyToOne
+    @JoinColumn(name = "quiz_room_id", nullable = false, foreignKey = @ForeignKey(FK_room_question_quizroom))
     private QuizRoom quizRoom;
 
     @ManyToOne
-    @JoinColumn(name = "question_id", nullable = false)
-    private Question question;
+    @JoinColumn(name = "question_id", nullable = false, foreignKey = @ForeignKey(FK_room_question_question))
+    private Question question;*/
 
     @Column(name = "quiz_order", nullable = false)
     private Integer quizOrder;
