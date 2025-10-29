@@ -15,7 +15,10 @@ public class InquiryResponseDto {
     private String inquiryTitle;
     private String inquiryContent;
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+    private String answerContent;
     private Status answerStatus;
     private Long userId;
+    private Long adminId;
 
 }
