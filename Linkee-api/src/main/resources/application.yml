@@ -18,5 +18,5 @@ spring:
 mybatis:
   configuration:
     map-underscore-to-camel-case: true
-  mapper-locations: mappers/**/*.xml
-  type-aliases-package: com.linkee.linkeeapi.inquiry.model.entity
+  mapper-locations: classpath:/mappers/**/*.xml
+  type-aliases-package: com.linkee.linkeeapi.**
