@@ -1,4 +1,4 @@
-package com.linkee.linkeeapi.quiz.model.dto.entity;
+package com.linkee.linkeeapi.quiz.model.entity;
 
 import com.linkee.linkeeapi.common.enums.Status;
 import com.linkee.linkeeapi.user.model.entity.User;
@@ -23,9 +23,9 @@ public class RoomMember {
     @JoinColumn(name = "member_id", nullable = false, foreignKey = @ForeignKey(name = "FK_room_member_member_id"))
     private User member;
 
-/*    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "quiz_room_id", nullable = false, foreignKey = @ForeignKey(name = "FK_room_member_quiz_room_id"))
-    private Quizroom quizroom;*/
+    private QuizRoom quizroom;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "is_ready", nullable = false, columnDefinition = "ENUM('Y','N') DEFAULT 'N'")
