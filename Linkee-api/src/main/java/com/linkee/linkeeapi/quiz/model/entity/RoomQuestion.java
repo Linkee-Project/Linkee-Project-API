@@ -1,5 +1,6 @@
 package com.linkee.linkeeapi.quiz.model.entity;
 
+import com.linkee.linkeeapi.question_board.model.entity.Question;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,13 +18,13 @@ public class RoomQuestion {
     @Column(name = "room_question_id")
     private Long roomQuestionId;
 
-/*    @ManyToOne
-    @JoinColumn(name = "quiz_room_id", nullable = false, foreignKey = @ForeignKey(FK_room_question_quizroom))
+    @ManyToOne
+    @JoinColumn(name = "quiz_room_id", nullable = false, foreignKey = @ForeignKey(name = "FK_room_question_quizroom"))
     private QuizRoom quizRoom;
 
     @ManyToOne
-    @JoinColumn(name = "question_id", nullable = false, foreignKey = @ForeignKey(FK_room_question_question))
-    private Question question;*/
+    @JoinColumn(name = "question_id", nullable = false, foreignKey = @ForeignKey(name = "FK_room_question_question"))
+    private Question question;
 
     @Column(name = "quiz_order", nullable = false)
     private Integer quizOrder;
