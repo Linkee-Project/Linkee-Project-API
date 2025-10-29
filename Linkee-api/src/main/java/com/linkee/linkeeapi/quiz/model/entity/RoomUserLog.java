@@ -23,10 +23,10 @@ public class RoomUserLog {
     private RoomQuestion roomQuestion;
 
     // 방 멤버 FK
-//    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-//    @JoinColumn(name = "room_member_id", nullable = false, foreignKey = @ForeignKey(name = "FK_room_user_log_member")
-//    )
-//    private RoomMember roomMember;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "room_member_id", nullable = false, foreignKey = @ForeignKey(name = "FK_room_user_log_member")
+    )
+    private RoomMember roomMember;
 
     // 정답 여부 (NULL 허용)
     @Enumerated(EnumType.STRING)
