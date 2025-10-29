@@ -30,7 +30,7 @@ public class QuizRoom extends BaseTimeEntity {
     private Category category;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "room_owner", nullable = false, foreignKey = @ForeignKey(name = "FK_quiz_room_roomOner"))
+    @JoinColumn(name = "room_owner", nullable = false, foreignKey = @ForeignKey(name = "FK_quiz_room_room_owner"))
     private User roomOwner;
 
     @Column(name = "room_title", nullable = false, length = 255)
