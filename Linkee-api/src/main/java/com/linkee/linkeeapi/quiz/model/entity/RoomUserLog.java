@@ -17,18 +17,14 @@ public class RoomUserLog {
     @Column(name = "room_user_log_id")
     private Long roomUserLogId;
 
-    // 문제(방에 편성된 문제) FK
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(
-            name = "room_question_id",
-            nullable = false,
-            foreignKey = @ForeignKey(name = "FK_roomuserlog_question")
-    )
+    @JoinColumn(name = "room_question_id", nullable = false, foreignKey = @ForeignKey(name = "FK_room_user_log_question"))
     private RoomQuestion roomQuestion;
 
     // 방 멤버 FK
 //    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-//    @JoinColumn(name = "room_member_id", nullable = false, foreignKey = @ForeignKey(name = "FK_roomuserlog_member")
+//    @JoinColumn(name = "room_member_id", nullable = false, foreignKey = @ForeignKey(name = "FK_room_user_log_member")
 //    )
 //    private RoomMember roomMember;
 
