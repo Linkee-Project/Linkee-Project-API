@@ -1,0 +1,66 @@
+package com.linkee.linkeeapi.quiz.model.entity;
+
+import com.linkee.linkeeapi.category.model.entity.Category;
+import com.linkee.linkeeapi.common.enums.RoomMode;
+import com.linkee.linkeeapi.common.enums.RoomStatus;
+import com.linkee.linkeeapi.common.enums.Status;
+import com.linkee.linkeeapi.common.model.BaseTimeEntity;
+import com.linkee.linkeeapi.user.model.entity.User;
+import jakarta.persistence.*;
+import lombok.*;
+
+
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "tbl_quiz_room")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class QuizRoom extends BaseTimeEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long quizRoomId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", nullable = false, foreignKey = @ForeignKey(name = "FK_quiz_room_category"))
+    private Category category;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "room_owner", nullable = false, foreignKey = @ForeignKey(name = "FK_quiz_room_roomOner"))
+    private User roomOwner;
+
+    @Column(name = "room_title", nullable = false, length = 255)
+    private String roomTitle;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "room_status", nullable = false, columnDefinition = "ENUM('W', 'P', 'E') DEFAULT 'W'")
+    private RoomStatus roomStatus;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "room_mode", nullable = false, columnDefinition = "ENUM('S', 'G')")
+    private RoomMode roomMode;
+
+    @Column(name = "joined_count", nullable = false)
+    private Integer joinedCount;
+
+    @Column(name = "room_capacity", nullable = false)
+    private Integer roomCapacity;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "is_private", nullable = false, columnDefinition = "ENUM('Y', 'N') DEFAULT 'Y'")
+    private Status isPrivate;
+
+    @Column(name = "ended_at", nullable = false)
+    private LocalDateTime endedAt;
+
+    @Column(name = "room_code",nullable = false)
+    private Integer roomCode;
+
+    @Column(name = "room_quiz_limit", nullable = false)
+    private Integer roomQuizLimit;
+
+}

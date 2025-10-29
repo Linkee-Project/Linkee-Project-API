@@ -26,7 +26,7 @@ public class Qna {
     private String qnaAnswer;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "char_room_id" ,referencedColumnName = "chat_room_id")
+    @JoinColumn(name = "chat_room_id" ,referencedColumnName = "chat_room_id")
     ChatRoom chatRoom;
 
     @ManyToOne(fetch = FetchType.LAZY)
