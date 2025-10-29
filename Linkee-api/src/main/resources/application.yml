@@ -14,3 +14,9 @@ spring:
         show_sql: true
         dialect: org.hibernate.dialect.MariaDBDialect
     open-in-view: false            # 성능상 권장 옵션
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+  mapper-locations: mappers/**/*.xml
+  type-aliases-package: com.linkee.linkeeapi.inquiry.model.entity
