@@ -38,6 +38,6 @@ public class RoomMember {
     @Column(name = "joined_at", nullable = false, columnDefinition = "DATETIME DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime joinedAt;
 
-    @Column(name = "left_at")
-    private LocalDateTime leftAt;
+    @Column(name = "lefted_at")
+    private LocalDateTime leftedAt;
 }
