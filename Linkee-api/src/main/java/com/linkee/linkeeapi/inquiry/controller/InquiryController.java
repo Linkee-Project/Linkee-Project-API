@@ -2,6 +2,7 @@ package com.linkee.linkeeapi.inquiry.controller;
 
 import com.linkee.linkeeapi.common.model.PageResponse;
 import com.linkee.linkeeapi.inquiry.model.dto.request.CreateInquiryRequestDto;
+import com.linkee.linkeeapi.inquiry.model.dto.request.UpdateInquiryAnswerRequestDto;
 import com.linkee.linkeeapi.inquiry.model.dto.response.InquiryResponseDto;
 import com.linkee.linkeeapi.inquiry.service.InquiryService;
 import com.linkee.linkeeapi.user.model.entity.User;
@@ -42,5 +43,14 @@ public class InquiryController {
                 inquiryService.getInquiryList(page, size, currentUser);
 
         return ResponseEntity.ok(response);
+    }
+
+    //update
+    @PatchMapping("/answer")
+    public ResponseEntity<String> updateInquiryAnswer(
+            @RequestBody UpdateInquiryAnswerRequestDto request) {
+
+        inquiryService.updateInquiryAnswer(request);
+        return ResponseEntity.ok("답변 등록 완료");
     }
 }

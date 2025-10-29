@@ -27,6 +27,9 @@ public class Inquiry {
     @Column(name = "inquiry_content", nullable = false, columnDefinition = "TEXT")
     private String inquiryContent;
 
+    @Column(name = "answer_content", length = 255)
+    private String answerContent;
+
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 

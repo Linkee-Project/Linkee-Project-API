@@ -5,6 +5,7 @@ import com.linkee.linkeeapi.common.enums.Status;
 import com.linkee.linkeeapi.common.model.PageResponse;
 import com.linkee.linkeeapi.inquiry.mapper.InquiryMapper;
 import com.linkee.linkeeapi.inquiry.model.dto.request.CreateInquiryRequestDto;
+import com.linkee.linkeeapi.inquiry.model.dto.request.UpdateInquiryAnswerRequestDto;
 import com.linkee.linkeeapi.inquiry.model.dto.response.InquiryResponseDto;
 import com.linkee.linkeeapi.inquiry.model.entity.Inquiry;
 import com.linkee.linkeeapi.inquiry.repository.InquiryRepository;
@@ -77,5 +78,30 @@ public class InquiryServiceImpl implements InquiryService {
         }
 
         return PageResponse.from(inquiries, page, pageSize, total);
+    }
+
+    //Update -답변등록
+    @Override
+    @Transactional(readOnly = false)
+    public void updateInquiryAnswer(UpdateInquiryAnswerRequestDto request) {
+        //관리자 조회
+        User adminUser = userFinder.getById(request.getAdminId());
+
+        //관리자 권한 체크
+        if (adminUser.getUserRole() != Role.ADMIN) {
+            throw new IllegalStateException("관리자만 답변 등록 가능");
+        }
+
+        //문의 조회
+        Inquiry inquiry = inquiryRepository.findById(request.getInquiryId())
+                .orElseThrow(() -> new IllegalArgumentException("해당 문의를 찾을 수 없음"));
+
+        //답변 등록
+        inquiry.setAnswerContent(request.getAnswerContent());
+        inquiry.setAnswerStatus(Status.Y);
+        inquiry.setAdmin(adminUser);
+        inquiry.setUpdatedAt(LocalDateTime.now());
+
+        inquiryRepository.save(inquiry);
     }
 }

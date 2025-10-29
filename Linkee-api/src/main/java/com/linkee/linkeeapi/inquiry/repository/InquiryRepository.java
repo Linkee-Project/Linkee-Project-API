@@ -7,5 +7,5 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface InquiryRepository extends JpaRepository<Inquiry, Long> {
-    Page<Inquiry> findByUser_UserId(Long userId, Pageable pageable);
+
 }
