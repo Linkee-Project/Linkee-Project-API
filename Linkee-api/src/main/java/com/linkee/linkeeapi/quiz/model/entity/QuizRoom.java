@@ -44,20 +44,20 @@ public class QuizRoom extends BaseTimeEntity {
     @Column(name = "room_mode", nullable = false, columnDefinition = "ENUM('S', 'G')")
     private RoomMode roomMode;
 
-    @Column(name = "joined_count", nullable = false)
+    @Column(name = "joined_count")
     private Integer joinedCount;
 
-    @Column(name = "room_capacity", nullable = false)
+    @Column(name = "room_capacity")
     private Integer roomCapacity;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "is_private", nullable = false, columnDefinition = "ENUM('Y', 'N') DEFAULT 'Y'")
     private Status isPrivate;
 
-    @Column(name = "ended_at", nullable = false)
+    @Column(name = "ended_at")
     private LocalDateTime endedAt;
 
-    @Column(name = "room_code",nullable = false)
+    @Column(name = "room_code")
     private Integer roomCode;
 
     @Column(name = "room_quiz_limit", nullable = false)
