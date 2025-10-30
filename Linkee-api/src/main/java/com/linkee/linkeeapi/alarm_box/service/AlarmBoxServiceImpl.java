@@ -17,9 +17,11 @@ import com.linkee.linkeeapi.user.service.util.UserFinder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -68,19 +70,39 @@ public class AlarmBoxServiceImpl implements AlarmBoxService{
     @Override
     public void createAlarmBox(AlarmBoxCreateRequest request) {
         // 현재 데이터가 없으므로 user 는 임의로 집어넣어준다
-        UserFinder foundUser = new UserFinder(userRepository);
+        User foundUser = userRepository.findById(request.getUserId())
+                .orElseGet(() -> userRepository.save(
+                        new User(null,
+                                "user00"+request.getUserId(),
+                                "pass00"+request.getUserId(),
+                                "짱이"+request.getUserId(),
+                                LocalDateTime.now(), LocalDateTime.now(), Status.Y, Role.USER)
+                ));
 
-        if(foundUser.getById(request.getUserId())== null) {
-            User user = new User(request.getUserId(), "user001", "pass001", "짱이", LocalDateTime.now(), LocalDateTime.now(), Status.Y, Role.USER);
-            userRepository.save(user);
-        }
         AlarmBox alarmBox = AlarmBox.builder()
                 .alarmBoxContent(request.getAlarmBoxContent())
-                .user(foundUser.getById(request.getUserId()))
+                .user(foundUser)
                 .isChecked(Status.N)
                 .build();
 
         alarmBoxRepository.save(alarmBox);
+    }
+
+    @Transactional
+    @Override
+    public void checkedAlarmBox(Long alarmBoxId) {
+
+        AlarmBox alarmBox = alarmBoxRepository.findById(alarmBoxId).orElseThrow();
+
+        alarmBox.checkedAlarm();
+    }
+
+    public void deleteAlarmBoxById(Long alarmBoxId){
+        if(alarmBoxRepository.findById(alarmBoxId).isPresent()) {
+
+            alarmBoxRepository.deleteById(alarmBoxId);
+
+        }
     }
 
 

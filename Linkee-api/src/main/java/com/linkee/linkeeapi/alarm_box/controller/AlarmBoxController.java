@@ -37,4 +37,19 @@ public class AlarmBoxController {
         service.createAlarmBox(request);
         return ResponseEntity.ok("알람박스 생성 성공");
     }
+
+
+    @PatchMapping("/check/{alarmBoxId}")
+    public ResponseEntity<String> checkedAlarm(@PathVariable Long alarmBoxId){
+        service.checkedAlarmBox(alarmBoxId);
+
+        return ResponseEntity.ok("알림확인!");
+    }
+
+    @DeleteMapping("/delete/{alarmBoxId}")
+    public ResponseEntity<String> deleteAlarm(@PathVariable Long alarmBoxId){
+        service.deleteAlarmBoxById(alarmBoxId);
+        return ResponseEntity.ok("삭제 성공");
+    }
+
 }
