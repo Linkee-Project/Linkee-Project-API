@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 public class AlarmBoxResponse {
     private Long alarmBoxId;
     private String alarmBoxContent;
-    private String status;
-    private LocalDateTime createAt;
+    private String isChecked;
+    private LocalDateTime createdAt;
     private Long userId;
 }
