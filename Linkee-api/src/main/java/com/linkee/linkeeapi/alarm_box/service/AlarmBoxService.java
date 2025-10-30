@@ -1,5 +1,6 @@
 package com.linkee.linkeeapi.alarm_box.service;
 
+import com.linkee.linkeeapi.alarm_box.model.dto.request.AlarmBoxCreateRequest;
 import com.linkee.linkeeapi.alarm_box.model.dto.request.AlarmBoxSearchRequest;
 import com.linkee.linkeeapi.alarm_box.model.dto.response.AlarmBoxResponse;
 import com.linkee.linkeeapi.alarm_box.model.entity.AlarmBox;
@@ -14,4 +15,5 @@ public interface AlarmBoxService {
 
     PageResponse<AlarmBoxResponse> selectAllAlarmBox(AlarmBoxSearchRequest request);
     ResponseEntity<AlarmBoxResponse> selectAlarmTemplateByAlarmBoxId(Long alarmBoxId);
+    void createAlarmBox(AlarmBoxCreateRequest request);
 }
