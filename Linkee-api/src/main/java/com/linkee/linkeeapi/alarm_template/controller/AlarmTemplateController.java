@@ -8,6 +8,7 @@ import com.linkee.linkeeapi.common.model.PageResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -40,5 +41,16 @@ public class AlarmTemplateController {
 
         return service.selectAlarmTemplateByAlarmTemplateId(templateId);
     }
+
+
+    @Transactional
+    @PatchMapping("/modify/{templateId}")
+    public ResponseEntity<String> modifyAlarmTemplate(@PathVariable long templateId , @RequestBody AlarmTemplateCreateRequest request ){
+
+        service.modifyAlarmTemplateByAlarmTemplateId(templateId,request);
+
+        return ResponseEntity.ok("저장 완료");
+    }
+
 
 }

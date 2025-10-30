@@ -85,5 +85,20 @@ class AlarmTemplateServiceImplTest {
     }
 
 
+    @Test
+    @DisplayName("알람템플릿 내용 변경 테스트")
+    void modifyAlarmTemplateContent(){
+        //given
+        AlarmTemplate template = repository.save(new AlarmTemplate(null,"변경전"));
+        AlarmTemplate foundTemplate = repository.findById(template.getTemplateId()).orElseThrow();
+        AlarmTemplateCreateRequest request = new AlarmTemplateCreateRequest("변경후");
+
+        service.modifyAlarmTemplateByAlarmTemplateId(foundTemplate.getTemplateId(),request);
+
+        assertEquals("변경후", foundTemplate.getTemplateContent());
+
+    }
+
+
 
 }
