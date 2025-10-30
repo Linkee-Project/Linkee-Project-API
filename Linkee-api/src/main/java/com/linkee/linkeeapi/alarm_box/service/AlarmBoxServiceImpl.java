@@ -17,6 +17,7 @@ import com.linkee.linkeeapi.user.service.util.UserFinder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -84,12 +85,21 @@ public class AlarmBoxServiceImpl implements AlarmBoxService{
         alarmBoxRepository.save(alarmBox);
     }
 
+    @Transactional
     @Override
     public void checkedAlarmBox(Long alarmBoxId) {
 
         AlarmBox alarmBox = alarmBoxRepository.findById(alarmBoxId).orElseThrow();
 
         alarmBox.checkedAlarm();
+    }
+
+    public void deleteAlarmBoxById(Long alarmBoxId){
+        if(alarmBoxRepository.findById(alarmBoxId).isPresent()) {
+
+            alarmBoxRepository.deleteById(alarmBoxId);
+
+        }
     }
 
 

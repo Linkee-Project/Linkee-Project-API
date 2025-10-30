@@ -17,4 +17,5 @@ public interface AlarmBoxService {
     ResponseEntity<AlarmBoxResponse> selectAlarmTemplateByAlarmBoxId(Long alarmBoxId);
     void createAlarmBox(AlarmBoxCreateRequest request);
     void checkedAlarmBox(Long alarmBoxId);
+    void deleteAlarmBoxById(Long alarmBoxId);
 }

@@ -15,6 +15,7 @@ import com.linkee.linkeeapi.user.repository.UserRepository;
 import com.linkee.linkeeapi.user.service.util.UserFinder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
@@ -115,5 +116,20 @@ class AlarmBoxServiceImplTest {
 
         assertThat(alarmBox.getIsChecked()).isEqualTo(Status.Y);
 
+    }
+
+    @Test
+    @DisplayName("알람박스 삭제")
+    void deleteAlarm(){
+        String content = "알람 컨텐트 11";
+        User user1 = new User(null, "user01", "pass01", "배짱이", LocalDateTime.now(), LocalDateTime.now(), Status.Y, Role.USER);
+        userRepository.save(user1);
+        AlarmBoxCreateRequest request = new AlarmBoxCreateRequest(content, 1L);
+        service.createAlarmBox(request);
+
+        AlarmBox alarmBox = repository.findAll().get(0);
+        service.deleteAlarmBoxById(alarmBox.getAlarmBoxId());
+
+        assertThat(repository.findAll().size()).isEqualTo(0);
     }
 }

@@ -45,4 +45,11 @@ public class AlarmBoxController {
 
         return ResponseEntity.ok("알림확인!");
     }
+
+    @DeleteMapping("/delete/{alarmBoxId}")
+    public ResponseEntity<String> deleteAlarm(@PathVariable Long alarmBoxId){
+        service.deleteAlarmBoxById(alarmBoxId);
+        return ResponseEntity.ok("삭제 성공");
+    }
+
 }
