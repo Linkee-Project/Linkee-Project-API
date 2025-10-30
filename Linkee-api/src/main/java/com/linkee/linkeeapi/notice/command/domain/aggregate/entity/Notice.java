@@ -1,10 +1,13 @@
-package com.linkee.linkeeapi.notice.model.entity;
+package com.linkee.linkeeapi.notice.command.domain.aggregate.entity;
 
 import com.linkee.linkeeapi.common.enums.Status;
 import com.linkee.linkeeapi.common.model.BaseTimeEntity;
 import com.linkee.linkeeapi.user.model.entity.User;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "tb_notice")

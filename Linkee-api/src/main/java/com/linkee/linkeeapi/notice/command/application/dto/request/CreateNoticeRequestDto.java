@@ -1,6 +1,10 @@
-package com.linkee.linkeeapi.notice.model.dto.request;
+package com.linkee.linkeeapi.notice.command.application.dto.request;
+
 import jakarta.validation.constraints.NotBlank;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
