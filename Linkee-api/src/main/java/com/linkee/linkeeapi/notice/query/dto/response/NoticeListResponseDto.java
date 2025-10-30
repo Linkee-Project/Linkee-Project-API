@@ -1,4 +1,4 @@
-package com.linkee.linkeeapi.notice.model.dto.response;
+package com.linkee.linkeeapi.notice.query.dto.response;
 
 import lombok.*;
 

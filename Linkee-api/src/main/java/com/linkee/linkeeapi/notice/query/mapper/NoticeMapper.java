@@ -1,7 +1,7 @@
-package com.linkee.linkeeapi.notice.mapper;
+package com.linkee.linkeeapi.notice.query.mapper;
 
-import com.linkee.linkeeapi.notice.model.dto.response.NoticeDetailResponseDto;
-import com.linkee.linkeeapi.notice.model.dto.response.NoticeListResponseDto;
+import com.linkee.linkeeapi.notice.query.dto.response.NoticeDetailResponseDto;
+import com.linkee.linkeeapi.notice.query.dto.response.NoticeListResponseDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
