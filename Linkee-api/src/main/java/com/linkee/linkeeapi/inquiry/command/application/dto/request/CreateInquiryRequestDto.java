@@ -1,4 +1,4 @@
-package com.linkee.linkeeapi.inquiry.model.dto.request;
+package com.linkee.linkeeapi.inquiry.command.application.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;

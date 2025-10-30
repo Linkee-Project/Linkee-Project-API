@@ -1,4 +1,4 @@
-package com.linkee.linkeeapi.inquiry.model.dto.response;
+package com.linkee.linkeeapi.inquiry.query.dto.response;
 
 import com.linkee.linkeeapi.common.enums.Status;
 import lombok.*;

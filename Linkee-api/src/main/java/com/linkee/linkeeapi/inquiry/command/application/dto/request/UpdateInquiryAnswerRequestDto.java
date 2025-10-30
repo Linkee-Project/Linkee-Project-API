@@ -1,4 +1,4 @@
-package com.linkee.linkeeapi.inquiry.model.dto.request;
+package com.linkee.linkeeapi.inquiry.command.application.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
