@@ -8,6 +8,7 @@ import com.linkee.linkeeapi.alarm_template.model.entity.AlarmTemplate;
 import com.linkee.linkeeapi.alarm_template.repository.AlarmTemplateRepository;
 import com.linkee.linkeeapi.common.model.PageResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -49,6 +50,21 @@ public class AlarmTemplateServiceImpl implements AlarmTemplateService{
         int total = alarmTemplateMapper.countAlarmTemplate(requestMapper);
 
         return PageResponse.from(templates, page, size, total);
+    }
+
+    @Override
+    public ResponseEntity<AlarmTemplateResponse> selectAlarmTemplateByAlarmTemplateId(Long templateId) {
+
+        AlarmTemplateResponse template = alarmTemplateMapper.selectAlarmTemplateById(templateId);
+
+        return ResponseEntity.ok(template);
+    }
+
+
+    @Override
+    public void modifyAlarmTemplateByAlarmTemplateId(Long templateId) {
+
+
     }
 
 

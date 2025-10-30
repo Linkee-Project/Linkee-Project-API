@@ -13,5 +13,5 @@ public interface AlarmTemplateMapper {
 
     int countAlarmTemplate(AlarmTemplateSearchRequest request);
 
-
+    AlarmTemplateResponse selectAlarmTemplateById(Long templateId);
 }

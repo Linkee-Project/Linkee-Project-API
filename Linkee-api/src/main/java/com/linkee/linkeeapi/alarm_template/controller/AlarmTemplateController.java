@@ -17,7 +17,7 @@ public class AlarmTemplateController {
 
     private final AlarmTemplateService service;
 
-
+    // create
     @PostMapping
     public ResponseEntity<String> createAlarmTemplate(@RequestBody String content){
         AlarmTemplateCreateRequest request = new AlarmTemplateCreateRequest(content);
@@ -26,12 +26,19 @@ public class AlarmTemplateController {
         return ResponseEntity.ok("저장 완료");
     }
 
-
+    // selectAll
     @GetMapping
     public PageResponse<AlarmTemplateResponse> getAllAlarmTemplates(
             AlarmTemplateSearchRequest request) {
 
         return service.selectAllAlarmTemplate(request);
+    }
+
+    // selectById
+    @GetMapping("/{templateId}")
+    public ResponseEntity<AlarmTemplateResponse> getAlarmTemplateById(@PathVariable Long templateId){
+
+        return service.selectAlarmTemplateByAlarmTemplateId(templateId);
     }
 
 }
