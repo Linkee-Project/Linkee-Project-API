@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -81,6 +82,14 @@ public class AlarmBoxServiceImpl implements AlarmBoxService{
                 .build();
 
         alarmBoxRepository.save(alarmBox);
+    }
+
+    @Override
+    public void checkedAlarmBox(Long alarmBoxId) {
+
+        AlarmBox alarmBox = alarmBoxRepository.findById(alarmBoxId).orElseThrow();
+
+        alarmBox.checkedAlarm();
     }
 
 

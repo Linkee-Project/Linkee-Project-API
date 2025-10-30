@@ -30,4 +30,11 @@ public class AlarmBox extends BaseTimeEntity {
     @JoinColumn(name = "user_id", referencedColumnName = "user_id")
     private User user;
 
+
+
+
+    public void checkedAlarm(){
+        this.isChecked = Status.Y;
+    }
+
  }

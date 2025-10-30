@@ -99,4 +99,21 @@ class AlarmBoxServiceImplTest {
 
         assertThat(saved.getAlarmBoxContent()).isEqualTo(content);
     }
+
+
+    @Test
+    @DisplayName("알림 확인 체크")
+    void checkAlarm(){
+        String content = "알람 컨텐트 11";
+        User user1 = new User(null, "user01", "pass01", "배짱이", LocalDateTime.now(), LocalDateTime.now(), Status.Y, Role.USER);
+        userRepository.save(user1);
+        AlarmBoxCreateRequest request = new AlarmBoxCreateRequest(content, 1L);
+        service.createAlarmBox(request);
+
+        AlarmBox alarmBox = repository.findAll().get(0);
+        alarmBox.checkedAlarm();
+
+        assertThat(alarmBox.getIsChecked()).isEqualTo(Status.Y);
+
+    }
 }
