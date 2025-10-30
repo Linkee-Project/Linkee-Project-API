@@ -1,5 +1,6 @@
 package com.linkee.linkeeapi.alarm_box.controller;
 
+import com.linkee.linkeeapi.alarm_box.model.dto.request.AlarmBoxCreateRequest;
 import com.linkee.linkeeapi.alarm_box.model.dto.request.AlarmBoxSearchRequest;
 import com.linkee.linkeeapi.alarm_box.model.dto.response.AlarmBoxResponse;
 import com.linkee.linkeeapi.alarm_box.service.AlarmBoxService;
@@ -9,10 +10,7 @@ import com.linkee.linkeeapi.common.model.PageResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,5 +30,11 @@ public class AlarmBoxController {
     public ResponseEntity<AlarmBoxResponse> getAlarmBoxById(@PathVariable long alarmBoxId){
 
         return service.selectAlarmTemplateByAlarmBoxId(alarmBoxId);
+    }
+
+    @PostMapping
+    public ResponseEntity<String> createAlarmBoxContent(@RequestBody AlarmBoxCreateRequest request){
+        service.createAlarmBox(request);
+        return ResponseEntity.ok("알람박스 생성 성공");
     }
 }
