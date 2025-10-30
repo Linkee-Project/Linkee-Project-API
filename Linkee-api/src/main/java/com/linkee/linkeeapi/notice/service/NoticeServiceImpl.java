@@ -4,6 +4,7 @@ import com.linkee.linkeeapi.common.enums.Role;
 import com.linkee.linkeeapi.common.model.PageResponse;
 import com.linkee.linkeeapi.notice.mapper.NoticeMapper;
 import com.linkee.linkeeapi.notice.model.dto.request.CreateNoticeRequestDto;
+import com.linkee.linkeeapi.notice.model.dto.request.UpdateNoticeRequestDto;
 import com.linkee.linkeeapi.notice.model.dto.response.NoticeDetailResponseDto;
 import com.linkee.linkeeapi.notice.model.dto.response.NoticeListResponseDto;
 import com.linkee.linkeeapi.notice.model.entity.Notice;
@@ -73,4 +74,37 @@ public class NoticeServiceImpl implements NoticeService {
         }
         return notice;
     }
+
+    //공지사항 수정
+    @Transactional
+    @Override
+    public void updateNotice(UpdateNoticeRequestDto request) {
+        Notice notice = noticeRepository.findById(request.getNoticeId())
+                .orElseThrow(() -> new IllegalStateException("존재하지 않는 공지사항입니다."));
+
+        User adminUser = userFinder.getById(request.getAdminId());
+        if (adminUser.getUserRole() != Role.ADMIN) {
+            throw new IllegalStateException("관리자만 공지사항 수정 가능");
+        }
+
+        notice.updateNotice(request.getNoticeTitle(), request.getNoticeContent());
+
+    }
+
+    //공지사항 삭제
+    @Override
+    @Transactional
+    public void deleteNotice(Long noticeId, Long adminId) {
+        Notice notice = noticeRepository.findById(noticeId)
+                .orElseThrow(() -> new IllegalStateException("존재하지 않는 공지사항입니다."));
+
+        User adminUser = userFinder.getById(adminId);
+        if (adminUser.getUserRole() != Role.ADMIN) {
+            throw new IllegalStateException("관리자만 삭제 가능");
+        }
+
+        notice.deleteNotice(); // isDeleted = Y
+        noticeRepository.save(notice); // updatedAt 자동 갱신
+    }
+
 }

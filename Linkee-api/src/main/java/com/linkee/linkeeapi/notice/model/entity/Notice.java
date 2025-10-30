@@ -42,4 +42,18 @@ public class Notice extends BaseTimeEntity {
         }
         this.admin = admin;
     }
+
+    public void updateNotice(String title, String content) {
+        if (title != null && !title.isBlank()) {
+            this.noticeTitle = title;
+        }
+        if (content != null && !content.isBlank()) {
+            this.noticeContent = content;
+        }
+    }
+
+    public void deleteNotice() {
+        this.isDeleted = Status.Y;
+    }
+
 }
