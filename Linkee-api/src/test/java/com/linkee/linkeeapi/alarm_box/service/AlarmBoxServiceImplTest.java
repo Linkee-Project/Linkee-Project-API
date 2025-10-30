@@ -1,21 +1,19 @@
 package com.linkee.linkeeapi.alarm_box.service;
 
-import com.linkee.linkeeapi.alarm_box.model.dto.request.AlarmBoxCreateRequest;
-import com.linkee.linkeeapi.alarm_box.model.dto.request.AlarmBoxSearchRequest;
-import com.linkee.linkeeapi.alarm_box.model.dto.response.AlarmBoxResponse;
-import com.linkee.linkeeapi.alarm_box.model.entity.AlarmBox;
-import com.linkee.linkeeapi.alarm_box.repository.AlarmBoxRepository;
-import com.linkee.linkeeapi.alarm_template.model.dto.request.AlarmTemplateCreateRequest;
-import com.linkee.linkeeapi.alarm_template.model.entity.AlarmTemplate;
+import com.linkee.linkeeapi.alarm_box.command.application.dto.request.AlarmBoxCreateRequest;
+import com.linkee.linkeeapi.alarm_box.command.application.dto.request.AlarmBoxSearchRequest;
+import com.linkee.linkeeapi.alarm_box.command.application.service.AlarmBoxCommandService;
+import com.linkee.linkeeapi.alarm_box.query.dto.response.AlarmBoxResponse;
+import com.linkee.linkeeapi.alarm_box.command.domain.aggregate.entity.AlarmBox;
+import com.linkee.linkeeapi.alarm_box.command.infrastructure.repository.AlarmBoxRepository;
+import com.linkee.linkeeapi.alarm_box.query.service.AlarmBoxQueryService;
 import com.linkee.linkeeapi.common.enums.Role;
 import com.linkee.linkeeapi.common.enums.Status;
 import com.linkee.linkeeapi.common.model.PageResponse;
 import com.linkee.linkeeapi.user.model.entity.User;
 import com.linkee.linkeeapi.user.repository.UserRepository;
-import com.linkee.linkeeapi.user.service.util.UserFinder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.function.Executable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -33,7 +30,9 @@ import static org.junit.jupiter.api.Assertions.*;
 class AlarmBoxServiceImplTest {
 
     @Autowired
-    private AlarmBoxService service;
+    private AlarmBoxQueryService queryService;
+    @Autowired
+    private AlarmBoxCommandService service;
 
     @Autowired
     private AlarmBoxRepository repository;
@@ -55,9 +54,9 @@ class AlarmBoxServiceImplTest {
         AlarmBoxSearchRequest request1 = new AlarmBoxSearchRequest("확인", 0, 10, 0, null);
         AlarmBoxSearchRequest request2 = new AlarmBoxSearchRequest(null, 0, 10, 0, "Y");
 
-        PageResponse<AlarmBoxResponse> alarmBoxResponsePageResponse = service.selectAllAlarmBox(request);
-        PageResponse<AlarmBoxResponse> alarmBoxResponsePageResponse1 = service.selectAllAlarmBox(request1);
-        PageResponse<AlarmBoxResponse> alarmBoxResponsePageResponse2 = service.selectAllAlarmBox(request2);
+        PageResponse<AlarmBoxResponse> alarmBoxResponsePageResponse = queryService.selectAllAlarmBox(request);
+        PageResponse<AlarmBoxResponse> alarmBoxResponsePageResponse1 = queryService.selectAllAlarmBox(request1);
+        PageResponse<AlarmBoxResponse> alarmBoxResponsePageResponse2 = queryService.selectAllAlarmBox(request2);
 
         assertThat(alarmBoxResponsePageResponse.getTotalElements()).isEqualTo(3);
         assertThat(alarmBoxResponsePageResponse1.getContent().get(0).getAlarmBoxContent()).isEqualTo("확인한 알람내용3");
@@ -75,7 +74,7 @@ class AlarmBoxServiceImplTest {
         repository.save(new AlarmBox(null, "알람내용2", Status.N, user2));
         repository.save(new AlarmBox(null, "확인한 알람내용3", Status.Y, user1));
 
-        ResponseEntity<AlarmBoxResponse> alarmBox = service.selectAlarmTemplateByAlarmBoxId(1L);
+        ResponseEntity<AlarmBoxResponse> alarmBox = queryService.selectAlarmTemplateByAlarmBoxId(1L);
 
         assertThat(alarmBox.getBody().getAlarmBoxContent()).isEqualTo("알람내용1");
 
