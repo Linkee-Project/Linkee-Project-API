@@ -2,6 +2,8 @@ package com.linkee.linkeeapi.notice.controller;
 
 import com.linkee.linkeeapi.common.model.PageResponse;
 import com.linkee.linkeeapi.notice.model.dto.request.CreateNoticeRequestDto;
+import com.linkee.linkeeapi.notice.model.dto.request.DeleteNoticeRequestDto;
+import com.linkee.linkeeapi.notice.model.dto.request.UpdateNoticeRequestDto;
 import com.linkee.linkeeapi.notice.model.dto.response.NoticeDetailResponseDto;
 import com.linkee.linkeeapi.notice.model.dto.response.NoticeListResponseDto;
 import com.linkee.linkeeapi.notice.service.NoticeService;
@@ -43,4 +45,24 @@ public class NoticeController {
 
         return ResponseEntity.ok(detailNotice);
     }
+
+    //공지사항 수정
+    @PutMapping("/{noticeId}")
+    public ResponseEntity<Void> updateNotice(@PathVariable Long noticeId,
+                                             @RequestBody UpdateNoticeRequestDto request) {
+        request.setNoticeId(noticeId);
+        noticeService.updateNotice(request);
+        return ResponseEntity.ok().build();
+
+    }
+
+    //공지사항 삭제
+    @PatchMapping("/{noticeId}/delete")
+    public ResponseEntity<Void> deleteNotice(@PathVariable Long noticeId,
+                                             @RequestBody DeleteNoticeRequestDto request) {
+        noticeService.deleteNotice(noticeId, request.getAdminId());
+        return ResponseEntity.ok().build();
+    }
+
+
 }
