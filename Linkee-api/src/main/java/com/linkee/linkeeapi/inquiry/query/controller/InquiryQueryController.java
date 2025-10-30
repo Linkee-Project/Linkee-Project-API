@@ -1,29 +1,23 @@
-package com.linkee.linkeeapi.inquiry.controller;
+package com.linkee.linkeeapi.inquiry.query.controller;
 
 import com.linkee.linkeeapi.common.model.PageResponse;
-import com.linkee.linkeeapi.inquiry.model.dto.request.CreateInquiryRequestDto;
-import com.linkee.linkeeapi.inquiry.model.dto.request.UpdateInquiryAnswerRequestDto;
-import com.linkee.linkeeapi.inquiry.model.dto.response.InquiryResponseDto;
-import com.linkee.linkeeapi.inquiry.service.InquiryService;
+import com.linkee.linkeeapi.inquiry.query.dto.response.InquiryResponseDto;
+import com.linkee.linkeeapi.inquiry.query.service.InquiryQueryService;
 import com.linkee.linkeeapi.user.model.entity.User;
 import com.linkee.linkeeapi.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/inquiry")
-public class InquiryController {
-    private final InquiryService inquiryService;
+public class InquiryQueryController {
     private final UserRepository userRepository;
-
-    //create
-    @PostMapping
-    public ResponseEntity<String> createInquiry(@RequestBody CreateInquiryRequestDto request){
-        inquiryService.createInquiry(request);
-        return ResponseEntity.ok("문의사항 생성 완료");
-    }
+    private final InquiryQueryService inquiryQueryService;
 
     //read
     @GetMapping()
@@ -40,17 +34,8 @@ public class InquiryController {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다."));
 
         PageResponse<InquiryResponseDto> response =
-                inquiryService.getInquiryList(page, size, currentUser);
+                inquiryQueryService.getInquiryList(page, size, currentUser);
 
         return ResponseEntity.ok(response);
-    }
-
-    //update
-    @PatchMapping("/answer")
-    public ResponseEntity<String> updateInquiryAnswer(
-            @RequestBody UpdateInquiryAnswerRequestDto request) {
-
-        inquiryService.updateInquiryAnswer(request);
-        return ResponseEntity.ok("답변 등록 완료");
     }
 }

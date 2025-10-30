@@ -1,6 +1,6 @@
-package com.linkee.linkeeapi.inquiry.mapper;
+package com.linkee.linkeeapi.inquiry.query.mapper;
 
-import com.linkee.linkeeapi.inquiry.model.dto.response.InquiryResponseDto;
+import com.linkee.linkeeapi.inquiry.query.dto.response.InquiryResponseDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
