@@ -2,10 +2,9 @@ package com.linkee.linkeeapi.report.controller;
 
 import com.linkee.linkeeapi.report.model.dto.request.CreateReportRequestDto;
 import com.linkee.linkeeapi.report.model.dto.request.ReadReportListRequestDto;
+import com.linkee.linkeeapi.report.model.dto.request.UpdateReportActionRequestDto;
 import com.linkee.linkeeapi.report.model.dto.response.ReportDetailResponseDto;
 import com.linkee.linkeeapi.report.model.dto.response.ReportListResponseDto;
-import com.linkee.linkeeapi.report.model.entity.Report;
-import com.linkee.linkeeapi.report.repository.ReportRepository;
 import com.linkee.linkeeapi.report.service.ReportService;
 import com.linkee.linkeeapi.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -54,6 +53,15 @@ public class ReportController {
 
         ReportDetailResponseDto reportDetail = reportService.getReportDetail(reportId, userId);
         return ResponseEntity.ok(reportDetail);
+    }
+
+    //신고 처리
+    @PatchMapping("/action")
+    public ResponseEntity<String> updateReportAnswer(
+            @RequestBody UpdateReportActionRequestDto request){
+
+        reportService.updateReportAnswer(request);
+        return ResponseEntity.ok("신고 처리 완료");
     }
 
 

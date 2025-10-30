@@ -1,10 +1,11 @@
 package com.linkee.linkeeapi.report.service;
 
 import com.linkee.linkeeapi.common.enums.Role;
-import com.linkee.linkeeapi.inquiry.mapper.InquiryMapper;
+import com.linkee.linkeeapi.common.enums.Status;
 import com.linkee.linkeeapi.report.mapper.ReportMapper;
 import com.linkee.linkeeapi.report.model.dto.request.CreateReportRequestDto;
 import com.linkee.linkeeapi.report.model.dto.request.ReadReportListRequestDto;
+import com.linkee.linkeeapi.report.model.dto.request.UpdateReportActionRequestDto;
 import com.linkee.linkeeapi.report.model.dto.response.ReportDetailResponseDto;
 import com.linkee.linkeeapi.report.model.dto.response.ReportListResponseDto;
 import com.linkee.linkeeapi.report.model.entity.Report;
@@ -61,6 +62,7 @@ public class ReportServiceImpl implements ReportService {
     }
 
     // 신고 상세 조회
+    @Override
     public ReportDetailResponseDto getReportDetail(Long reportId, Long userId) {
 
         User user = userFinder.getById(userId);
@@ -80,5 +82,30 @@ public class ReportServiceImpl implements ReportService {
 
         return reportDetail;
     }
+
+    // 신고 처리 입력
+    @Override
+    @Transactional(readOnly = false)
+    public void updateReportAnswer(UpdateReportActionRequestDto request){
+        //관리자 조회
+        User adminUser = userFinder.getById(request.getAdminId());
+
+        //관리자 권한 체크
+        if (adminUser.getUserRole() != Role.ADMIN) {
+            throw new IllegalStateException("관리자만 답변 등록 가능");
+        }
+
+        //신고 조회
+        Report report = reportRepository.findById(request.getReportId())
+                .orElseThrow(() -> new IllegalArgumentException("해당 신고를 찾을 수 없습니다."));
+
+        //신고 처리 등록
+        report.setAdmin(adminUser);
+        report.setReportAction(request.getReportAction());
+        report.setReportStatus(Status.Y);
+
+        reportRepository.save(report);
+    }
+
 
 }

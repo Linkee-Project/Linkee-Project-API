@@ -97,6 +97,7 @@ public class InquiryServiceImpl implements InquiryService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 문의를 찾을 수 없음"));
 
         //답변 등록
+        //mapper 사용 x (mapper로 들어갈게 answerContent 뿐임)
         inquiry.setAnswerContent(request.getAnswerContent());
         inquiry.setAnswerStatus(Status.Y);
         inquiry.setAdmin(adminUser);
