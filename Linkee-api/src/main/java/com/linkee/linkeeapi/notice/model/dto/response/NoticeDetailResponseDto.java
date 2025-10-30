@@ -9,11 +9,13 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class NoticeResponseDto {
+//목록 조회 응답
+public class NoticeDetailResponseDto {
 
     private String noticeTitle;
     private String noticeContent;
     private Long noticeViews;
     private LocalDateTime createdAt;
+    private String adminName;
 
 }

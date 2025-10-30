@@ -1,11 +1,9 @@
 package com.linkee.linkeeapi.notice.controller;
 
 import com.linkee.linkeeapi.common.model.PageResponse;
-import com.linkee.linkeeapi.inquiry.model.dto.response.InquiryResponseDto;
-import com.linkee.linkeeapi.notice.mapper.NoticeMapper;
 import com.linkee.linkeeapi.notice.model.dto.request.CreateNoticeRequestDto;
-import com.linkee.linkeeapi.notice.model.dto.response.NoticeResponseDto;
-import com.linkee.linkeeapi.notice.model.entity.Notice;
+import com.linkee.linkeeapi.notice.model.dto.response.NoticeDetailResponseDto;
+import com.linkee.linkeeapi.notice.model.dto.response.NoticeListResponseDto;
 import com.linkee.linkeeapi.notice.service.NoticeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -26,15 +24,23 @@ public class NoticeController {
         return ResponseEntity.ok("공지사항 생성 완료");
     }
 
-    //공지사항 조회
+    //공지사항 목록 조회
     @GetMapping
-    public ResponseEntity<PageResponse<NoticeResponseDto>> getNoticeList(
+    public ResponseEntity<PageResponse<NoticeListResponseDto>> getNoticeList(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(required = false) Integer size
     ){
-        PageResponse<NoticeResponseDto> response =
+        PageResponse<NoticeListResponseDto> response =
                 noticeService.getNoticeList(page, size);
 
         return ResponseEntity.ok(response);
+    }
+
+    //공지사항 상세 조회
+    @GetMapping("/{noticeId}")
+    public ResponseEntity<NoticeDetailResponseDto> getNoticeDetail(@PathVariable Long noticeId){
+        NoticeDetailResponseDto detailNotice = noticeService.getNoticeDetail(noticeId);
+
+        return ResponseEntity.ok(detailNotice);
     }
 }

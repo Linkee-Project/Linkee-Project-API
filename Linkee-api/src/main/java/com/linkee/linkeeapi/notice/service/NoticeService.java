@@ -2,7 +2,8 @@ package com.linkee.linkeeapi.notice.service;
 
 import com.linkee.linkeeapi.common.model.PageResponse;
 import com.linkee.linkeeapi.notice.model.dto.request.CreateNoticeRequestDto;
-import com.linkee.linkeeapi.notice.model.dto.response.NoticeResponseDto;
+import com.linkee.linkeeapi.notice.model.dto.response.NoticeDetailResponseDto;
+import com.linkee.linkeeapi.notice.model.dto.response.NoticeListResponseDto;
 
 public interface NoticeService {
 
@@ -10,5 +11,7 @@ public interface NoticeService {
     void createNotice(CreateNoticeRequestDto request);
 
     //READ
-    PageResponse<NoticeResponseDto> getNoticeList(int page, Integer size);
+    PageResponse<NoticeListResponseDto> getNoticeList(int page, Integer size);
+
+    NoticeDetailResponseDto getNoticeDetail(Long noticeId);
 }
