@@ -31,4 +31,14 @@
         </if>
     </select>
 
+    <select id="selectAlarmTemplateById" resultType="com.linkee.linkeeapi.alarm_template.model.dto.response.AlarmTemplateResponse">
+        SELECT
+        template_id AS templateId,
+        template_content AS templateContent,
+        created_at AS createdAt,
+        updated_at AS updatedAt
+        FROM alarm_template
+        WHERE template_id = #{templateId}
+    </select>
+
 </mapper>
