@@ -30,5 +30,34 @@
             LIMIT #{offset}, #{limit}
     </select>
 
+    <!-- 관리자: 신고 상세 조회 -->
+    <select id="findReportById" resultType="com.linkee.linkeeapi.report.model.dto.response.ReportDetailResponseDto">
+        SELECT
+            report_title,
+            report_content,
+            report_type,
+            reporter_id,
+            reported_id,
+            report_action,
+            report_status
+        FROM tb_report
+        WHERE report_id = #{reportId}
+    </select>
+
+    <!-- 일반 유저: 본인 신고만 상세 조회 -->
+    <select id="findReportByIdAndReporter" resultType="com.linkee.linkeeapi.report.model.dto.response.ReportDetailResponseDto">
+        SELECT
+            report_title,
+            report_content,
+            report_type,
+            reporter_id,
+            reported_id,
+            report_action,
+            report_status
+        FROM tb_report
+        WHERE report_id = #{reportId}
+          AND reporter_id = #{userId}
+    </select>
+
 </mapper>
 

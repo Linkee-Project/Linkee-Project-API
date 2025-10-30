@@ -2,6 +2,7 @@ package com.linkee.linkeeapi.report.controller;
 
 import com.linkee.linkeeapi.report.model.dto.request.CreateReportRequestDto;
 import com.linkee.linkeeapi.report.model.dto.request.ReadReportListRequestDto;
+import com.linkee.linkeeapi.report.model.dto.response.ReportDetailResponseDto;
 import com.linkee.linkeeapi.report.model.dto.response.ReportListResponseDto;
 import com.linkee.linkeeapi.report.model.entity.Report;
 import com.linkee.linkeeapi.report.repository.ReportRepository;
@@ -27,7 +28,9 @@ public class ReportController {
         return ResponseEntity.ok("신고 생성 완료");
     }
 
-    //조회
+    //목록 조회
+    //관리자 전체조회
+    //일반 유저 자신 신고만 조회
     @GetMapping
     public ResponseEntity<List<ReportListResponseDto>> getReportList(
             @RequestParam Long userId,
@@ -43,4 +46,16 @@ public class ReportController {
         List<ReportListResponseDto> reports = reportService.getReportList(request);
         return ResponseEntity.ok(reports);
     }
+
+    @GetMapping("/{reportId}/{userId}")
+    public ResponseEntity<ReportDetailResponseDto> getReportDetail(
+            @PathVariable Long reportId,
+            @PathVariable Long userId) {
+
+        ReportDetailResponseDto reportDetail = reportService.getReportDetail(reportId, userId);
+        return ResponseEntity.ok(reportDetail);
+    }
+
+
+
 }

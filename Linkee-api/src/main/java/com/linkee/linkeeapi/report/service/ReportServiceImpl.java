@@ -5,6 +5,7 @@ import com.linkee.linkeeapi.inquiry.mapper.InquiryMapper;
 import com.linkee.linkeeapi.report.mapper.ReportMapper;
 import com.linkee.linkeeapi.report.model.dto.request.CreateReportRequestDto;
 import com.linkee.linkeeapi.report.model.dto.request.ReadReportListRequestDto;
+import com.linkee.linkeeapi.report.model.dto.response.ReportDetailResponseDto;
 import com.linkee.linkeeapi.report.model.dto.response.ReportListResponseDto;
 import com.linkee.linkeeapi.report.model.entity.Report;
 import com.linkee.linkeeapi.report.repository.ReportRepository;
@@ -58,4 +59,26 @@ public class ReportServiceImpl implements ReportService {
         }
 
     }
+
+    // 신고 상세 조회
+    public ReportDetailResponseDto getReportDetail(Long reportId, Long userId) {
+
+        User user = userFinder.getById(userId);
+        boolean isAdmin = user.getUserRole() == Role.ADMIN;
+
+        ReportDetailResponseDto reportDetail;
+
+        if (isAdmin) {
+            reportDetail = reportMapper.findReportById(reportId);
+        } else {
+            reportDetail = reportMapper.findReportByIdAndReporter(reportId, userId);
+        }
+
+        if (reportDetail == null) {
+            throw new IllegalStateException("조회 권한이 없거나 존재하지 않는 신고입니다.");
+        }
+
+        return reportDetail;
+    }
+
 }
