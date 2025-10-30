@@ -17,6 +17,6 @@ public interface AlarmTemplateService {
     ResponseEntity<AlarmTemplateResponse> selectAlarmTemplateByAlarmTemplateId(Long templateId);
 
 
-    void modifyAlarmTemplateByAlarmTemplateId(Long templateId);
+    void modifyAlarmTemplateByAlarmTemplateId(Long templateId,AlarmTemplateCreateRequest request);
 
 }

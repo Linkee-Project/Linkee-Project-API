@@ -52,6 +52,8 @@ public class AlarmTemplateServiceImpl implements AlarmTemplateService{
         return PageResponse.from(templates, page, size, total);
     }
 
+
+    // id 값으로 단건 조회
     @Override
     public ResponseEntity<AlarmTemplateResponse> selectAlarmTemplateByAlarmTemplateId(Long templateId) {
 
@@ -62,10 +64,14 @@ public class AlarmTemplateServiceImpl implements AlarmTemplateService{
 
 
     @Override
-    public void modifyAlarmTemplateByAlarmTemplateId(Long templateId) {
+    public void modifyAlarmTemplateByAlarmTemplateId(Long templateId, AlarmTemplateCreateRequest request) {
+        AlarmTemplate foundTemplate = repository.findById(templateId).orElseThrow();
 
-
+        if(!(request.templateContent().isBlank() || request.templateContent() == null)){
+        foundTemplate.modifyTemplateContent(request.templateContent());
+        }
     }
+
 
 
 }
