@@ -3,9 +3,9 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.linkee.linkeeapi.question.mapper.QuestionMapper">
+<mapper namespace="com.linkee.linkeeapi.question.query.mapper.QuestionMapper">
 
-    <resultMap id="QuestionListResponseMap" type="com.linkee.linkeeapi.question.model.dto.reponse.QuestionListResponseDto">
+    <resultMap id="QuestionListResponseMap" type="com.linkee.linkeeapi.question.query.model.dto.reponse.QuestionListResponseDto">
         <result property="questionId" column="question_id"/>
         <result property="questionTitle" column="question_title"/>
         <result property="categoryName" column="category_name"/>
@@ -14,7 +14,7 @@
         <result property="createdAt" column="created_at"/>
     </resultMap>
 
-    <resultMap id="QuestionDetailResponseMap" type="com.linkee.linkeeapi.question.model.dto.reponse.QuestionDetailResponseDto">
+    <resultMap id="QuestionDetailResponseMap" type="com.linkee.linkeeapi.question.query.model.dto.reponse.QuestionDetailResponseDto">
         <result property="questionId" column="question_id"/>
         <result property="questionTitle" column="question_title"/>
         <result property="content" column="question_question"/>

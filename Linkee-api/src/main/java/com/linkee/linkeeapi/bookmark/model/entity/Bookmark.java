@@ -1,6 +1,6 @@
 package com.linkee.linkeeapi.bookmark.model.entity;
 
-import com.linkee.linkeeapi.question.model.entity.Question;
+import com.linkee.linkeeapi.question.query.model.entity.Question;
 import com.linkee.linkeeapi.user.model.entity.User;
 import jakarta.persistence.*;
 import lombok.*;

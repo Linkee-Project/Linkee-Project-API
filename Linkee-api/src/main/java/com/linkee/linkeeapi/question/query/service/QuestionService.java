@@ -1,9 +1,9 @@
-package com.linkee.linkeeapi.question.service;
+package com.linkee.linkeeapi.question.query.service;
 
 
 import com.linkee.linkeeapi.common.model.PageResponse;
-import com.linkee.linkeeapi.question.model.dto.reponse.QuestionDetailResponseDto;
-import com.linkee.linkeeapi.question.model.dto.reponse.QuestionListResponseDto;
+import com.linkee.linkeeapi.question.query.model.dto.reponse.QuestionDetailResponseDto;
+import com.linkee.linkeeapi.question.query.model.dto.reponse.QuestionListResponseDto;
 
 public interface QuestionService {
 

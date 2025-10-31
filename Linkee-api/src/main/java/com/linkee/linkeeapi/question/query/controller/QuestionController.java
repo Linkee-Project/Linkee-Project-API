@@ -1,9 +1,9 @@
-package com.linkee.linkeeapi.question.controller;
+package com.linkee.linkeeapi.question.query.controller;
 
 import com.linkee.linkeeapi.common.model.PageResponse;
-import com.linkee.linkeeapi.question.model.dto.reponse.QuestionDetailResponseDto;
-import com.linkee.linkeeapi.question.model.dto.reponse.QuestionListResponseDto;
-import com.linkee.linkeeapi.question.service.QuestionService;
+import com.linkee.linkeeapi.question.query.model.dto.reponse.QuestionDetailResponseDto;
+import com.linkee.linkeeapi.question.query.model.dto.reponse.QuestionListResponseDto;
+import com.linkee.linkeeapi.question.query.service.QuestionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

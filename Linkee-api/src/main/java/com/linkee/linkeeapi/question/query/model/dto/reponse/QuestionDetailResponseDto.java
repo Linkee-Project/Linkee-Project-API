@@ -1,4 +1,4 @@
-package com.linkee.linkeeapi.question.model.dto.reponse;
+package com.linkee.linkeeapi.question.query.model.dto.reponse;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -7,12 +7,13 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-public class QuestionListResponseDto {
+public class QuestionDetailResponseDto {
     private Long questionId;
     private String questionTitle;
+    private String content;
     private String categoryName;
     private String userNickname;
-    private Integer viewCount;
+    private int viewCount;
     private LocalDateTime createdAt;
-
+    private LocalDateTime updatedAt;
 }
