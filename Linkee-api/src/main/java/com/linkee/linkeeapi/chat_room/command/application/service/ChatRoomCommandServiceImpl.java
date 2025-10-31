@@ -1,6 +1,7 @@
 package com.linkee.linkeeapi.chat_room.command.application.service;
 
 import com.linkee.linkeeapi.chat_room.command.application.dto.request.ChatRoomCreateRequestDto;
+import com.linkee.linkeeapi.chat_room.command.application.dto.request.ChatRoomDeleteRequestDto;
 import com.linkee.linkeeapi.chat_room.command.domain.aggregate.ChatRoom;
 import com.linkee.linkeeapi.chat_room.command.domain.aggregate.ChatRoomType;
 import com.linkee.linkeeapi.chat_room.command.domain.repository.ChatRoomRepository;
@@ -21,6 +22,8 @@ public class ChatRoomCommandServiceImpl implements ChatRoomCommandService {
 
     private final JpaChatRoomRepository chatRoomRepository;
     private final UserFinder userFinder;
+
+    /*---------------------------------------create------------------------------------------*/
 
     //자율방 or 채팅방 만들기
     /* 채팅방
@@ -100,6 +103,43 @@ public class ChatRoomCommandServiceImpl implements ChatRoomCommandService {
         if (capacity < 2) return 2;
         if (capacity > 5) return 5;
         return capacity;
+    }
+
+    /*---------------------------------------delete------------------------------------------*/
+    //게임방 방장 나가면 room_status = 'N'
+    //채팅방 방 인원이 0명이 되면 room_status = 'N'
+
+    /*게임방일 경우:
+    방장(roomOwner)이 leaveRoom을 호출하면 room_status = N으로 바꿔 종료.
+    다른 멤버가 나가는 건 인원수만 감소.
+    채팅방일 경우:
+    멤버가 나가면 joinedCount 감소.
+    joinedCount가 0이면 room_status = N으로 바꿈.*/
+
+    @Override
+    @Transactional
+    public void deleteGameRoom(ChatRoomDeleteRequestDto request) {
+        ChatRoom chatRoom = chatRoomRepository.findById(request.getChatRoomId())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 채팅방입니다."));
+
+        if (!chatRoom.getRoomOwner().getUserId().equals(request.getUserId())) {
+            throw new IllegalArgumentException("게임방에서는 방장만 방을 종료할 수 있습니다.");
+        }
+
+        // 게임방 종료
+        chatRoom.closeRoom();
+        chatRoomRepository.save(chatRoom);
+    }
+
+    @Override
+    @Transactional
+    public void leaveChatRoom(ChatRoomDeleteRequestDto request) {
+        ChatRoom chatRoom = chatRoomRepository.findById(request.getChatRoomId())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 채팅방입니다."));
+
+        chatRoom.decreaseJoinedCount();
+
+        chatRoomRepository.save(chatRoom);
     }
 
 }

@@ -1,14 +1,12 @@
 package com.linkee.linkeeapi.chat_room.command.application.controller;
 
 import com.linkee.linkeeapi.chat_room.command.application.dto.request.ChatRoomCreateRequestDto;
+import com.linkee.linkeeapi.chat_room.command.application.dto.request.ChatRoomDeleteRequestDto;
 import com.linkee.linkeeapi.chat_room.command.application.service.ChatRoomCommandService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,6 +19,20 @@ public class ChatRoomCommandController {
     @PostMapping
     public ResponseEntity<String> createRoom(@Valid @RequestBody ChatRoomCreateRequestDto request) {
         chatRoomCommandService.createRoom(request);
-        return ResponseEntity.ok("채팅방이 성공적으로 생성되었습니다.");
+        return ResponseEntity.ok("방이 성공적으로 생성되었습니다.");
+    }
+
+    // 방장 게임방 나가기
+    @PostMapping("/delete-game-room")
+    public ResponseEntity<String> deleteGameRoom(@Valid @RequestBody ChatRoomDeleteRequestDto request) {
+        chatRoomCommandService.deleteGameRoom(request);
+        return ResponseEntity.ok("게임방이 성공적으로 종료되었습니다.");
+    }
+
+    // 채팅방 나가기
+    @PostMapping("/leave-chat-room")
+    public ResponseEntity<String> leaveChatRoom(@Valid @RequestBody ChatRoomDeleteRequestDto request) {
+        chatRoomCommandService.leaveChatRoom(request);
+        return ResponseEntity.ok("채팅방에서 나갔습니다.");
     }
 }
