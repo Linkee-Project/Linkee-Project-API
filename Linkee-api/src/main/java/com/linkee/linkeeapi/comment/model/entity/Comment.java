@@ -1,8 +1,9 @@
-package com.linkee.linkeeapi.question_board.model.entity;
+package com.linkee.linkeeapi.comment.model.entity;
 
 import com.linkee.linkeeapi.common.enums.Status;
 import com.linkee.linkeeapi.common.model.BaseTimeEntity;
 import com.linkee.linkeeapi.user.model.entity.User;
+import com.linkee.linkeeapi.question.model.entity.Question;
 import jakarta.persistence.*;
 import lombok.*;
 
