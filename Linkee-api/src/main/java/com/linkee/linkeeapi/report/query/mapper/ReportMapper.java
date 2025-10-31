@@ -1,7 +1,8 @@
-package com.linkee.linkeeapi.report.mapper;
+package com.linkee.linkeeapi.report.query.mapper;
 
-import com.linkee.linkeeapi.report.model.dto.response.ReportDetailResponseDto;
-import com.linkee.linkeeapi.report.model.dto.response.ReportListResponseDto;
+
+import com.linkee.linkeeapi.report.query.dto.response.ReportDetailResponseDto;
+import com.linkee.linkeeapi.report.query.dto.response.ReportListResponseDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

@@ -1,6 +1,5 @@
-package com.linkee.linkeeapi.report.model.entity;
+package com.linkee.linkeeapi.report.command.domain.aggregate;
 
-import com.linkee.linkeeapi.common.enums.ReportType;
 import com.linkee.linkeeapi.common.enums.Status;
 import com.linkee.linkeeapi.common.model.BaseTimeEntity;
 import com.linkee.linkeeapi.user.model.entity.User;
@@ -10,7 +9,6 @@ import lombok.*;
 @Entity
 @Table(name = "tb_report")
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -51,5 +49,12 @@ public class Report extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "admin_id", foreignKey = @ForeignKey(name = "FK_report_admin"))
     private User admin;
+
+    // Report.java 내부
+    public void handleReport(User admin, String action) {
+        this.admin = admin;
+        this.reportAction = action;
+        this.reportStatus = Status.Y; // 처리 완료 상태로 변경
+    }
 }
 

@@ -1,4 +1,4 @@
-package com.linkee.linkeeapi.common.enums;
+package com.linkee.linkeeapi.report.command.domain.aggregate;
 
 public enum ReportType {
     C ,//Chating 채팅

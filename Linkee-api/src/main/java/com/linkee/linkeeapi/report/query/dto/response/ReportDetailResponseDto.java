@@ -1,7 +1,7 @@
-package com.linkee.linkeeapi.report.model.dto.response;
+package com.linkee.linkeeapi.report.query.dto.response;
 
-import com.linkee.linkeeapi.common.enums.ReportType;
 import com.linkee.linkeeapi.common.enums.Status;
+import com.linkee.linkeeapi.report.command.domain.aggregate.ReportType;
 import lombok.*;
 
 @Getter

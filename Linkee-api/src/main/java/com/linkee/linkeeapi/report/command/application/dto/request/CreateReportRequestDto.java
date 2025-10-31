@@ -1,6 +1,6 @@
-package com.linkee.linkeeapi.report.model.dto.request;
+package com.linkee.linkeeapi.report.command.application.dto.request;
 
-import com.linkee.linkeeapi.common.enums.ReportType;
+import com.linkee.linkeeapi.report.command.domain.aggregate.ReportType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
