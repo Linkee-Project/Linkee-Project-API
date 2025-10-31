@@ -1,4 +1,4 @@
-package com.linkee.linkeeapi.quiz_room.model.dto.response;
+package com.linkee.linkeeapi.quiz_room.query.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

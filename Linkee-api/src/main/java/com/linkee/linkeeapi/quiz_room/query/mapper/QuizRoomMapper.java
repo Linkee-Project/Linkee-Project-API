@@ -1,8 +1,8 @@
-package com.linkee.linkeeapi.quiz_room.mapper;
-import com.linkee.linkeeapi.quiz_room.model.dto.response.PlayStateResponseDto;
-import com.linkee.linkeeapi.quiz_room.model.dto.response.ResultRowResponseDto;
-import com.linkee.linkeeapi.quiz_room.model.dto.response.QuizRoomListResponseDto;
-import com.linkee.linkeeapi.quiz_room.model.dto.response.QuizRoomResponseDto;
+package com.linkee.linkeeapi.quiz_room.query.mapper;
+import com.linkee.linkeeapi.quiz_room.query.dto.response.PlayStateResponseDto;
+import com.linkee.linkeeapi.quiz_room.query.dto.response.ResultRowResponseDto;
+import com.linkee.linkeeapi.quiz_room.query.dto.response.QuizRoomListResponseDto;
+import com.linkee.linkeeapi.quiz_room.query.dto.response.QuizRoomResponseDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

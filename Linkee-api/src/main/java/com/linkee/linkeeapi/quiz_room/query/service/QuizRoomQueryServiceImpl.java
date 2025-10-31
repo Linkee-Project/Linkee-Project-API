@@ -1,10 +1,10 @@
-package com.linkee.linkeeapi.quiz_room.service;
+package com.linkee.linkeeapi.quiz_room.query.service;
 
-import com.linkee.linkeeapi.quiz_room.mapper.QuizRoomMapper;
-import com.linkee.linkeeapi.quiz_room.model.dto.response.PlayStateResponseDto;
-import com.linkee.linkeeapi.quiz_room.model.dto.response.QuizRoomListResponseDto;
-import com.linkee.linkeeapi.quiz_room.model.dto.response.QuizRoomResponseDto;
-import com.linkee.linkeeapi.quiz_room.model.dto.response.ResultRowResponseDto;
+import com.linkee.linkeeapi.quiz_room.query.mapper.QuizRoomMapper;
+import com.linkee.linkeeapi.quiz_room.query.dto.response.PlayStateResponseDto;
+import com.linkee.linkeeapi.quiz_room.query.dto.response.QuizRoomListResponseDto;
+import com.linkee.linkeeapi.quiz_room.query.dto.response.QuizRoomResponseDto;
+import com.linkee.linkeeapi.quiz_room.query.dto.response.ResultRowResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +14,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class QuizRoomServiceImpl implements QuizRoomService {
+public class QuizRoomQueryServiceImpl implements QuizRoomQueryService {
 
     private final QuizRoomMapper quizRoomMapper;
 

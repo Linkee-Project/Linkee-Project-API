@@ -1,11 +1,11 @@
-package com.linkee.linkeeapi.quiz_room.controller;
+package com.linkee.linkeeapi.quiz_room.query.controller;
 
 import com.linkee.linkeeapi.common.ApiResponse;
-import com.linkee.linkeeapi.quiz_room.model.dto.response.PlayStateResponseDto;
-import com.linkee.linkeeapi.quiz_room.model.dto.response.QuizRoomListResponseDto;
-import com.linkee.linkeeapi.quiz_room.model.dto.response.QuizRoomResponseDto;
-import com.linkee.linkeeapi.quiz_room.model.dto.response.ResultRowResponseDto;
-import com.linkee.linkeeapi.quiz_room.service.QuizRoomService;
+import com.linkee.linkeeapi.quiz_room.query.dto.response.PlayStateResponseDto;
+import com.linkee.linkeeapi.quiz_room.query.dto.response.QuizRoomListResponseDto;
+import com.linkee.linkeeapi.quiz_room.query.dto.response.QuizRoomResponseDto;
+import com.linkee.linkeeapi.quiz_room.query.dto.response.ResultRowResponseDto;
+import com.linkee.linkeeapi.quiz_room.query.service.QuizRoomQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,9 +20,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/quiz-rooms")
 @RequiredArgsConstructor
-public class QuizRoomController {
+public class QuizRoomQueryController {
 
-    private final QuizRoomService quizRoomService;
+    private final QuizRoomQueryService quizRoomService;
 
     // 방 목록 조회
     @GetMapping
