@@ -1,18 +1,20 @@
-package com.linkee.linkeeapi.alarm_box.command.application.dto.request;
+package com.linkee.linkeeapi.chat_message.query.dto.request;
 
 import lombok.*;
 
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AlarmBoxSearchRequest {
+public class ChatMessageSearchRequest {
 
     private String keyword;
     private Integer page;
     private Integer size;
     private Integer offset;
-    private String isChecked;
+    private Long chatRoomId;
+    private Long senderId;
+
 
 }
+

@@ -1,11 +1,9 @@
 package com.linkee.linkeeapi.alarm_box.query.service;
 
 import com.linkee.linkeeapi.alarm_box.query.mapper.AlarmBoxMapper;
-import com.linkee.linkeeapi.alarm_box.command.application.dto.request.AlarmBoxSearchRequest;
+import com.linkee.linkeeapi.alarm_box.query.dto.request.AlarmBoxSearchRequest;
 import com.linkee.linkeeapi.alarm_box.query.dto.response.AlarmBoxResponse;
-import com.linkee.linkeeapi.alarm_box.command.infrastructure.repository.AlarmBoxRepository;
 import com.linkee.linkeeapi.common.model.PageResponse;
-import com.linkee.linkeeapi.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;

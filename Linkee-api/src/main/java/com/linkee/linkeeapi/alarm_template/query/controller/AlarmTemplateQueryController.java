@@ -1,6 +1,6 @@
 package com.linkee.linkeeapi.alarm_template.query.controller;
 
-import com.linkee.linkeeapi.alarm_template.command.application.dto.request.AlarmTemplateSearchRequest;
+import com.linkee.linkeeapi.alarm_template.query.dto.reqeust.AlarmTemplateSearchRequest;
 import com.linkee.linkeeapi.alarm_template.query.dto.response.AlarmTemplateResponse;
 import com.linkee.linkeeapi.alarm_template.query.service.AlarmTemplateQueryService;
 import com.linkee.linkeeapi.common.model.PageResponse;
