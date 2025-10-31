@@ -1,12 +1,9 @@
-package com.linkee.linkeeapi.report.controller;
+package com.linkee.linkeeapi.report.query.controller;
 
-import com.linkee.linkeeapi.report.model.dto.request.CreateReportRequestDto;
-import com.linkee.linkeeapi.report.model.dto.request.ReadReportListRequestDto;
-import com.linkee.linkeeapi.report.model.dto.request.UpdateReportActionRequestDto;
-import com.linkee.linkeeapi.report.model.dto.response.ReportDetailResponseDto;
-import com.linkee.linkeeapi.report.model.dto.response.ReportListResponseDto;
-import com.linkee.linkeeapi.report.service.ReportService;
-import com.linkee.linkeeapi.user.repository.UserRepository;
+import com.linkee.linkeeapi.report.query.dto.request.ReadReportListRequestDto;
+import com.linkee.linkeeapi.report.query.dto.response.ReportDetailResponseDto;
+import com.linkee.linkeeapi.report.query.dto.response.ReportListResponseDto;
+import com.linkee.linkeeapi.report.query.service.ReportQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,16 +13,9 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/v1/report")
-public class ReportController {
-    private final ReportService reportService;
-    private final UserRepository userRepository;
+public class ReportQueryController {
+    private final ReportQueryService reportService;
 
-    //create
-    @PostMapping
-    public ResponseEntity<String> createReport(@RequestBody CreateReportRequestDto request) {
-        reportService.createReport(request);
-        return ResponseEntity.ok("신고 생성 완료");
-    }
 
     //목록 조회
     //관리자 전체조회
@@ -54,16 +44,4 @@ public class ReportController {
         ReportDetailResponseDto reportDetail = reportService.getReportDetail(reportId, userId);
         return ResponseEntity.ok(reportDetail);
     }
-
-    //신고 처리
-    @PatchMapping("/action")
-    public ResponseEntity<String> updateReportAnswer(
-            @RequestBody UpdateReportActionRequestDto request){
-
-        reportService.updateReportAnswer(request);
-        return ResponseEntity.ok("신고 처리 완료");
-    }
-
-
-
 }

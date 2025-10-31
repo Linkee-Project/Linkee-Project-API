@@ -1,4 +1,4 @@
-package com.linkee.linkeeapi.report.model.dto.request;
+package com.linkee.linkeeapi.report.query.dto.request;
 
 import lombok.*;
 
