@@ -1,4 +1,4 @@
-package com.linkee.linkeeapi.alarm_template.command.application.dto.request;
+package com.linkee.linkeeapi.alarm_template.query.dto.reqeust;
 
 public record AlarmTemplateSearchRequest(
         String keyword,
