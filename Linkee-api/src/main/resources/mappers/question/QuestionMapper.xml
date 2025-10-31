@@ -5,21 +5,21 @@
 
 <mapper namespace="com.linkee.linkeeapi.question.query.mapper.QuestionMapper">
 
-    <resultMap id="QuestionListResponseMap" type="com.linkee.linkeeapi.question.query.model.dto.reponse.QuestionListResponseDto">
+    <resultMap id="QuestionListResponseMap" type="com.linkee.linkeeapi.question.query.model.dto.response.QuestionListResponseDto">
         <result property="questionId" column="question_id"/>
         <result property="questionTitle" column="question_title"/>
         <result property="categoryName" column="category_name"/>
-        <result property="userNickname" column="nickname"/>
+        <result property="userNickname" column="user_nickname"/>
         <result property="viewCount" column="question_views"/>
         <result property="createdAt" column="created_at"/>
     </resultMap>
 
-    <resultMap id="QuestionDetailResponseMap" type="com.linkee.linkeeapi.question.query.model.dto.reponse.QuestionDetailResponseDto">
+    <resultMap id="QuestionDetailResponseMap" type="com.linkee.linkeeapi.question.query.model.dto.response.QuestionDetailResponseDto">
         <result property="questionId" column="question_id"/>
         <result property="questionTitle" column="question_title"/>
         <result property="content" column="question_question"/>
         <result property="categoryName" column="category_name"/>
-        <result property="userNickname" column="nickname"/>
+        <result property="userNickname" column="user_nickname"/>
         <result property="viewCount" column="question_views"/>
         <result property="createdAt" column="created_at"/>
         <result property="updatedAt" column="updated_at"/>
@@ -31,7 +31,7 @@
         q.question_id,
         q.question_title,
         c.category_name,
-        u.nickname,
+        u.user_nickname,
         q.question_views,
         q.created_at
         FROM tb_question q
@@ -39,7 +39,10 @@
         JOIN tb_user u ON q.user_id = u.user_id
         WHERE q.is_deleted = 'N'
         <if test="keyword != null and keyword != ''">
-            AND q.question_title LIKE CONCAT('%', #{keyword}, '%') ESCAPE '\'
+            AND (
+            q.question_title    LIKE CONCAT('%', #{keyword}, '%')
+            OR q.question_question LIKE CONCAT('%', #{keyword}, '%')
+            )
         </if>
         ORDER BY q.created_at DESC
         <if test="limit != null and offset != null">
@@ -53,7 +56,10 @@
         FROM tb_question q
         WHERE q.is_deleted = 'N'
         <if test="keyword != null and keyword != ''">
-            AND q.question_title LIKE CONCAT('%', #{keyword}, '%') ESCAPE '\'
+            AND (
+            q.question_title    LIKE CONCAT('%', #{keyword}, '%')
+            OR q.question_question LIKE CONCAT('%', #{keyword}, '%')
+            )
         </if>
     </select>
 
@@ -63,7 +69,7 @@
         q.question_id,
         q.question_title,
         c.category_name,
-        u.nickname,
+        u.user_nickname,
         q.question_views,
         q.created_at
         FROM tb_question q
@@ -72,7 +78,10 @@
         WHERE q.category_id = #{categoryId}
         AND q.is_deleted = 'N'
         <if test="keyword != null and keyword != ''">
-            AND q.question_title LIKE CONCAT('%', #{keyword}, '%') ESCAPE '\'
+            AND (
+            q.question_title    LIKE CONCAT('%', #{keyword}, '%')
+            OR q.question_question LIKE CONCAT('%', #{keyword}, '%')
+            )
         </if>
         ORDER BY q.created_at DESC
         <if test="limit != null and offset != null">
@@ -87,7 +96,10 @@
         WHERE q.is_deleted = 'N'
         AND q.category_id = #{categoryId}
         <if test="keyword != null and keyword != ''">
-            AND q.question_title LIKE CONCAT('%', #{keyword}, '%') ESCAPE '\'
+            AND (
+            q.question_title    LIKE CONCAT('%', #{keyword}, '%')
+            OR q.question_question LIKE CONCAT('%', #{keyword}, '%')
+            )
         </if>
     </select>
 
@@ -100,7 +112,7 @@
         q.question_title,
         q.question_question,
         c.category_name,
-        u.nickname,
+        u.user_nickname,
         q.question_views,
         q.created_at,
         q.updated_at

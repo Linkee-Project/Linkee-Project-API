@@ -1,7 +1,7 @@
 package com.linkee.linkeeapi.question.query.mapper;
 
-import com.linkee.linkeeapi.question.query.model.dto.reponse.QuestionDetailResponseDto;
-import com.linkee.linkeeapi.question.query.model.dto.reponse.QuestionListResponseDto;
+import com.linkee.linkeeapi.question.query.model.dto.response.QuestionDetailResponseDto;
+import com.linkee.linkeeapi.question.query.model.dto.response.QuestionListResponseDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

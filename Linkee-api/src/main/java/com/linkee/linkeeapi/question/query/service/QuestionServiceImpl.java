@@ -2,8 +2,8 @@ package com.linkee.linkeeapi.question.query.service;
 
 import com.linkee.linkeeapi.common.model.PageResponse;
 import com.linkee.linkeeapi.question.query.mapper.QuestionMapper;
-import com.linkee.linkeeapi.question.query.model.dto.reponse.QuestionDetailResponseDto;
-import com.linkee.linkeeapi.question.query.model.dto.reponse.QuestionListResponseDto;
+import com.linkee.linkeeapi.question.query.model.dto.response.QuestionDetailResponseDto;
+import com.linkee.linkeeapi.question.query.model.dto.response.QuestionListResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,11 +22,11 @@ public class QuestionServiceImpl implements QuestionService {
         int pageSize = (size != null) ? size : 10;
         int offset = page * pageSize;
 
-        String normalizeKeyword = normalizeKeyword(keyword);
+        String k = (keyword != null && !keyword.trim().isEmpty()) ? keyword.trim() : null;
 
         List<QuestionListResponseDto> questions =
-                questionMapper.findAllWithKeyword(normalizeKeyword, offset, pageSize);
-        int total = questionMapper.countAllWithKeyword(normalizeKeyword);
+                questionMapper.findAllWithKeyword(k, offset, pageSize);
+        int total = questionMapper.countAllWithKeyword(k);
 
         return PageResponse.from(questions, page, pageSize, total);
     }
@@ -37,12 +37,12 @@ public class QuestionServiceImpl implements QuestionService {
         int pageSize = (size != null) ? size : 10;
         int offset = page * pageSize;
 
-        String normalizeKeyword = normalizeKeyword(keyword);
+        String k = (keyword != null && !keyword.trim().isEmpty()) ? keyword.trim() : null;
 
         List<QuestionListResponseDto> questions =
-                questionMapper.findByCategoryWithKeyword(categoryId, normalizeKeyword, offset, pageSize);
+                questionMapper.findByCategoryWithKeyword(categoryId, k, offset, pageSize);
 
-        int total = questionMapper.countByCategoryWithKeyword(categoryId, normalizeKeyword);
+        int total = questionMapper.countByCategoryWithKeyword(categoryId, k);
 
         return PageResponse.from(questions,page,pageSize,total);
 
@@ -56,14 +56,4 @@ public class QuestionServiceImpl implements QuestionService {
         return questionMapper.findDetailByQuestionId(questionId);
     }
 
-    // LIKE 검색 안전처리: %, _, \ (null/blank는 null 반환)
-    private String normalizeKeyword(String keyword) {
-        if (keyword == null) return null;
-        String trimmed = keyword.trim();
-        if (trimmed.isEmpty()) return null;
-        return trimmed
-                .replace("\\", "\\\\")
-                .replace("%", "\\%")
-                .replace("_", "\\_");
-    }
 }
