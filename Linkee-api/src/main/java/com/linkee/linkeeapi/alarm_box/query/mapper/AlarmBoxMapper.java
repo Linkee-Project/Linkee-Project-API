@@ -1,6 +1,6 @@
 package com.linkee.linkeeapi.alarm_box.query.mapper;
 
-import com.linkee.linkeeapi.alarm_box.command.application.dto.request.AlarmBoxSearchRequest;
+import com.linkee.linkeeapi.alarm_box.query.dto.request.AlarmBoxSearchRequest;
 import com.linkee.linkeeapi.alarm_box.query.dto.response.AlarmBoxResponse;
 import org.apache.ibatis.annotations.Mapper;
 

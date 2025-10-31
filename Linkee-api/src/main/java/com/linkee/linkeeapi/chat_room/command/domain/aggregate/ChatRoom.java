@@ -1,4 +1,4 @@
-package com.linkee.linkeeapi.chat_room.model.entity;
+package com.linkee.linkeeapi.chat_room.command.domain.aggregate;
 
 import com.linkee.linkeeapi.common.enums.Status;
 import com.linkee.linkeeapi.common.model.BaseTimeEntity;
@@ -9,7 +9,6 @@ import lombok.*;
 @Entity
 @Table(name = "tb_chat_room")
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -22,10 +21,6 @@ public class ChatRoom extends BaseTimeEntity {
 
     @Column(name = "chat_room_name", nullable = false, length = 50)
     private String chatRoomName;
-
-    @Enumerated(EnumType.STRING)
-    @Column(name = "is_group", nullable = false, columnDefinition = "ENUM('Y','N') DEFAULT 'N'" )
-    private Status isGroup = Status.N;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "chat_room_type", nullable = false, columnDefinition = "ENUM('GAME','CHAT')")
@@ -43,15 +38,24 @@ public class ChatRoom extends BaseTimeEntity {
     private User roomOwner;
 
     @Column(name = "joined_count", nullable = false)
-    private Integer joinedCount;
+    private Integer joinedCount = 1;
 
     @Column(name = "room_capacity")
     private Integer roomCapacity;
 
-    public enum ChatRoomType {
-        GAME,
-        CHAT
+    @Enumerated(EnumType.STRING)
+    @Column(name = "room_status", nullable = false, columnDefinition = "ENUM('Y','N') DEFAULT 'Y'" )
+    private Status roomStatus = Status.Y;
+
+
+    public void decreaseJoinedCount() {
+        this.joinedCount = this.joinedCount - 1;
+        if (this.joinedCount <= 0) {
+            this.roomStatus = Status.N;
+        }
     }
 
-
+    public void closeRoom() {
+        this.roomStatus = Status.N;
+    }
 }

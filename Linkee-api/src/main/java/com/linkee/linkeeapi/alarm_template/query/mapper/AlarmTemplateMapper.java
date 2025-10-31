@@ -1,6 +1,6 @@
 package com.linkee.linkeeapi.alarm_template.query.mapper;
 
-import com.linkee.linkeeapi.alarm_template.command.application.dto.request.AlarmTemplateSearchRequest;
+import com.linkee.linkeeapi.alarm_template.query.dto.reqeust.AlarmTemplateSearchRequest;
 import com.linkee.linkeeapi.alarm_template.query.dto.response.AlarmTemplateResponse;
 import org.apache.ibatis.annotations.Mapper;
 

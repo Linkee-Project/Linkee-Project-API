@@ -1,7 +1,7 @@
 package com.linkee.linkeeapi.alarm_box.service;
 
 import com.linkee.linkeeapi.alarm_box.command.application.dto.request.AlarmBoxCreateRequest;
-import com.linkee.linkeeapi.alarm_box.command.application.dto.request.AlarmBoxSearchRequest;
+import com.linkee.linkeeapi.alarm_box.query.dto.request.AlarmBoxSearchRequest;
 import com.linkee.linkeeapi.alarm_box.command.application.service.AlarmBoxCommandService;
 import com.linkee.linkeeapi.alarm_box.query.dto.response.AlarmBoxResponse;
 import com.linkee.linkeeapi.alarm_box.command.domain.aggregate.entity.AlarmBox;

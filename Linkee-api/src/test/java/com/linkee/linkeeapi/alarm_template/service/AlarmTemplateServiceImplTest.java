@@ -3,7 +3,7 @@ package com.linkee.linkeeapi.alarm_template.service;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.linkee.linkeeapi.alarm_template.command.application.dto.request.AlarmTemplateCreateRequest;
-import com.linkee.linkeeapi.alarm_template.command.application.dto.request.AlarmTemplateSearchRequest;
+import com.linkee.linkeeapi.alarm_template.query.dto.reqeust.AlarmTemplateSearchRequest;
 import com.linkee.linkeeapi.alarm_template.command.application.service.AlarmTemplateCommandService;
 import com.linkee.linkeeapi.alarm_template.query.dto.response.AlarmTemplateResponse;
 import com.linkee.linkeeapi.alarm_template.command.domain.aggregate.entity.AlarmTemplate;
