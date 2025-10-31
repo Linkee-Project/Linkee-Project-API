@@ -48,5 +48,14 @@ public class ChatRoom extends BaseTimeEntity {
     private Status roomStatus = Status.Y;
 
 
+    public void decreaseJoinedCount() {
+        this.joinedCount = this.joinedCount - 1;
+        if (this.joinedCount <= 0) {
+            this.roomStatus = Status.N;
+        }
+    }
 
+    public void closeRoom() {
+        this.roomStatus = Status.N;
+    }
 }

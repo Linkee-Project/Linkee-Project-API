@@ -1,4 +1,4 @@
-package com.linkee.linkeeapi.chat_message.model.entity;
+package com.linkee.linkeeapi.chat_message.command.domain.aggregate.entity;
 
 import com.linkee.linkeeapi.chat_room.command.domain.aggregate.ChatRoom;
 import com.linkee.linkeeapi.user.model.entity.User;
@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 @Entity
 @Table(name = "tb_chat_message")
 public class ChatMessage {
