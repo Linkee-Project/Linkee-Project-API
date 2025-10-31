@@ -1,10 +1,7 @@
 package com.linkee.linkeeapi.alarm_template.command.domain.aggregate.entity;
 
 import com.linkee.linkeeapi.common.model.BaseTimeEntity;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 @NoArgsConstructor
@@ -13,6 +10,7 @@ import lombok.*;
 @ToString
 @Getter
 @Entity
+@Table(name = "tb_alarm_template")
 public class AlarmTemplate extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
