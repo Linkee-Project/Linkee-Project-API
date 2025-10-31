@@ -1,6 +1,6 @@
 package com.linkee.linkeeapi.alarm_box.query.controller;
 
-import com.linkee.linkeeapi.alarm_box.command.application.dto.request.AlarmBoxSearchRequest;
+import com.linkee.linkeeapi.alarm_box.query.dto.request.AlarmBoxSearchRequest;
 import com.linkee.linkeeapi.alarm_box.query.dto.response.AlarmBoxResponse;
 import com.linkee.linkeeapi.alarm_box.query.service.AlarmBoxQueryService;
 import com.linkee.linkeeapi.common.model.PageResponse;
