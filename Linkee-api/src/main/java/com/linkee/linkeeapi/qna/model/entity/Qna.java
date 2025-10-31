@@ -1,6 +1,6 @@
 package com.linkee.linkeeapi.qna.model.entity;
 
-import com.linkee.linkeeapi.chat_member.model.entity.ChatMember;
+import com.linkee.linkeeapi.chat_member.command.domain.aggregate.entity.ChatMember;
 import com.linkee.linkeeapi.chat_room.command.domain.aggregate.ChatRoom;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "qna")
+@Table(name = "tb_qna")
 public class Qna {
 
     @Id
