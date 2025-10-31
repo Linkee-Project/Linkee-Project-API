@@ -1,6 +1,6 @@
 package com.linkee.linkeeapi.chat_message.model.entity;
 
-import com.linkee.linkeeapi.chat_room.model.entity.ChatRoom;
+import com.linkee.linkeeapi.chat_room.command.domain.aggregate.ChatRoom;
 import com.linkee.linkeeapi.user.model.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
