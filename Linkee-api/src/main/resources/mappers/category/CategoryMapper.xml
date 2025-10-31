@@ -11,3 +11,4 @@
         FROM tb_category c
         ORDER BY c.category_name ASC
     </select>
+</mapper>
