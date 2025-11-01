@@ -1,6 +1,6 @@
 package com.linkee.linkeeapi.question_board.model.entity;
 
-import com.linkee.linkeeapi.category.model.entity.Category;
+import com.linkee.linkeeapi.category.command.aggregate.Category;
 import com.linkee.linkeeapi.common.enums.Status;
 import com.linkee.linkeeapi.common.model.BaseTimeEntity;
 import com.linkee.linkeeapi.user.model.entity.User;

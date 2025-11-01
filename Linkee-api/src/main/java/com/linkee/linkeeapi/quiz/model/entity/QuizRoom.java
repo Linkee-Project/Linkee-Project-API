@@ -1,6 +1,6 @@
 package com.linkee.linkeeapi.quiz.model.entity;
 
-import com.linkee.linkeeapi.category.model.entity.Category;
+import com.linkee.linkeeapi.category.command.aggregate.Category;
 import com.linkee.linkeeapi.common.enums.RoomMode;
 import com.linkee.linkeeapi.common.enums.RoomStatus;
 import com.linkee.linkeeapi.common.enums.Status;
