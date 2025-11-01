@@ -6,4 +6,6 @@ import com.linkee.linkeeapi.chat_member.command.application.dto.response.ChatMem
 public interface ChatMemberCommandService {
 
     ChatMemberCreateResponse createChatMember(ChatMemberCreateRequest request);
+    void updateIsRead(Long chatMemberId);
+    String deleteChatMember(Long chatMemberId);
 }

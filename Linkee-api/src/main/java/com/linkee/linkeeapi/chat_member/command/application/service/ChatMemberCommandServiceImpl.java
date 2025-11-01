@@ -10,6 +10,9 @@ import com.linkee.linkeeapi.user.model.entity.User;
 import com.linkee.linkeeapi.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -42,6 +45,26 @@ public class ChatMemberCommandServiceImpl implements ChatMemberCommandService {
 
     }
 
+    @Transactional
+    @Override
+    public void updateIsRead(Long chatMemberId) {
+        ChatMember foundMember = chatMemberRepository.findById(chatMemberId).orElseThrow();
+        foundMember.modifyIsRead();
+    }
+
+    @Transactional
+    @Override
+    public String deleteChatMember(Long chatMemberId) {
+
+        ChatMember foundMember = chatMemberRepository.findById(chatMemberId).orElseThrow();
+
+        String userNickName = userRepository.findById(foundMember.getUser().getUserId()).orElseThrow().getUserNickname();
+
+        foundMember.modifyLeftAt();
+
+
+        return userNickName;
+    }
 
 
 }
