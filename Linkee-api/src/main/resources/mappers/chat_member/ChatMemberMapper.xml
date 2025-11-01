@@ -26,9 +26,8 @@
             AND user_id = #{userId}
         </if>
         ORDER BY joined_at DESC
-        <if test="size != null and offset != null">
-            LIMIT #{size} OFFSET #{offset}
-        </if>
+        LIMIT #{size} OFFSET #{offset}
+
     </select>
 
 

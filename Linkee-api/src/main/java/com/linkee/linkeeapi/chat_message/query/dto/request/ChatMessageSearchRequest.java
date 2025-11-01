@@ -3,6 +3,7 @@ package com.linkee.linkeeapi.chat_message.query.dto.request;
 import lombok.*;
 
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

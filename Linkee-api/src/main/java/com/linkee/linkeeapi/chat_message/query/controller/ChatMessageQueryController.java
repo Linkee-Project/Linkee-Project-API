@@ -20,6 +20,7 @@ public class ChatMessageQueryController {
     @GetMapping
     public PageResponse<ChatMessageResponse> selectAllChatMessage(ChatMessageSearchRequest request){
 
+        System.out.println("================================\n컨트롤러 " + request.getPage() + " " +request.getSize());
         return service.selectAllChatMessage(request);
     }
 
