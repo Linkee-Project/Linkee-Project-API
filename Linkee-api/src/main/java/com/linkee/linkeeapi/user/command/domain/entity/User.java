@@ -21,7 +21,6 @@ import java.util.List;
         }
 )
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -51,8 +50,17 @@ public class User extends BaseTimeEntity {
     private Role userRole = Role.USER;
 
 
+
     public void setEncodedPassword(String encodedPassword) {
         this.userPassword = encodedPassword;
     }
 
+    public void modifyUserNickName(String userNickname){
+        this.userNickname = userNickname;
+    }
+
+
+    public void deactivateUser() {
+        this.userStatus = Status.N;
+    }
 }
