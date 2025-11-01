@@ -1,4 +1,4 @@
-package com.linkee.linkeeapi.qna.model.entity;
+package com.linkee.linkeeapi.qna.command.domain.aggregate;
 
 import com.linkee.linkeeapi.chat_member.command.domain.aggregate.entity.ChatMember;
 import com.linkee.linkeeapi.chat_room.command.domain.aggregate.ChatRoom;
