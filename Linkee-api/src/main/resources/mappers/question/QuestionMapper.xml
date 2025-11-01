@@ -5,6 +5,7 @@
 
 <mapper namespace="com.linkee.linkeeapi.question.query.mapper.QuestionMapper">
 
+    <!-- QuestionListResponseDto에 맞춘 매핑 -->
     <resultMap id="QuestionListResponseMap" type="com.linkee.linkeeapi.question.query.model.dto.response.QuestionListResponseDto">
         <result property="questionId" column="question_id"/>
         <result property="questionTitle" column="question_title"/>
@@ -12,17 +13,6 @@
         <result property="userNickname" column="user_nickname"/>
         <result property="viewCount" column="question_views"/>
         <result property="createdAt" column="created_at"/>
-    </resultMap>
-
-    <resultMap id="QuestionDetailResponseMap" type="com.linkee.linkeeapi.question.query.model.dto.response.QuestionDetailResponseDto">
-        <result property="questionId" column="question_id"/>
-        <result property="questionTitle" column="question_title"/>
-        <result property="content" column="question_question"/>
-        <result property="categoryName" column="category_name"/>
-        <result property="userNickname" column="user_nickname"/>
-        <result property="viewCount" column="question_views"/>
-        <result property="createdAt" column="created_at"/>
-        <result property="updatedAt" column="updated_at"/>
     </resultMap>
 
     <!-- 전체 문제 조회 + 옵션 (keyword) -->
@@ -102,6 +92,18 @@
             )
         </if>
     </select>
+
+    <!-- QuestionDetailResponseDto에 맞춘 매핑 -->
+    <resultMap id="QuestionDetailResponseMap" type="com.linkee.linkeeapi.question.query.model.dto.response.QuestionDetailResponseDto">
+        <result property="questionId" column="question_id"/>
+        <result property="questionTitle" column="question_title"/>
+        <result property="content" column="question_question"/>
+        <result property="categoryName" column="category_name"/>
+        <result property="userNickname" column="user_nickname"/>
+        <result property="viewCount" column="question_views"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+    </resultMap>
 
 
     <!-- 문제 상세 조회 -->
