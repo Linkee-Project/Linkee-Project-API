@@ -9,7 +9,7 @@ import java.util.List;
 @Mapper
 public interface ChatMessageMapper {
 
-    List<ChatMessageResponse> selectAllChatMessage(ChatMessageSearchRequest request);
+    List<ChatMessageResponse> selectAllChatMessage(ChatMessageSearchRequest requestMapper);
 
     int countChatMessage(ChatMessageSearchRequest requestMapper);
 }

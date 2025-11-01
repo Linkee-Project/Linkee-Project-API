@@ -40,6 +40,7 @@ public class ChatMember {
     @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(name = "FK_chatmember_user"))
     private User user;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(name = "is_read", nullable = false, columnDefinition = "ENUM('Y','N') DEFAULT 'N'")
     private Status isRead = Status.N;
