@@ -31,7 +31,7 @@ public class Relation extends BaseTimeEntity {
 
 
     @LastModifiedDate
-    @Column(name = "accepted_at")
+    @Column(name = "accepted_at", insertable = false)
     private LocalDateTime acceptedAt;
 
     // 요청을 받은 사용자 (FK)
@@ -44,4 +44,7 @@ public class Relation extends BaseTimeEntity {
     @JoinColumn(name = "requester_id", nullable = false)
     private User requester;
 
+    public void modifyRelationStatus(RelationStatus status) {
+        this.relationStatus = status;
+    }
 }

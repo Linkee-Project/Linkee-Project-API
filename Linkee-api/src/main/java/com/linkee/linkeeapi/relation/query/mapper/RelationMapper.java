@@ -12,7 +12,7 @@ public interface RelationMapper {
     List<RelationResponse> selectAllRelations(RelationSearchRequest request);
     int countAllRelations(RelationSearchRequest request);
 
-    /** 내 ID 기준 상태별 조회 (페이징 가능) */
+    // id 기준
     List<RelationResponse> selectRelationsByUserIdAndStatus(RelationSearchRequest request);
     int countRelationsByUserIdAndStatus(RelationSearchRequest request);
 }
