@@ -1,7 +1,5 @@
 package com.linkee.linkeeapi.common.config;
 
-import com.linkee.linkeeapi.user.model.dto.UserCreateRequest;
-import com.linkee.linkeeapi.user.model.entity.User;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.context.annotation.Bean;
@@ -23,12 +21,6 @@ public class AppConfig {
                         org.modelmapper.config.Configuration.AccessLevel.PRIVATE
                 )
                 .setFieldMatchingEnabled(true);
-
-        // UserCreateRequest -> User 맵핑 시 userId 필드는 건너뛰도록 설행
-        modelMapper.typeMap(UserCreateRequest.class, User.class)
-                .addMappings(mapper
-                        -> {mapper.skip(User::setUserId);
-                });
 
         return modelMapper;
     }

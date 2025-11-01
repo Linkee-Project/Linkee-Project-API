@@ -2,7 +2,7 @@ package com.linkee.linkeeapi.chat_member.command.domain.aggregate.entity;
 
 import com.linkee.linkeeapi.chat_room.command.domain.aggregate.ChatRoom;
 import com.linkee.linkeeapi.common.enums.Status;
-import com.linkee.linkeeapi.user.model.entity.User;
+import com.linkee.linkeeapi.user.command.domain.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;

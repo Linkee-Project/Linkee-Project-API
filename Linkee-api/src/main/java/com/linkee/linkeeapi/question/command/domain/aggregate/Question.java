@@ -3,7 +3,7 @@ package com.linkee.linkeeapi.question.command.domain.aggregate;
 import com.linkee.linkeeapi.category.command.aggregate.Category;
 import com.linkee.linkeeapi.common.enums.Status;
 import com.linkee.linkeeapi.common.model.BaseTimeEntity;
-import com.linkee.linkeeapi.user.model.entity.User;
+import com.linkee.linkeeapi.user.command.domain.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 

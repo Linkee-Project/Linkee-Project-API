@@ -1,7 +1,5 @@
 package com.linkee.linkeeapi.alarm_box.query.dto.response;
 
-import com.linkee.linkeeapi.common.enums.Status;
-import com.linkee.linkeeapi.user.model.entity.User;
 import lombok.*;
 
 import java.time.LocalDateTime;
