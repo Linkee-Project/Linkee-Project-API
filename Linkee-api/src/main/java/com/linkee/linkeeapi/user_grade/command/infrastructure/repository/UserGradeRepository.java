@@ -1,6 +1,6 @@
-package com.linkee.linkeeapi.user_grade.repository;
+package com.linkee.linkeeapi.user_grade.command.infrastructure.repository;
 
-import com.linkee.linkeeapi.user_grade.entity.UserGrade;
+import com.linkee.linkeeapi.user_grade.command.domain.entity.UserGrade;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

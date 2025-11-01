@@ -1,14 +1,11 @@
 package com.linkee.linkeeapi.user.query.service;
 
-import com.linkee.linkeeapi.chat_member.query.dto.request.ChatMemberSearchRequest;
-import com.linkee.linkeeapi.chat_member.query.dto.response.ChatMemberResponse;
 import com.linkee.linkeeapi.common.model.PageResponse;
 import com.linkee.linkeeapi.user.query.dto.request.UserSearchRequest;
 import com.linkee.linkeeapi.user.query.dto.response.UserListResponse;
 import com.linkee.linkeeapi.user.query.dto.response.UserMeResponse;
 import com.linkee.linkeeapi.user.query.mapper.UserMapper;
-import com.linkee.linkeeapi.user_grade.entity.UserGrade;
-import com.linkee.linkeeapi.user_grade.repository.UserGradeRepository;
+import com.linkee.linkeeapi.user_grade.command.infrastructure.repository.UserGradeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

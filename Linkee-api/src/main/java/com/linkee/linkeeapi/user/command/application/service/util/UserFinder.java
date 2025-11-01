@@ -1,7 +1,7 @@
 package com.linkee.linkeeapi.user.command.application.service.util;
 
 import com.linkee.linkeeapi.user.command.domain.entity.User;
-import com.linkee.linkeeapi.user.command.infrastructure.UserRepository;
+import com.linkee.linkeeapi.user.command.infrastructure.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

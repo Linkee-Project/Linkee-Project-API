@@ -1,22 +1,17 @@
-package com.linkee.linkeeapi.user_grade.entity;
+package com.linkee.linkeeapi.user_grade.command.domain.entity;
 
 import com.linkee.linkeeapi.category.command.aggregate.Category;
 import com.linkee.linkeeapi.grade.command.domain.aggregate.entity.Grade;
 import com.linkee.linkeeapi.user.command.domain.entity.User;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-
-import jakarta.persistence.*;
-import lombok.*;
 
 @Entity
 @Table(name = "tb_user_grade")
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -43,8 +38,14 @@ public class UserGrade {
     private Category category;
 
     // 승리 횟수
+    @Builder.Default
     @Column(name = "victory_count", nullable = false)
     private int victoryCount = 0;
+
+
+    public void modifyVictoryCount(int victoryCount){
+        this.victoryCount = victoryCount;
+    }
 }
 
 
