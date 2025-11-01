@@ -4,7 +4,7 @@ import com.linkee.linkeeapi.common.model.PageResponse;
 import com.linkee.linkeeapi.inquiry.query.dto.response.InquiryResponseDto;
 import com.linkee.linkeeapi.inquiry.query.service.InquiryQueryService;
 import com.linkee.linkeeapi.user.command.domain.entity.User;
-import com.linkee.linkeeapi.user.command.infrastructure.UserRepository;
+import com.linkee.linkeeapi.user.command.infrastructure.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

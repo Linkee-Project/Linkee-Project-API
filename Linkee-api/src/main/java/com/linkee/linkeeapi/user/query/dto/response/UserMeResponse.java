@@ -1,6 +1,6 @@
 package com.linkee.linkeeapi.user.query.dto.response;
 
-import com.linkee.linkeeapi.user_grade.entity.UserGrade;
+import com.linkee.linkeeapi.user_grade.command.domain.entity.UserGrade;
 import lombok.*;
 
 import java.time.LocalDateTime;

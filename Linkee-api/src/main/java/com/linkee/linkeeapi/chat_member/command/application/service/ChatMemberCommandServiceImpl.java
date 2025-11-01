@@ -7,7 +7,7 @@ import com.linkee.linkeeapi.chat_member.command.infrastructure.repository.ChatMe
 import com.linkee.linkeeapi.chat_room.command.domain.aggregate.ChatRoom;
 import com.linkee.linkeeapi.chat_room.command.infrastructure.repository.JpaChatRoomRepository;
 import com.linkee.linkeeapi.user.command.domain.entity.User;
-import com.linkee.linkeeapi.user.command.infrastructure.UserRepository;
+import com.linkee.linkeeapi.user.command.infrastructure.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
