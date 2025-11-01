@@ -5,10 +5,7 @@ import com.linkee.linkeeapi.chat_member.command.application.dto.response.ChatMem
 import com.linkee.linkeeapi.chat_member.command.application.service.ChatMemberCommandService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,6 +15,7 @@ public class ChatMemberCommandController {
     private final ChatMemberCommandService chatMemberCommandService;
 
 
+    // create
     @PostMapping
     public ResponseEntity<String> createChatMember(@RequestBody ChatMemberCreateRequest request) {
 
@@ -27,6 +25,20 @@ public class ChatMemberCommandController {
         + response.getUserNickName() + " 님이 입장하셨습니다.";
 
         return ResponseEntity.ok(message);
+    }
+
+    //updateIsRead
+    @PatchMapping("/read/{chatMemberId}")
+    public ResponseEntity<String> updateIsRead(@PathVariable Long chatMemberId) {
+        chatMemberCommandService.updateIsRead(chatMemberId);
+        return ResponseEntity.ok("읽음 처리 완료");
+    }
+
+    //deleteChatMember -> 나가면 leftAt 시간을 update처리
+    @DeleteMapping("/leave/{chatMemberId}")
+    public ResponseEntity<String> deleteChatMember(@PathVariable Long chatMemberId) {
+        String result = chatMemberCommandService.deleteChatMember(chatMemberId);
+        return ResponseEntity.ok(result +" 님이 퇴장하셨습니다");
     }
 
 }
