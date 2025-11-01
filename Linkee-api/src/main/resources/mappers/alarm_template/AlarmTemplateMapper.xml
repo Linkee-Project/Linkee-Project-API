@@ -11,7 +11,7 @@
         template_content AS templateContent,
         created_at AS createdAt,
         updated_at AS updatedAt
-        FROM alarm_template
+        FROM tb_alarm_template
         WHERE 1=1
         <if test="keyword != null and keyword != ''">
             AND template_content LIKE CONCAT('%', #{keyword}, '%')
@@ -24,7 +24,7 @@
 
     <select id="countAlarmTemplate" resultType="int">
         SELECT COUNT(*)
-        FROM alarm_template
+        FROM tb_alarm_template
         WHERE 1=1
         <if test="keyword != null and keyword != ''">
             AND template_content LIKE CONCAT('%', #{keyword}, '%')
@@ -37,7 +37,7 @@
         template_content AS templateContent,
         created_at AS createdAt,
         updated_at AS updatedAt
-        FROM alarm_template
+        FROM tb_alarm_template
         WHERE template_id = #{templateId}
     </select>
 

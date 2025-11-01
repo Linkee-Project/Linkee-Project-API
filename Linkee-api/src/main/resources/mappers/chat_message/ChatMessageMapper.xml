@@ -17,16 +17,16 @@
         <if test="keyword != null and keyword != ''">
             AND message_content LIKE CONCAT('%', #{keyword}, '%')
         </if>
-        <if test="chatRoomId != null and chatRoomId != ''">
+        <if test="chatRoomId != null ">
             AND chat_room_id = #{chatRoomId}
         </if>
-        <if test="senderId != null and senderId != ''">
+        <if test="senderId != null ">
             AND sender_id = #{senderId}
         </if>
         ORDER BY sent_at DESC
-        <if test="size != null and offset != null">
-            LIMIT #{size} OFFSET #{offset}
-        </if>
+        LIMIT #{size} OFFSET #{offset}
+
+
     </select>
 
 

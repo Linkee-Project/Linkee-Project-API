@@ -21,7 +21,7 @@ public class ChatMemberQueryServiceImpl implements ChatMemberQueryService{
     @Override
     public PageResponse<ChatMemberResponse> selectAllChatMember(ChatMemberSearchRequest request){
 
-        int page = request.getPage() != null && request.getPage() >= 0 ? request.getPage() : 0;
+        int page = request.getPage() != null && request.getPage() > 0 ? request.getPage() : 0;
         int size = request.getSize() != null && request.getSize() > 0 ? request.getSize() : 10;
         int offset = page * size;
 
