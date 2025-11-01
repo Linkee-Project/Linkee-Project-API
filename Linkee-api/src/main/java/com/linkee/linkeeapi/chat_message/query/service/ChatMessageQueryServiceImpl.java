@@ -35,8 +35,8 @@ public class ChatMessageQueryServiceImpl implements ChatMessageQueryService {
 
         List<ChatMessageResponse> results = mapper.selectAllChatMessage(requestMapper);
 
-        System.out.println("=================\n" +
-                request.getPage() + " " +request.getSize());
+//        System.out.println("=================\n" +
+//                request.getPage() + " " +request.getSize());
 
         int total = mapper.countChatMessage(requestMapper);
 
