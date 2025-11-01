@@ -1,6 +1,6 @@
 package com.linkee.linkeeapi.room_question.command.domain.aggregate;
 
-import com.linkee.linkeeapi.question_board.model.entity.Question;
+import com.linkee.linkeeapi.question.command.domain.aggregate.Question;
 import com.linkee.linkeeapi.quiz_room.command.domain.aggregate.QuizRoom;
 import jakarta.persistence.*;
 import lombok.*;

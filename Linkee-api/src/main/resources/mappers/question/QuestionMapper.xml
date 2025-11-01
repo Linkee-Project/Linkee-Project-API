@@ -6,7 +6,7 @@
 <mapper namespace="com.linkee.linkeeapi.question.query.mapper.QuestionMapper">
 
     <!-- QuestionListResponseDto에 맞춘 매핑 -->
-    <resultMap id="QuestionListResponseMap" type="com.linkee.linkeeapi.question.query.model.dto.response.QuestionListResponseDto">
+    <resultMap id="QuestionListResponseMap" type="com.linkee.linkeeapi.question.query.dto.response.QuestionListResponseDto">
         <result property="questionId" column="question_id"/>
         <result property="questionTitle" column="question_title"/>
         <result property="categoryName" column="category_name"/>
@@ -94,7 +94,7 @@
     </select>
 
     <!-- QuestionDetailResponseDto에 맞춘 매핑 -->
-    <resultMap id="QuestionDetailResponseMap" type="com.linkee.linkeeapi.question.query.model.dto.response.QuestionDetailResponseDto">
+    <resultMap id="QuestionDetailResponseMap" type="com.linkee.linkeeapi.question.query.dto.response.QuestionDetailResponseDto">
         <result property="questionId" column="question_id"/>
         <result property="questionTitle" column="question_title"/>
         <result property="content" column="question_question"/>

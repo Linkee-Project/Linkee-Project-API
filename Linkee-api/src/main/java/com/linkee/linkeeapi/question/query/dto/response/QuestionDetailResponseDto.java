@@ -1,4 +1,4 @@
-package com.linkee.linkeeapi.question.query.model.dto.response;
+package com.linkee.linkeeapi.question.query.dto.response;
 
 import lombok.Getter;
 import lombok.Setter;
