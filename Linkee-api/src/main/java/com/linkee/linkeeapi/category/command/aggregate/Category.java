@@ -1,4 +1,4 @@
-package com.linkee.linkeeapi.category.model.entity;
+package com.linkee.linkeeapi.category.command.aggregate;
 
 import jakarta.persistence.*;
 import lombok.*;
