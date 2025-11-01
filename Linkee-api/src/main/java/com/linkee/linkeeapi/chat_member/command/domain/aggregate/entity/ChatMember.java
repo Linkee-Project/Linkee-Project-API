@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "tb_chat_member")
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
@@ -40,7 +39,17 @@ public class ChatMember {
     @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(name = "FK_chatmember_user"))
     private User user;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(name = "is_read", nullable = false, columnDefinition = "ENUM('Y','N') DEFAULT 'N'")
     private Status isRead = Status.N;
+
+
+    public void modifyIsRead(){
+        this.isRead = Status.Y;
+    }
+
+    public void modifyLeftAt() {
+        this.leftAt = LocalDateTime.now();
+    }
 }
