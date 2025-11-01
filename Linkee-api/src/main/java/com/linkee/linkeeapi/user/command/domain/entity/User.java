@@ -51,9 +51,6 @@ public class User extends BaseTimeEntity {
 
 
 
-    public void setEncodedPassword(String encodedPassword) {
-        this.userPassword = encodedPassword;
-    }
 
     public void modifyUserNickName(String userNickname){
         this.userNickname = userNickname;
