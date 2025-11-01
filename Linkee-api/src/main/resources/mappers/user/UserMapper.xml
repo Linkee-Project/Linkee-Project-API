@@ -54,5 +54,33 @@
     </select>
 
 
+    <!--id 값으로 하나(자기정보) 조회-->
+
+    <resultMap id="userMeResultMap" type="com.linkee.linkeeapi.user.query.dto.response.UserMeResponse">
+        <result property="userEmail" column="user_email"/>
+        <result property="userNickname" column="user_nickname"/>
+        <result property="createdAt" column="created_at"/>
+        <result property="updatedAt" column="updated_at"/>
+        <collection property="userGrades" ofType="com.linkee.linkeeapi.user.query.dto.response.UserGradeInfo">
+            <result property="gradeName" column="grade_name"/>
+            <result property="categoryName" column="category_name"/>
+            <result property="victoryCount" column="victory_count"/>
+        </collection>
+    </resultMap>
+
+    <select id="selectUserMe" resultMap="userMeResultMap">
+        SELECT u.user_email, u.user_nickname, u.created_at, u.updated_at,
+               ug.victory_count,
+               g.grade_name,
+               c.category_name
+        FROM tb_user u
+                 LEFT JOIN tb_user_grade ug ON u.user_id = ug.user_id
+                 LEFT JOIN tb_grade g ON ug.grade_id = g.grade_id
+                 LEFT JOIN tb_category c ON ug.category_id = c.category_id
+        WHERE u.user_id = #{userId}
+    </select>
+
+    <!--    -->
+
 
 </mapper>

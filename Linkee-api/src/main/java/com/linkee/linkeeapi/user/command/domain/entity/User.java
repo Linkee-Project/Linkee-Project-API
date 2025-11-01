@@ -3,11 +3,13 @@ package com.linkee.linkeeapi.user.command.domain.entity;
 import com.linkee.linkeeapi.common.enums.Role;
 import com.linkee.linkeeapi.common.enums.Status;
 import com.linkee.linkeeapi.common.model.BaseTimeEntity;
+import com.linkee.linkeeapi.user_grade.entity.UserGrade;
 import jakarta.persistence.*;
 import lombok.*;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.util.List;
 
 
 @Entity

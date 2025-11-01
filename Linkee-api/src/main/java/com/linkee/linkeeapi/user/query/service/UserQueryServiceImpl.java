@@ -5,7 +5,10 @@ import com.linkee.linkeeapi.chat_member.query.dto.response.ChatMemberResponse;
 import com.linkee.linkeeapi.common.model.PageResponse;
 import com.linkee.linkeeapi.user.query.dto.request.UserSearchRequest;
 import com.linkee.linkeeapi.user.query.dto.response.UserListResponse;
+import com.linkee.linkeeapi.user.query.dto.response.UserMeResponse;
 import com.linkee.linkeeapi.user.query.mapper.UserMapper;
+import com.linkee.linkeeapi.user_grade.entity.UserGrade;
+import com.linkee.linkeeapi.user_grade.repository.UserGradeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +20,7 @@ public class UserQueryServiceImpl implements UserQueryService{
 
 
     private final UserMapper userMapper;
+    private final UserGradeRepository userGradeRepository;
 
     @Override
     public PageResponse<UserListResponse> selectAllUsers(UserSearchRequest request) {
@@ -45,6 +49,14 @@ public class UserQueryServiceImpl implements UserQueryService{
 
         return PageResponse.from(results, page, size, total);
 
+    }
+
+
+
+    // id 값으로 한건조회(자기정보)
+    @Override
+    public UserMeResponse getUserMe(Long userId) {
+        return userMapper.selectUserMe(userId);
     }
 
 

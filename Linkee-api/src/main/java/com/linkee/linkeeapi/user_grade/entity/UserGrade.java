@@ -1,4 +1,4 @@
-package com.linkee.linkeeapi.usergrade.entity;
+package com.linkee.linkeeapi.user_grade.entity;
 
 import com.linkee.linkeeapi.category.command.aggregate.Category;
 import com.linkee.linkeeapi.grade.entity.Grade;
