@@ -1,4 +1,4 @@
-package com.linkee.linkeeapi.quiz.model.entity;
+package com.linkee.linkeeapi.quiz_room.command.domain.aggregate;
 
 import com.linkee.linkeeapi.category.command.aggregate.Category;
 import com.linkee.linkeeapi.common.enums.RoomMode;

@@ -1,6 +1,8 @@
-package com.linkee.linkeeapi.quiz.model.entity;
+package com.linkee.linkeeapi.room_user_log.command.domain.aggregate;
 
 import com.linkee.linkeeapi.common.enums.Status;
+import com.linkee.linkeeapi.room_question.command.domain.aggregate.RoomQuestion;
+import com.linkee.linkeeapi.room_member.command.domain.aggregate.RoomMember;
 import jakarta.persistence.*;
 import lombok.*;
 
