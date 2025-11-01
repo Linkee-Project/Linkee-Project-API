@@ -1,4 +1,4 @@
-package com.linkee.linkeeapi.question_board.model.entity;
+package com.linkee.linkeeapi.question.command.domain.aggregate.entity;
 
 import com.linkee.linkeeapi.category.model.entity.Category;
 import com.linkee.linkeeapi.common.enums.Status;

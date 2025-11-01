@@ -2,6 +2,7 @@ package com.linkee.linkeeapi.question_board.model.entity;
 
 import com.linkee.linkeeapi.common.enums.Status;
 import com.linkee.linkeeapi.common.model.BaseTimeEntity;
+import com.linkee.linkeeapi.question.command.domain.aggregate.entity.Question;
 import com.linkee.linkeeapi.user.model.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
