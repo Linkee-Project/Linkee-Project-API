@@ -4,12 +4,9 @@ import com.linkee.linkeeapi.chat_message.command.application.dto.request.ChatMes
 import com.linkee.linkeeapi.chat_message.command.domain.aggregate.entity.ChatMessage;
 import com.linkee.linkeeapi.chat_message.command.infrastructure.repository.ChatMessageRepository;
 import com.linkee.linkeeapi.chat_room.command.domain.aggregate.ChatRoom;
-import com.linkee.linkeeapi.chat_room.command.domain.aggregate.ChatRoomType;
-import com.linkee.linkeeapi.chat_room.command.domain.repository.ChatRoomRepository;
 import com.linkee.linkeeapi.chat_room.command.infrastructure.repository.JpaChatRoomRepository;
-import com.linkee.linkeeapi.common.enums.Status;
-import com.linkee.linkeeapi.user.model.entity.User;
-import com.linkee.linkeeapi.user.service.util.UserFinder;
+import com.linkee.linkeeapi.user.command.domain.entity.User;
+import com.linkee.linkeeapi.user.command.application.service.util.UserFinder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

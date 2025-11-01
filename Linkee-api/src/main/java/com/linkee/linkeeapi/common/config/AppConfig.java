@@ -1,7 +1,7 @@
 package com.linkee.linkeeapi.common.config;
 
-import com.linkee.linkeeapi.user.model.dto.UserCreateRequest;
-import com.linkee.linkeeapi.user.model.entity.User;
+import com.linkee.linkeeapi.user.command.application.dto.UserCreateRequest;
+import com.linkee.linkeeapi.user.command.domain.entity.User;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.context.annotation.Bean;

@@ -9,7 +9,7 @@ import com.linkee.linkeeapi.chat_room.command.domain.aggregate.ChatRoomType;
 import com.linkee.linkeeapi.common.enums.Role;
 import com.linkee.linkeeapi.common.enums.Status;
 import com.linkee.linkeeapi.common.model.PageResponse;
-import com.linkee.linkeeapi.user.model.entity.User;
+import com.linkee.linkeeapi.user.command.domain.entity.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +18,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")

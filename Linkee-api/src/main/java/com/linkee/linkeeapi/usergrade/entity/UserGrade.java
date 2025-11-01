@@ -2,7 +2,7 @@ package com.linkee.linkeeapi.usergrade.entity;
 
 import com.linkee.linkeeapi.category.command.aggregate.Category;
 import com.linkee.linkeeapi.grade.entity.Grade;
-import com.linkee.linkeeapi.user.model.entity.User;
+import com.linkee.linkeeapi.user.command.domain.entity.User;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
