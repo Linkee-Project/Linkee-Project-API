@@ -1,16 +1,19 @@
 package com.linkee.linkeeapi.room_member.command.application.service;
 import com.linkee.linkeeapi.room_member.command.application.dto.request.RoomMemberCreateRequest;
+import com.linkee.linkeeapi.room_member.command.application.dto.response.RoomMemberCreateResponse;
 
 /*
  * 룸 멤버 관련 CUD(Create, Update, Delete) 작업을 위한 서비스 인터페이스.
  * 비즈니스 로직을 정의합니다.
  */
 public interface RoomMemberCommandService {
-    /*
+    /**
      * 새로운 룸 멤버를 생성합니다.(입장)
+     *
      * @param request 생성할 룸 멤버의 정보를 담은 요청 객체
+     * @return 생성된 룸 멤버의 정보를 담은 응답 객체
      */
-    void createRoomMember(RoomMemberCreateRequest request);
+    RoomMemberCreateResponse createRoomMember(RoomMemberCreateRequest request);
 
     /*
      * 특정 룸 멤버의 준비 상태를 토글합니다

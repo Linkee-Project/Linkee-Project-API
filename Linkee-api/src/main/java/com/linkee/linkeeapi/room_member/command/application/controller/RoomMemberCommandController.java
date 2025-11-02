@@ -2,6 +2,7 @@ package com.linkee.linkeeapi.room_member.command.application.controller;
 
 import com.linkee.linkeeapi.common.ApiResponse;
 import com.linkee.linkeeapi.room_member.command.application.dto.request.RoomMemberCreateRequest;
+import com.linkee.linkeeapi.room_member.command.application.dto.response.RoomMemberCreateResponse;
 import com.linkee.linkeeapi.room_member.command.application.service.RoomMemberCommandService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -23,9 +24,9 @@ public class RoomMemberCommandController {
      * @return 성공 응답
      */
     @PostMapping
-    public ApiResponse<Void> createRoomMember(@RequestBody RoomMemberCreateRequest request) {
-        roomMemberCommandService.createRoomMember(request);
-        return ApiResponse.success(null);
+    public ApiResponse<RoomMemberCreateResponse> createRoomMember(@RequestBody RoomMemberCreateRequest request) {
+        RoomMemberCreateResponse response = roomMemberCommandService.createRoomMember(request);
+        return ApiResponse.success(response);
     }
 
     /*

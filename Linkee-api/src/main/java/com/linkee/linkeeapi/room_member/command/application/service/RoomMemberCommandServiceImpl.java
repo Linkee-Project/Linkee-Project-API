@@ -4,6 +4,7 @@ import com.linkee.linkeeapi.common.enums.Status;
 import com.linkee.linkeeapi.quiz_room.command.domain.aggregate.QuizRoom;
 import com.linkee.linkeeapi.quiz_room.command.infrastructure.repository.QuizRoomRepository;
 import com.linkee.linkeeapi.room_member.command.application.dto.request.RoomMemberCreateRequest;
+import com.linkee.linkeeapi.room_member.command.application.dto.response.RoomMemberCreateResponse;
 import com.linkee.linkeeapi.room_member.command.domain.aggregate.RoomMember;
 import com.linkee.linkeeapi.room_member.command.infrastructure.repository.RoomMemberRepository;
 import com.linkee.linkeeapi.user.command.domain.entity.User;
@@ -14,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
-/*
+/**
  * RoomMemberCommandService 인터페이스의 구현체.
  * 룸 멤버 관련 비즈니스 로직을 실제로 처리합니다.
  */
@@ -34,7 +35,7 @@ public class RoomMemberCommandServiceImpl implements RoomMemberCommandService {
      * @throws IllegalArgumentException 사용자 또는 퀴즈룸을 찾을 수 없을 경우 발생
      */
     @Override
-    public void createRoomMember(RoomMemberCreateRequest request) {
+    public RoomMemberCreateResponse createRoomMember(RoomMemberCreateRequest request) {
         User user = userRepository.findById(request.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
         QuizRoom quizRoom = quizRoomRepository.findById(request.getQuizRoomId())
@@ -48,6 +49,12 @@ public class RoomMemberCommandServiceImpl implements RoomMemberCommandService {
                 .build();
 
         roomMemberRepository.save(roomMember);
+
+        return RoomMemberCreateResponse.builder()
+                .quizRoomId(quizRoom.getQuizRoomId())
+                .quizRoomName(quizRoom.getRoomTitle())
+                .userNickName(user.getUserNickname())
+                .build();
     }
 
     /*
