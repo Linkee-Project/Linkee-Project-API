@@ -3,7 +3,8 @@ package com.linkee.linkeeapi.quiz_room.command.application.service;
 import com.linkee.linkeeapi.category.command.aggregate.Category;
 import com.linkee.linkeeapi.category.command.infrastructure.repository.CategoryRepository;
 import com.linkee.linkeeapi.common.enums.RoomStatus;
-import com.linkee.linkeeapi.quiz_room.command.application.dto.request.CreateQuizRoomRequest;
+import com.linkee.linkeeapi.quiz_room.command.application.dto.request.QuizRoomCreateRequestDto;
+import com.linkee.linkeeapi.quiz_room.command.application.dto.request.QuizRoomDeleteRequestDto;
 import com.linkee.linkeeapi.quiz_room.command.domain.aggregate.QuizRoom;
 import com.linkee.linkeeapi.quiz_room.command.infrastructure.repository.QuizRoomRepository;
 import com.linkee.linkeeapi.user.command.domain.entity.User;
@@ -11,6 +12,8 @@ import com.linkee.linkeeapi.user.command.infrastructure.repository.UserRepositor
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 /**
  * 퀴즈룸 생성 관련 비즈니스 로직을 처리하는 서비스 구현체.
@@ -36,7 +39,7 @@ public class QuizRoomCommandServiceImpl implements QuizRoomCommandService {
      */
     @Override
     @Transactional // 쓰기 작업이므로 별도의 트랜잭션 설정
-    public Long create(CreateQuizRoomRequest request, Long userId) {
+    public Long create(QuizRoomCreateRequestDto request, Long userId) {
         // 1. 퀴즈룸을 생성하는 사용자(방장) 정보를 조회합니다.
         // 사용자가 존재하지 않으면 예외를 발생시킵니다.
         User roomOwner = userRepository.findById(userId)
@@ -67,5 +70,38 @@ public class QuizRoomCommandServiceImpl implements QuizRoomCommandService {
 
         // 5. 성공적으로 생성된 퀴즈룸의 고유 ID를 반환합니다.
         return newQuizRoom.getQuizRoomId();
+    }
+
+    @Override
+    @Transactional
+    public void deleteQuizRoom(QuizRoomDeleteRequestDto request) {
+        QuizRoom quizRoom = quizRoomRepository.findById(request.getQuizRoomId())
+                .orElseThrow(() -> new IllegalArgumentException("Quiz room not found with ID: " + request.getQuizRoomId()));
+
+        if (!quizRoom.getRoomOwner().getUserId().equals(request.getUserId())) {
+            throw new IllegalArgumentException("방장만 방을 삭제할 수 있습니다.");
+        }
+
+        quizRoom.setRoomStatus(RoomStatus.E);
+        quizRoom.setEndedAt(LocalDateTime.now());
+        quizRoomRepository.save(quizRoom);
+    }
+
+    @Override
+    @Transactional
+    public void leaveQuizRoom(QuizRoomDeleteRequestDto request) {
+        QuizRoom quizRoom = quizRoomRepository.findById(request.getQuizRoomId())
+                .orElseThrow(() -> new IllegalArgumentException("Quiz room not found with ID: " + request.getQuizRoomId()));
+
+        if (quizRoom.getRoomStatus() == RoomStatus.P) {
+            throw new IllegalStateException("게임 중에는 방을 나갈 수 없습니다.");
+        }
+
+        if (quizRoom.getRoomOwner().getUserId().equals(request.getUserId())) {
+            throw new IllegalArgumentException("방장은 방을 나갈 수 없습니다. 방 삭제 기능을 이용해주세요.");
+        }
+
+        quizRoom.setJoinedCount(quizRoom.getJoinedCount() - 1);
+        quizRoomRepository.save(quizRoom);
     }
 }

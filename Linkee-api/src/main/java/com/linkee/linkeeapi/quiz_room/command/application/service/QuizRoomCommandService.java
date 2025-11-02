@@ -1,6 +1,7 @@
 package com.linkee.linkeeapi.quiz_room.command.application.service;
 
-import com.linkee.linkeeapi.quiz_room.command.application.dto.request.CreateQuizRoomRequest;
+import com.linkee.linkeeapi.quiz_room.command.application.dto.request.QuizRoomCreateRequestDto;
+import com.linkee.linkeeapi.quiz_room.command.application.dto.request.QuizRoomDeleteRequestDto;
 
 /*
  * 퀴즈룸 생성 관련 비즈니스 로직을 정의하는 서비스 인터페이스.
@@ -13,5 +14,9 @@ public interface QuizRoomCommandService {
      * @param userId 퀴즈룸을 생성하는 사용자의 ID (방장)
      * @return 생성된 퀴즈룸의 고유 ID
      */
-    Long create(CreateQuizRoomRequest request, Long userId);
+    Long create(QuizRoomCreateRequestDto request, Long userId);
+
+    void deleteQuizRoom(QuizRoomDeleteRequestDto request);
+
+    void leaveQuizRoom(QuizRoomDeleteRequestDto request);
 }
