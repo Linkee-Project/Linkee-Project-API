@@ -77,7 +77,7 @@
                  LEFT JOIN tb_user_grade ug ON u.user_id = ug.user_id
                  LEFT JOIN tb_grade g ON ug.grade_id = g.grade_id
                  LEFT JOIN tb_category c ON ug.category_id = c.category_id
-        WHERE u.user_id = #{userId}
+        WHERE u.user_email = #{userEmail}
     </select>
 
     <!--    -->

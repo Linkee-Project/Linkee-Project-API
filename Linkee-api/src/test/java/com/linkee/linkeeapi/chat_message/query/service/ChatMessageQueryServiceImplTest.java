@@ -17,8 +17,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -34,7 +32,7 @@ class ChatMessageQueryServiceImplTest {
     @Test
     @DisplayName("채팅메세지 생성")
     void createMessage(){
-        User user1 = new User(null, "user01", "pass01", "배짱이", LocalDateTime.now(), LocalDateTime.now(), Status.Y, Role.USER);
+        User user1 = new User(null, "user01", "pass01", "배짱이", Status.Y, Role.USER);
 
         ChatRoom room = ChatRoom.builder()
                 .chatRoomName("채팅방1")
@@ -57,7 +55,7 @@ class ChatMessageQueryServiceImplTest {
     @Test
     @DisplayName("전체 채팅메세지 조회")
     void selectAll(){
-        User user1 = new User(null, "user01", "pass01", "배짱이", LocalDateTime.now(), LocalDateTime.now(), Status.Y, Role.USER);
+        User user1 = new User(null, "user01", "pass01", "배짱이",Status.Y, Role.USER);
 
         ChatRoom room = ChatRoom.builder()
                 .chatRoomName("채팅방1")
