@@ -26,9 +26,12 @@ public interface QuestionMapper {
 
     //문제 상세 조회
     QuestionDetailResponseDto findDetailByQuestionId(@Param("questionId") Long questionId);
+    //문제 상세 조회 + 옵션
+    List<QuestionDetailResponseDto.OptionList> findDetailOptions(@Param("id") Long id);
 
     //조회수 증가
     void increaseViewCount(@Param("questionId") Long questionId);
+
 
 
 }
