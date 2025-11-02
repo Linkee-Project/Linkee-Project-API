@@ -37,6 +37,7 @@ public class QuestionOption {
     @Builder.Default
     private Status isCorrected = Status.N;
 
+    // 연관관계는 setter 자동 생성 지양
     /*양방향 세팅
     * FK를 가진 자식이(option) 부모(quetion)를 가리키도록 연결/해제
     * 항상 부모의 addOption/removeOption에서만 호출 (양방향 동기화)*/

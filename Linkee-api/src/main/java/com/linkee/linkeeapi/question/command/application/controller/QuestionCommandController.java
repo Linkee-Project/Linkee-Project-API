@@ -3,6 +3,7 @@ package com.linkee.linkeeapi.question.command.application.controller;
 import com.linkee.linkeeapi.question.command.application.dto.request.CreateQuestionRequestDto;
 import com.linkee.linkeeapi.question.command.application.service.QuestionCommandService;
 import com.linkee.linkeeapi.user.command.infrastructure.repository.UserRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,9 +20,9 @@ public class QuestionCommandController {
     private final UserRepository userRepository;
 
     @PostMapping
-    public ResponseEntity<String> createQuestion (@RequestBody CreateQuestionRequestDto request){
+    public ResponseEntity<String> create(@Valid @RequestBody CreateQuestionRequestDto request) {
         questionCommandService.createQuestion(request);
-        return  ResponseEntity.ok("문제 등록 완료");
+        return ResponseEntity.ok("문제 등록 완료");
     }
 
 }
