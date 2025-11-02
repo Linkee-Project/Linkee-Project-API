@@ -4,11 +4,10 @@ import com.linkee.linkeeapi.chat_room.command.application.dto.request.ChatRoomCr
 import com.linkee.linkeeapi.chat_room.command.application.dto.request.ChatRoomDeleteRequestDto;
 import com.linkee.linkeeapi.chat_room.command.domain.aggregate.ChatRoom;
 import com.linkee.linkeeapi.chat_room.command.domain.aggregate.ChatRoomType;
-import com.linkee.linkeeapi.chat_room.command.domain.repository.ChatRoomRepository;
 import com.linkee.linkeeapi.chat_room.command.infrastructure.repository.JpaChatRoomRepository;
 import com.linkee.linkeeapi.common.enums.Status;
-import com.linkee.linkeeapi.user.model.entity.User;
-import com.linkee.linkeeapi.user.service.util.UserFinder;
+import com.linkee.linkeeapi.user.command.domain.entity.User;
+import com.linkee.linkeeapi.user.command.application.service.util.UserFinder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

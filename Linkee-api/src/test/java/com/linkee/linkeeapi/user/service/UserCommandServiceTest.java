@@ -1,8 +1,9 @@
 package com.linkee.linkeeapi.user.service;
 
-import com.linkee.linkeeapi.user.model.dto.UserCreateRequest;
-import com.linkee.linkeeapi.user.model.entity.User;
-import com.linkee.linkeeapi.user.repository.UserRepository;
+import com.linkee.linkeeapi.user.command.application.dto.UserCreateRequest;
+import com.linkee.linkeeapi.user.command.application.service.UserCommandService;
+import com.linkee.linkeeapi.user.command.domain.entity.User;
+import com.linkee.linkeeapi.user.command.infrastructure.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

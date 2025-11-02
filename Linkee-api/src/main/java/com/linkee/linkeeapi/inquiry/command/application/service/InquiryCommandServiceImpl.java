@@ -2,20 +2,17 @@ package com.linkee.linkeeapi.inquiry.command.application.service;
 
 import com.linkee.linkeeapi.common.enums.Role;
 import com.linkee.linkeeapi.common.enums.Status;
-import com.linkee.linkeeapi.common.model.PageResponse;
 import com.linkee.linkeeapi.inquiry.command.application.dto.request.CreateInquiryRequestDto;
 import com.linkee.linkeeapi.inquiry.command.application.dto.request.UpdateInquiryAnswerRequestDto;
 import com.linkee.linkeeapi.inquiry.command.domain.aggregate.Inquiry;
 import com.linkee.linkeeapi.inquiry.command.infrastructure.repository.JpaInquiryRepository;
-import com.linkee.linkeeapi.user.model.entity.User;
-import com.linkee.linkeeapi.user.service.util.UserFinder;
+import com.linkee.linkeeapi.user.command.domain.entity.User;
+import com.linkee.linkeeapi.user.command.application.service.util.UserFinder;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
