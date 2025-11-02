@@ -3,9 +3,13 @@ package com.linkee.linkeeapi.question.command.domain.aggregate;
 import com.linkee.linkeeapi.category.command.aggregate.Category;
 import com.linkee.linkeeapi.common.enums.Status;
 import com.linkee.linkeeapi.common.model.BaseTimeEntity;
+import com.linkee.linkeeapi.question_option.command.domain.aggregate.QuestionOption;
 import com.linkee.linkeeapi.user.command.domain.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "tb_question")
@@ -50,10 +54,34 @@ public class Question extends BaseTimeEntity {
     @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(name = "FK_question_user"))
     private User user;
 
+    //옵션 컬렉션
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<QuestionOption> options = new ArrayList<>();
 
+    /* 부모(Question) ↔ 자식(QuestionOption) 양방향 연관관계를 항상 동기화시키는 메서드
+    * 문제 등록(생성) 과정에서 4개의 보기(option)를 추가할 때 사용 */
+    public void addOption(QuestionOption option) {
+        if (option == null) return;
+        options.add(option);
+        option.setQuestion(this);
+    }
 
+    /* 정답 변경 메서드
+    * 호출 시점
+    * 1. 사용자가 검증 전 상태의 문제를 수정할 때
+    * 2. 서비스 계층에서 isQualified 상태를 먼저 검증한 뒤 호출됨 */
+    public void changeAnswer(int newAnswer) {
+        this.questionAnswer = newAnswer;
+        // 컬렉션이 로딩되어 있다면 동기화
+        for (QuestionOption o : options) {
+            o.setIsCorrected(
+                    o.getOptionIndex().equals(newAnswer) ? Status.Y : Status.N
+            );
+        }
+    }
+    /*문제 검증 완료 처리 메서드
+    * 관리자가 문제의 상태를 검증상태 변경할 때 사용.*/
+    public void qualify() {this.isQualified = Status.Y;}
 
-
-
-
-}
+    }
