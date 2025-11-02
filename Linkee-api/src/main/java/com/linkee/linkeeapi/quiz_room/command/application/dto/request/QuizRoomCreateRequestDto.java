@@ -25,7 +25,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateQuizRoomRequest {
+public class QuizRoomCreateRequestDto {
 
     //  퀴즈룸이 속할 카테고리
 
