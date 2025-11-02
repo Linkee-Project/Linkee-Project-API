@@ -11,6 +11,7 @@ import com.linkee.linkeeapi.user.command.infrastructure.repository.UserRepositor
 import com.linkee.linkeeapi.user_grade.command.domain.entity.UserGrade;
 import com.linkee.linkeeapi.user_grade.command.infrastructure.repository.UserGradeRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,13 +25,18 @@ public class UserCommandServiceImpl implements UserCommandService{
     private final CategoryRepository categoryRepository;
     private final GradeRepository gradeRepository;
     private final UserGradeRepository userGradeRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void createUser(UserCreateRequest request) {
+
+        // 비밀번호 암호화
+        String encodedPassword = passwordEncoder.encode(request.getUserPassword());
+
         //유저 저장
         User user = User.builder()
                 .userEmail(request.getUserEmail())
-                .userPassword(request.getUserPassword())
+                .userPassword(encodedPassword)
                 .userNickname(request.getUserNickname())
                 .build();
         userRepository.save(user);

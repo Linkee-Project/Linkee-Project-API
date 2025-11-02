@@ -1,7 +1,5 @@
 package com.linkee.linkeeapi.user.query.mapper;
 
-import com.linkee.linkeeapi.chat_member.query.dto.request.ChatMemberSearchRequest;
-import com.linkee.linkeeapi.chat_member.query.dto.response.ChatMemberResponse;
 import com.linkee.linkeeapi.user.query.dto.request.UserSearchRequest;
 import com.linkee.linkeeapi.user.query.dto.response.UserListResponse;
 import com.linkee.linkeeapi.user.query.dto.response.UserMeResponse;
@@ -17,6 +15,6 @@ public interface UserMapper {
 
     int countUser(UserSearchRequest requestMapper);
 
-    UserMeResponse selectUserMe(@Param("userId") Long userId);
+    UserMeResponse selectUserMe(@Param("userEmail") String userEmail);
 
 }

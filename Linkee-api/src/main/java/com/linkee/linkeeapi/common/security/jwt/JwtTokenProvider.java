@@ -22,7 +22,6 @@ public class JwtTokenProvider {
             @Value("${jwt.access-expiration}") long accessTokenValidity,
             @Value("${jwt.refresh-expiration}") long refreshTokenValidity) {
 
-        // Base64 디코딩 후 SecretKey 생성
         byte[] decodedKey = Base64.getDecoder().decode(secretKeyBase64);
         this.key = Keys.hmacShaKeyFor(decodedKey);
 
@@ -30,52 +29,59 @@ public class JwtTokenProvider {
         this.refreshTokenValidity = refreshTokenValidity;
     }
 
-
-    // AccessToken 생성
-    public String createAccessToken(String username) {
-        return createToken(username, accessTokenValidity);
-    }
-
-    // RefreshToken 생성
-    public String createRefreshToken(String username) {
-        return createToken(username, refreshTokenValidity);
-    }
-
-    // 토큰 생성
-    private String createToken(String username, long expireTime) {
+    public String createAccessToken(String userEmail, String role) {
         Date now = new Date();
         return Jwts.builder()
-                .setSubject(username)
+                .setSubject(userEmail)
+                .claim("role", role)
                 .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime() + expireTime))
-                .signWith(key) // HS256 자동 적용
+                .setExpiration(new Date(now.getTime() + accessTokenValidity))
+                .signWith(key)
                 .compact();
     }
 
-    // 토큰에서 username 추출
+    public String createRefreshToken(String userEmail) {
+        Date now = new Date();
+        return Jwts.builder()
+                .setSubject(userEmail)
+                .setIssuedAt(now)
+                .setExpiration(new Date(now.getTime() + refreshTokenValidity))
+                .signWith(key)
+                .compact();
+    }
+
     public String getUsername(String token) {
         try {
             return Jwts.parser()
                     .verifyWith(key)
                     .build()
-                    .parseSignedClaims(token)
-                    .getPayload()
+                    .parseClaimsJws(token)
+                    .getBody()
                     .getSubject();
-        } catch (JwtException | IllegalArgumentException e) {
+        } catch (JwtException e) {
             return null;
         }
     }
 
-    // 토큰 검증
-    public boolean validateToken(String token) {
+    public String getRole(String token) {
         try {
-            Jwts.parser().verifyWith(key).build().parseSignedClaims(token);
-            return true;
-        } catch (JwtException | IllegalArgumentException e) {
-            return false;
+            return Jwts.parser()
+                    .verifyWith(key)
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody()
+                    .get("role", String.class);
+        } catch (JwtException e) {
+            return null;
         }
     }
 
-
-
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parser().verifyWith(key).build().parseClaimsJws(token);
+            return true;
+        } catch (JwtException e) {
+            return false;
+        }
+    }
 }
