@@ -53,7 +53,18 @@ public class QuestionServiceImpl implements QuestionService {
     @Transactional
     public QuestionDetailResponseDto getQuestionDetail(Long questionId) {
         questionMapper.increaseViewCount(questionId);
-        return questionMapper.findDetailByQuestionId(questionId);
+
+        // 문제 상세 조회 id 검증
+        QuestionDetailResponseDto detail = questionMapper.findDetailByQuestionId(questionId);
+        if (detail == null) throw new IllegalArgumentException("존재하지 않는 문제입니다.");
+
+        // 옵션 목록 조회
+        List<QuestionDetailResponseDto.OptionList> options = questionMapper.findDetailOptions(questionId);
+
+        // DTO에 세팅
+        detail.setOptions(options);
+
+        return detail;
     }
 
 }

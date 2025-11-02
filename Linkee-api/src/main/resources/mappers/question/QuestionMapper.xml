@@ -98,6 +98,7 @@
         <result property="questionId" column="question_id"/>
         <result property="questionTitle" column="question_title"/>
         <result property="content" column="question_question"/>
+        <result property="questionAnswer" column="question_answer"/>
         <result property="categoryName" column="category_name"/>
         <result property="userNickname" column="user_nickname"/>
         <result property="viewCount" column="question_views"/>
@@ -113,6 +114,7 @@
         q.question_id,
         q.question_title,
         q.question_question,
+        q.question_answer,
         c.category_name,
         u.user_nickname,
         q.question_views,
@@ -123,6 +125,19 @@
         JOIN tb_user u ON q.user_id = u.user_id
         WHERE q.question_id = #{questionId}
         AND q.is_deleted = 'N'
+    </select>
+
+    <!-- 문제의 옵션 목록  -->
+    <select id="findDetailOptions"
+            resultType="com.linkee.linkeeapi.question.query.dto.response.QuestionDetailResponseDto$OptionList">
+        SELECT
+        o.question_option_id     AS optionId,
+        o.question_option_index  AS optionIndex,
+        o.question_option_text   AS optionText,
+        o.is_corrected           AS isCorrected
+        FROM tb_question_option o
+        WHERE o.question_id = #{id}
+        ORDER BY o.question_option_index ASC
     </select>
 
     <!-- 조회수 증가 -->
