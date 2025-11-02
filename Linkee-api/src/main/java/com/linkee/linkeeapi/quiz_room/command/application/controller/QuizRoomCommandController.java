@@ -27,7 +27,7 @@ public class QuizRoomCommandController {
      */
     @PostMapping
     public ApiResponse<Long> createQuizRoom(@RequestBody CreateQuizRoomRequest request) {
-        //  TODO: 추후 Spring Security가 적용되면 @AuthenticationPrincipal 에서 유저 정보를 받아와야 합니다.
+        //  추후 Spring Security가 적용되면 @AuthenticationPrincipal 에서 유저 정보를 받아와야 합니다.
         Long userId = 1L; // 임시로 방장(유저) ID를 1로 설정합니다.
         
         Long quizRoomId = quizRoomCommandService.create(request, userId);
