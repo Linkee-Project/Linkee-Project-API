@@ -8,5 +8,5 @@ import com.linkee.linkeeapi.user.query.dto.response.UserMeResponse;
 public interface UserQueryService {
 
     PageResponse<UserListResponse> selectAllUsers(UserSearchRequest request);
-    UserMeResponse getUserMe(Long userId);
+    UserMeResponse getUserMe(String userEmail);
 }

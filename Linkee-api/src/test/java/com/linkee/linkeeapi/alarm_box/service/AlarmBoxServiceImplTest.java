@@ -1,11 +1,11 @@
 package com.linkee.linkeeapi.alarm_box.service;
 
 import com.linkee.linkeeapi.alarm_box.command.application.dto.request.AlarmBoxCreateRequest;
-import com.linkee.linkeeapi.alarm_box.query.dto.request.AlarmBoxSearchRequest;
 import com.linkee.linkeeapi.alarm_box.command.application.service.AlarmBoxCommandService;
-import com.linkee.linkeeapi.alarm_box.query.dto.response.AlarmBoxResponse;
 import com.linkee.linkeeapi.alarm_box.command.domain.aggregate.entity.AlarmBox;
 import com.linkee.linkeeapi.alarm_box.command.infrastructure.repository.AlarmBoxRepository;
+import com.linkee.linkeeapi.alarm_box.query.dto.request.AlarmBoxSearchRequest;
+import com.linkee.linkeeapi.alarm_box.query.dto.response.AlarmBoxResponse;
 import com.linkee.linkeeapi.alarm_box.query.service.AlarmBoxQueryService;
 import com.linkee.linkeeapi.common.enums.Role;
 import com.linkee.linkeeapi.common.enums.Status;
@@ -19,8 +19,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -44,8 +42,8 @@ class AlarmBoxServiceImplTest {
     @DisplayName("알람박스 전체 조회 및 검색")
     void selectAllAlarmBox() {
 
-        User user1 = new User(null, "user01", "pass01", "배짱이", LocalDateTime.now(), LocalDateTime.now(), Status.Y, Role.USER);
-        User user2 = new User(null, "user02", "pass02", "배짱이2", LocalDateTime.now(), LocalDateTime.now(), Status.Y, Role.USER);
+        User user1 = new User(null, "user01", "pass01", "배짱이", Status.Y, Role.USER);
+        User user2 = new User(null, "user02", "pass02", "배짱이2", Status.Y, Role.USER);
         repository.save(new AlarmBox(null, "알람내용1", Status.N, user1));
         repository.save(new AlarmBox(null, "알람내용2", Status.N, user2));
         repository.save(new AlarmBox(null, "확인한 알람내용3", Status.Y, user1));
@@ -68,8 +66,8 @@ class AlarmBoxServiceImplTest {
     @Test
     @DisplayName("boxId 로 단건 조회")
     void selectById() {
-        User user1 = new User(null, "user01", "pass01", "배짱이", LocalDateTime.now(), LocalDateTime.now(), Status.Y, Role.USER);
-        User user2 = new User(null, "user02", "pass02", "배짱이2", LocalDateTime.now(), LocalDateTime.now(), Status.Y, Role.USER);
+        User user1 = new User(null, "user01", "pass01", "배짱이", Status.Y, Role.USER);
+        User user2 = new User(null, "user02", "pass02", "배짱이2", Status.Y, Role.USER);
         repository.save(new AlarmBox(null, "알람내용1", Status.N, user1));
         repository.save(new AlarmBox(null, "알람내용2", Status.N, user2));
         repository.save(new AlarmBox(null, "확인한 알람내용3", Status.Y, user1));
@@ -86,7 +84,7 @@ class AlarmBoxServiceImplTest {
     void saveAlarmTemplate() {
         String content = "알람 컨텐트 11";
 
-        User user1 = new User(null, "user01", "pass01", "배짱이", LocalDateTime.now(), LocalDateTime.now(), Status.Y, Role.USER);
+        User user1 = new User(null, "user01", "pass01", "배짱이",  Status.Y, Role.USER);
         userRepository.save(user1);
 
 
@@ -105,7 +103,7 @@ class AlarmBoxServiceImplTest {
     @DisplayName("알림 확인 체크")
     void checkAlarm(){
         String content = "알람 컨텐트 11";
-        User user1 = new User(null, "user01", "pass01", "배짱이", LocalDateTime.now(), LocalDateTime.now(), Status.Y, Role.USER);
+        User user1 = new User(null, "user01", "pass01", "배짱이",  Status.Y, Role.USER);
         userRepository.save(user1);
         AlarmBoxCreateRequest request = new AlarmBoxCreateRequest(content, user1.getUserId());
         service.createAlarmBox(request);
@@ -121,7 +119,7 @@ class AlarmBoxServiceImplTest {
     @DisplayName("알람박스 삭제")
     void deleteAlarm(){
         String content = "알람 컨텐트 11";
-        User user1 = new User(null, "user01", "pass01", "배짱이", LocalDateTime.now(), LocalDateTime.now(), Status.Y, Role.USER);
+        User user1 = new User(null, "user01", "pass01", "배짱이", Status.Y, Role.USER);
         userRepository.save(user1);
         AlarmBoxCreateRequest request = new AlarmBoxCreateRequest(content, 1L);
         service.createAlarmBox(request);

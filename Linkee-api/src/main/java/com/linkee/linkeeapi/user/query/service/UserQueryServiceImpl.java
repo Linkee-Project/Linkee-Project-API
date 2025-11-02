@@ -1,5 +1,6 @@
 package com.linkee.linkeeapi.user.query.service;
 
+import com.linkee.linkeeapi.auth.authService.AuthService;
 import com.linkee.linkeeapi.common.model.PageResponse;
 import com.linkee.linkeeapi.user.query.dto.request.UserSearchRequest;
 import com.linkee.linkeeapi.user.query.dto.response.UserListResponse;
@@ -18,6 +19,7 @@ public class UserQueryServiceImpl implements UserQueryService{
 
     private final UserMapper userMapper;
     private final UserGradeRepository userGradeRepository;
+    private final AuthService authService;
 
     @Override
     public PageResponse<UserListResponse> selectAllUsers(UserSearchRequest request) {
@@ -52,8 +54,10 @@ public class UserQueryServiceImpl implements UserQueryService{
 
     // id 값으로 한건조회(자기정보)
     @Override
-    public UserMeResponse getUserMe(Long userId) {
-        return userMapper.selectUserMe(userId);
+    public UserMeResponse getUserMe(String userEmail) {
+
+        System.out.println("service에서 호출 :" + authService.getCurrentUsername());
+        return userMapper.selectUserMe(userEmail);
     }
 
 
