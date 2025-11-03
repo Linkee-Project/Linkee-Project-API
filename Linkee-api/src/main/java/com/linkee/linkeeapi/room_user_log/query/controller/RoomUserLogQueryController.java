@@ -1,6 +1,6 @@
 package com.linkee.linkeeapi.room_user_log.query.controller;
 
-import com.linkee.linkeeapi.common.ApiResponse;
+import com.linkee.linkeeapi.common.model.dto.ApiResponse;
 import com.linkee.linkeeapi.room_user_log.query.dto.response.RoomUserLogResponse;
 import com.linkee.linkeeapi.room_user_log.query.dto.response.RoomUserRankResponse;
 import com.linkee.linkeeapi.room_user_log.query.service.RoomUserLogQueryService;
