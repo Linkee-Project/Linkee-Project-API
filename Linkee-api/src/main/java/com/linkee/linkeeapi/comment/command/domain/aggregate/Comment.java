@@ -95,9 +95,11 @@ public class Comment extends BaseTimeEntity {
     }
     //댓글 수정
     public void updateContent(String newContent) {
+        if (newContent == null || newContent.isBlank()) {
+            throw new IllegalArgumentException("댓글 내용은 비어 있을 수 없습니다.");
+        }
         this.commentContent = newContent;
     }
-
 
     // 추가(등록/대댓글 연결)
     public void addChild(Comment child) {
