@@ -12,6 +12,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 
 @Service
 @RequiredArgsConstructor
@@ -29,21 +31,31 @@ public class RelationCommandService {
                 .orElseThrow(() -> new IllegalArgumentException("잘못 된 사용자입니다"));
 
         // 두 사용자 간의 관계가 이미 존재하는지 확인
-        relationRepository.findByUser(requester, receiver).ifPresent(relation -> {
-            if(relation.getRelationStatus() == RelationStatus.A) {
-                throw new BusinessException(ErrorCode.RELATION_ALREADY_EXISTS);
-            } else if (relation.getRelationStatus() == RelationStatus.P) {
-                throw new BusinessException(ErrorCode.RELATION_REQUEST_ALREADY_EXISTS);
+        Optional<Relation> optionalRelation = relationRepository.findByUsers(requester, receiver);
+
+        if (optionalRelation.isPresent()) {
+            // 관계가 이미 존재하면 , 재활용
+            Relation existingRelation = optionalRelation.get();
+
+            switch (existingRelation.getRelationStatus()) {
+                case A:
+                    throw new BusinessException(ErrorCode.RELATION_ALREADY_EXISTS);
+                case P:
+                    throw new BusinessException(ErrorCode.RELATION_REQUEST_ALREADY_EXISTS);
+                case R:
+                    // 거절된 상태에서 다시 요청하는 경우, 기존 데이터를 업데이트
+                    existingRelation.reRequest(requester, receiver);
+                    relationRepository.save(existingRelation);
+                    break;
             }
-        });
+        } else {
+            Relation relation = Relation.builder()
+                    .requester(requester)
+                    .receiver(receiver)
+                    .build();
 
-
-        Relation relation = Relation.builder()
-                .requester(requester)
-                .receiver(receiver)
-                .build();
-
-        relationRepository.save(relation);
+            relationRepository.save(relation);
+        }
     }
 
 
