@@ -14,7 +14,7 @@ public interface NoticeMapper {
 
     int countAll();
 
-    void increaseViewCount(@Param("noticeId") Long noticeId);
+    int increaseViewCount(@Param("noticeId") Long noticeId);
 
     NoticeDetailResponseDto findById(@Param("noticeId") Long noticeId);
 }
