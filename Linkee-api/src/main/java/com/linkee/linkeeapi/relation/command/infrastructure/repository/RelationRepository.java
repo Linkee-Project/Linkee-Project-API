@@ -21,4 +21,7 @@ public interface RelationRepository extends JpaRepository<Relation,Long> {
             "AND r.receiver = :user1)")
     // findByUser -> 두 사용자 간의 관계를 찾아주기 위해서 생성
     Optional<Relation> findByUsers(@Param("user1") User user1, @Param("user2") User user2);
+
+    void deleteByReceiverOrRequester(User receiver, User requester);
+
 }
