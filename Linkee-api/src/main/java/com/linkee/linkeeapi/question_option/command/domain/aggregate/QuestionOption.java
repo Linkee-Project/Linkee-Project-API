@@ -3,16 +3,14 @@ package com.linkee.linkeeapi.question_option.command.domain.aggregate;
 import com.linkee.linkeeapi.common.enums.Status;
 import com.linkee.linkeeapi.question.command.domain.aggregate.Question;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name = "tb_question_option",
         uniqueConstraints = @UniqueConstraint(name = "uq_question_option_idx", columnNames = {"question_id", "question_option_index"}))
 //UNIQUE 제약 이유 : 하나의 문제 안에서 option_index 값은 중복될 수 없음
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -36,6 +34,11 @@ public class QuestionOption {
     @Column(name = "is_corrected", nullable = false, length = 1)
     @Builder.Default
     private Status isCorrected = Status.N;
+
+    public void updateOption(Integer newIndex, String newText) {
+        this.optionIndex = newIndex;
+        this.optionText = newText;
+    }
 
     // 연관관계는 setter 자동 생성 지양
     /*양방향 세팅
