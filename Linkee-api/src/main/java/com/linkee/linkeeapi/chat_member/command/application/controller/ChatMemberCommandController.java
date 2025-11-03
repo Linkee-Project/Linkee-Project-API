@@ -3,6 +3,8 @@ package com.linkee.linkeeapi.chat_member.command.application.controller;
 import com.linkee.linkeeapi.chat_member.command.application.dto.reqeust.ChatMemberCreateRequest;
 import com.linkee.linkeeapi.chat_member.command.application.dto.response.ChatMemberCreateResponse;
 import com.linkee.linkeeapi.chat_member.command.application.service.ChatMemberCommandService;
+import com.linkee.linkeeapi.user.command.domain.entity.User;
+import com.linkee.linkeeapi.user.command.infrastructure.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 public class ChatMemberCommandController {
 
     private final ChatMemberCommandService chatMemberCommandService;
+    private final UserRepository userRepository;
 
 
     // create
@@ -35,10 +38,16 @@ public class ChatMemberCommandController {
     }
 
     //deleteChatMember -> 나가면 leftAt 시간을 update처리
-    @DeleteMapping("/leave/{chatMemberId}")
-    public ResponseEntity<String> deleteChatMember(@PathVariable Long chatMemberId) {
-        String result = chatMemberCommandService.deleteChatMember(chatMemberId);
-        return ResponseEntity.ok(result +" 님이 퇴장하셨습니다");
+    @DeleteMapping("/leave")
+    public ResponseEntity<String> leaveRoom(
+            @RequestParam Long userId,
+            @RequestParam Long chatRoomId) {
+
+        User found = userRepository.findById(userId).orElseThrow();
+
+        chatMemberCommandService.deleteChatMember(userId, chatRoomId);
+
+        return ResponseEntity.ok(chatRoomId + "번 방" + found.getUserNickname() + " 님 이 퇴장 하였습니다");
     }
 
 }

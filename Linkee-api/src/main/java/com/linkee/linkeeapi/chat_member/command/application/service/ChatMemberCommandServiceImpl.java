@@ -2,6 +2,7 @@ package com.linkee.linkeeapi.chat_member.command.application.service;
 
 import com.linkee.linkeeapi.chat_member.command.application.dto.reqeust.ChatMemberCreateRequest;
 import com.linkee.linkeeapi.chat_member.command.application.dto.response.ChatMemberCreateResponse;
+import com.linkee.linkeeapi.chat_member.command.application.dto.response.ChatMemberDeleteResponse;
 import com.linkee.linkeeapi.chat_member.command.domain.aggregate.entity.ChatMember;
 import com.linkee.linkeeapi.chat_member.command.infrastructure.repository.ChatMemberRepository;
 import com.linkee.linkeeapi.chat_room.command.domain.aggregate.ChatRoom;
@@ -69,35 +70,32 @@ public class ChatMemberCommandServiceImpl implements ChatMemberCommandService {
 
     @Transactional
     @Override
-    public String deleteChatMember(Long chatMemberId) {
+    public ChatMemberDeleteResponse deleteChatMember(Long userId, Long chatRoomId) {
 
-        ChatMember foundMember = chatMemberRepository.findById(chatMemberId).orElseThrow();
+        ChatRoom chatRoom = jpaChatRoomRepository.findById(chatRoomId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 채팅방입니다."));
 
-        ChatRoom chatRoom = foundMember.getChatRoom();
-        User user = foundMember.getUser();
-        String userNickName = user.getUserNickname();
+        ChatMember foundMember =
+                chatMemberRepository.findByChatRoomAndUser(chatRoom, userRepository.findById(userId)
+                        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다.")))
+                .orElseThrow(() -> new IllegalArgumentException("해당 사용자는 방 멤버가 아닙니다."));
 
-        // 중복처리 방지
         if (foundMember.getLeftAt() != null) {
             throw new IllegalStateException("이미 퇴장한 사용자입니다.");
         }
 
-        // 나간 시간 기록
         foundMember.modifyLeftAt();
-
-        // 인원수 감소
         chatRoom.decreaseJoinedCount();
 
-       // 방인원 0명일시 방삭제(닫기)
-        if (chatRoom.getChatRoomType() == ChatRoomType.CHAT) {
-            // 모든 멤버가 나가면 방 종료
-            if (chatRoom.getJoinedCount() <= 0) {
-                chatRoom.closeRoom(); // roomStatus = N, endedAt 설정 등
-            }
+        if (chatRoom.getChatRoomType() == ChatRoomType.CHAT &&
+                chatRoom.getJoinedCount() <= 0) {
+            chatRoom.closeRoom();
         }
 
-        return userNickName;
+        return ChatMemberDeleteResponse.builder()
+                .chatRoomId(chatRoom.getChatRoomId())
+                .userNickName(foundMember.getUser().getUserNickname())
+                .build();
     }
-
 
 }
