@@ -5,6 +5,18 @@ spring:
     username: linkee
     password: linkee
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME:charlymarket001@gmail.com}
+    password: ${MAIL_PASSWORD:uxjg kacj xyns wvno}
+    protocol: smtp
+    default-encoding: UTF-8
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+      mail.smtp.starttls.required: true
+
   data:
     redis:
       host: localhost
@@ -26,7 +38,9 @@ jwt:
   access-expiration: 600000      # 10분
   refresh-expiration: 3600000    # 1시간
 
-
+auth:
+  code:
+    expiration-millis: 300000
 
 mybatis:
   configuration:

@@ -16,14 +16,6 @@ public class UserCommandController {
     private final UserCommandService userCommandService;
 
 
-
-    @PostMapping
-    public ResponseEntity<String> createUser(@RequestBody UserCreateRequest request) {
-
-        userCommandService.createUser(request);
-        return ResponseEntity.ok("회원가입 완료!");
-    }
-
     @PatchMapping
     public ResponseEntity<String> updateUserNickName(@RequestBody UpdateUserNickNameRequest request){
 
