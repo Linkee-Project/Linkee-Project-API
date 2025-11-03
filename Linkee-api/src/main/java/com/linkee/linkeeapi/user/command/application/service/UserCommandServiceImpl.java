@@ -22,44 +22,6 @@ import java.util.List;
 public class UserCommandServiceImpl implements UserCommandService{
 
     private final UserRepository userRepository;
-    private final CategoryRepository categoryRepository;
-    private final GradeRepository gradeRepository;
-    private final UserGradeRepository userGradeRepository;
-    private final PasswordEncoder passwordEncoder;
-
-    @Override
-    public void createUser(UserCreateRequest request) {
-
-        // 비밀번호 암호화
-        String encodedPassword = passwordEncoder.encode(request.getUserPassword());
-
-        //유저 저장
-        User user = User.builder()
-                .userEmail(request.getUserEmail())
-                .userPassword(encodedPassword)
-                .userNickname(request.getUserNickname())
-                .build();
-        userRepository.save(user);
-
-
-        List<Category> categories = categoryRepository.findAll();
-
-        //기본 등급
-        Grade defaultGrade = gradeRepository.findById(1L)
-                .orElseThrow(() -> new IllegalArgumentException("기본 등급이 존재하지 않습니다."));
-
-        //각 카테고리별 UserGrade 생성
-        for (Category category : categories) {
-            UserGrade userGrade = UserGrade.builder()
-                    .user(user)
-                    .grade(defaultGrade)
-                    .category(category)
-                    .victoryCount(0)
-                    .build();
-            userGradeRepository.save(userGrade);
-        }
-
-    }
 
 
     @Transactional
