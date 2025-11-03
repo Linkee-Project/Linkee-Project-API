@@ -1,7 +1,7 @@
 package com.linkee.linkeeapi.room_question.query.controller;
 
 
-import com.linkee.linkeeapi.common.ApiResponse;
+import com.linkee.linkeeapi.common.model.dto.ApiResponse;
 import com.linkee.linkeeapi.room_question.query.service.RoomQuestionQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;

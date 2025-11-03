@@ -1,6 +1,6 @@
 package com.linkee.linkeeapi.room_question.command.application.controller;
 
-import com.linkee.linkeeapi.common.ApiResponse;
+import com.linkee.linkeeapi.common.model.dto.ApiResponse;
 import com.linkee.linkeeapi.room_question.command.application.dto.request.RoomQuestionCreateRequest;
 import com.linkee.linkeeapi.room_question.command.application.service.RoomQuestionCommandService;
 import lombok.RequiredArgsConstructor;

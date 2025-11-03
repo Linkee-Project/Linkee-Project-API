@@ -1,6 +1,6 @@
 package com.linkee.linkeeapi.room_member.command.application.controller;
 
-import com.linkee.linkeeapi.common.ApiResponse;
+import com.linkee.linkeeapi.common.model.dto.ApiResponse;
 import com.linkee.linkeeapi.room_member.command.application.dto.request.RoomMemberCreateRequest;
 import com.linkee.linkeeapi.room_member.command.application.dto.response.RoomMemberCreateResponse;
 import com.linkee.linkeeapi.room_member.command.application.service.RoomMemberCommandService;

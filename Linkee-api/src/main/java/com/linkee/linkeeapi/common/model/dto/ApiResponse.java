@@ -1,4 +1,4 @@
-package com.linkee.linkeeapi.common;
+package com.linkee.linkeeapi.common.model.dto;
 
 import lombok.Builder;
 import lombok.Getter;
