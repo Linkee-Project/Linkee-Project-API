@@ -9,10 +9,12 @@ import com.linkee.linkeeapi.user.command.domain.entity.User;
 import com.linkee.linkeeapi.user.command.infrastructure.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequiredArgsConstructor
@@ -71,6 +73,16 @@ public class AuthController {
                 "refreshToken", refreshToken
         ));
     }
+
+
+    @DeleteMapping("/logout")
+    public ResponseEntity<String> logout() {
+        // jwt 토큰은 따로 서버에서 관리하는게아니다
+        // 클라이언트에서 jwt 쿠키에서 직접 삭제 하거나
+        // 만료시간을 짧게 잡아서 자연스럽게 토큰값이 사라지는 역할
+        return ResponseEntity.ok("로그아웃 완료!");
+    }
+
 
     @PostMapping("/refresh")
     public ResponseEntity<?> refresh(@RequestParam String userEmail,
