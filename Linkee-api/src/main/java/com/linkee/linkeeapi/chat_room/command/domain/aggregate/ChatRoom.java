@@ -55,6 +55,11 @@ public class ChatRoom extends BaseTimeEntity {
         }
     }
 
+    public void increaseJoinedCount() {
+        this.joinedCount++;
+    }
+
+
     public void closeRoom() {
         this.roomStatus = Status.N;
     }

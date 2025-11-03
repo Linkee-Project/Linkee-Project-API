@@ -5,6 +5,7 @@ import com.linkee.linkeeapi.chat_member.command.application.dto.response.ChatMem
 import com.linkee.linkeeapi.chat_member.command.domain.aggregate.entity.ChatMember;
 import com.linkee.linkeeapi.chat_member.command.infrastructure.repository.ChatMemberRepository;
 import com.linkee.linkeeapi.chat_room.command.domain.aggregate.ChatRoom;
+import com.linkee.linkeeapi.chat_room.command.domain.aggregate.ChatRoomType;
 import com.linkee.linkeeapi.chat_room.command.infrastructure.repository.JpaChatRoomRepository;
 import com.linkee.linkeeapi.user.command.domain.entity.User;
 import com.linkee.linkeeapi.user.command.infrastructure.repository.UserRepository;
@@ -26,6 +27,20 @@ public class ChatMemberCommandServiceImpl implements ChatMemberCommandService {
         User foundUser = userRepository.findById(request.getUserId()).orElseThrow();
         ChatRoom foundChatRoom = jpaChatRoomRepository.findById(request.getChatRoomId()).orElseThrow();
 
+        if (foundChatRoom.getChatRoomType() == ChatRoomType.GAME) {
+            if (foundChatRoom.getJoinedCount() >= foundChatRoom.getRoomCapacity()) {
+                throw new IllegalStateException("게임방 인원이 가득 찼습니다. ("
+                        + foundChatRoom.getJoinedCount() + "/" + foundChatRoom.getRoomCapacity() + ")");
+            }
+        }
+
+        // 중복 입장 방지
+        boolean alreadyJoined = chatMemberRepository.existsByChatRoomAndUser(foundChatRoom, foundUser);
+        if (alreadyJoined) {
+            throw new IllegalArgumentException("이미 방에 참가한 사용자입니다.");
+        }
+
+        // 멤버 저장(입장)
         ChatMember chatMember = ChatMember.builder()
                 .chatRoom(foundChatRoom)
                 .user(foundUser)
@@ -33,13 +48,15 @@ public class ChatMemberCommandServiceImpl implements ChatMemberCommandService {
 
         chatMemberRepository.save(chatMember);
 
-        ChatMemberCreateResponse response = ChatMemberCreateResponse.builder()
+        // 인원수 증가
+        foundChatRoom.increaseJoinedCount();
+        jpaChatRoomRepository.save(foundChatRoom);
+
+        return ChatMemberCreateResponse.builder()
                 .userNickName(foundUser.getUserNickname())
                 .chatRoomId(foundChatRoom.getChatRoomId())
                 .chatRoomName(foundChatRoom.getChatRoomName())
                 .build();
-
-        return response;
 
     }
 
@@ -56,10 +73,28 @@ public class ChatMemberCommandServiceImpl implements ChatMemberCommandService {
 
         ChatMember foundMember = chatMemberRepository.findById(chatMemberId).orElseThrow();
 
-        String userNickName = userRepository.findById(foundMember.getUser().getUserId()).orElseThrow().getUserNickname();
+        ChatRoom chatRoom = foundMember.getChatRoom();
+        User user = foundMember.getUser();
+        String userNickName = user.getUserNickname();
 
+        // 중복처리 방지
+        if (foundMember.getLeftAt() != null) {
+            throw new IllegalStateException("이미 퇴장한 사용자입니다.");
+        }
+
+        // 나간 시간 기록
         foundMember.modifyLeftAt();
 
+        // 인원수 감소
+        chatRoom.decreaseJoinedCount();
+
+       // 방인원 0명일시 방삭제(닫기)
+        if (chatRoom.getChatRoomType() == ChatRoomType.CHAT) {
+            // 모든 멤버가 나가면 방 종료
+            if (chatRoom.getJoinedCount() <= 0) {
+                chatRoom.closeRoom(); // roomStatus = N, endedAt 설정 등
+            }
+        }
 
         return userNickName;
     }
