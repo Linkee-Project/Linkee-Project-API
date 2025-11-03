@@ -1,5 +1,7 @@
 package com.linkee.linkeeapi.chat_room.command.application.service;
 
+import com.linkee.linkeeapi.chat_member.command.domain.aggregate.entity.ChatMember;
+import com.linkee.linkeeapi.chat_member.command.infrastructure.repository.ChatMemberRepository;
 import com.linkee.linkeeapi.chat_room.command.application.dto.request.ChatRoomCreateRequestDto;
 import com.linkee.linkeeapi.chat_room.command.application.dto.request.ChatRoomDeleteRequestDto;
 import com.linkee.linkeeapi.chat_room.command.domain.aggregate.ChatRoom;
@@ -12,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -21,6 +24,7 @@ public class ChatRoomCommandServiceImpl implements ChatRoomCommandService {
 
     private final JpaChatRoomRepository chatRoomRepository;
     private final UserFinder userFinder;
+    private final ChatMemberRepository chatMemberRepository;
 
     /*---------------------------------------create------------------------------------------*/
 
@@ -125,19 +129,37 @@ public class ChatRoomCommandServiceImpl implements ChatRoomCommandService {
             throw new IllegalArgumentException("게임방에서는 방장만 방을 종료할 수 있습니다.");
         }
 
-        // 게임방 종료
+        // 방장 나감 -> 게임방 종료
         chatRoom.closeRoom();
         chatRoomRepository.save(chatRoom);
+
+        //모든 멤버에 leftAt 기록 남기기
+        List<ChatMember> members = chatMemberRepository.findAllByChatRoom(chatRoom);
+        for (ChatMember member : members) {
+            if(member.getLeftAt() == null) {
+                member.modifyLeftAt();
+                chatMemberRepository.save(member);
+            }
+        }
     }
 
     @Override
     @Transactional
-    public void leaveChatRoom(ChatRoomDeleteRequestDto request) {
+    public void leaveRoom(ChatRoomDeleteRequestDto request) {
         ChatRoom chatRoom = chatRoomRepository.findById(request.getChatRoomId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 채팅방입니다."));
 
-        chatRoom.decreaseJoinedCount();
+        User user = userFinder.getById(request.getUserId());
 
+        ChatMember chatMember = chatMemberRepository.findByChatRoomAndUser(chatRoom, user)
+                        .orElseThrow(() -> new IllegalArgumentException("해당 사용자는 방 멤버가 아닙니다"));
+
+        //나간시간 기록
+        chatMember.modifyLeftAt();
+        chatMemberRepository.save(chatMember);
+
+        //인원 감소
+        chatRoom.decreaseJoinedCount();
         chatRoomRepository.save(chatRoom);
     }
 
