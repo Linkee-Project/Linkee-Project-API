@@ -42,4 +42,15 @@ public class CommentCommandController {
         return ResponseEntity.ok(response);
     }
 
+    // 댓글 삭제
+    @DeleteMapping("/{commentId}")
+    public ResponseEntity<String> delete(
+            @PathVariable Long questionId,
+            @PathVariable Long commentId,
+            @RequestParam Long userId
+    ) {
+        commentCommandService.deleteComment(questionId, commentId, userId);
+        return ResponseEntity.ok("댓글 삭제 완료");
+    }
+
 }

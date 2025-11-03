@@ -111,5 +111,12 @@ public class Comment extends BaseTimeEntity {
         child.setParent(null);       // 자식 FK 해제 → orphan 제거 트리거
     }
 
+    //softDelete
+    public void softDelete() {
+        this.isDeleted = Status.Y;
+        this.commentContent = "(삭제된 댓글입니다)";
+    }
+
+
 
 }
