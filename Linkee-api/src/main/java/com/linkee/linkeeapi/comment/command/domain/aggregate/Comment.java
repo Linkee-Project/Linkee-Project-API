@@ -1,4 +1,4 @@
-package com.linkee.linkeeapi.comment.model.entity;
+package com.linkee.linkeeapi.comment.command.domain.aggregate;
 
 import com.linkee.linkeeapi.common.enums.Status;
 import com.linkee.linkeeapi.common.model.BaseTimeEntity;
