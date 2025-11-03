@@ -10,4 +10,10 @@ public class BusinessException extends RuntimeException {
         super(errorCode.getMessage());
         this.errorCode = errorCode;
     }
+
+    // ✅ 추가된 생성자 (직접 커스텀 메시지 전달 가능)
+    public BusinessException(ErrorCode errorCode, String customMessage) {
+        super(customMessage);
+        this.errorCode = errorCode;
+    }
 }
