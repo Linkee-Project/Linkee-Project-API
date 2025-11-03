@@ -52,4 +52,9 @@ public class ChatMember {
     public void modifyLeftAt() {
         this.leftAt = LocalDateTime.now();
     }
+
+    //읽음 여부 로직추가
+    public void setIsRead(Status status) {
+        this.isRead = status;
+    }
 }
