@@ -1,6 +1,6 @@
 package com.linkee.linkeeapi.quiz_room.query.controller;
 
-import com.linkee.linkeeapi.common.ApiResponse;
+import com.linkee.linkeeapi.common.model.dto.ApiResponse;
 import com.linkee.linkeeapi.quiz_room.query.dto.response.PlayStateResponseDto;
 import com.linkee.linkeeapi.quiz_room.query.dto.response.QuizRoomListResponseDto;
 import com.linkee.linkeeapi.quiz_room.query.dto.response.QuizRoomResponseDto;
