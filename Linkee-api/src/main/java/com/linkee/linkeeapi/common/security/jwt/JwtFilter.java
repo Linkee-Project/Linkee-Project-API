@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import com.linkee.linkeeapi.common.jwt.JwtTokenProvider;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -17,9 +18,9 @@ import java.util.Collections;
 @Component
 public class JwtFilter extends OncePerRequestFilter {
 
-    private final com.linkee.linkeeapi.common.jwt.JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    public JwtFilter(com.linkee.linkeeapi.common.jwt.JwtTokenProvider jwtTokenProvider) {
+    public JwtFilter(JwtTokenProvider jwtTokenProvider) {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
