@@ -1,7 +1,9 @@
 package com.linkee.linkeeapi.comment.command.application.application;
 
 import com.linkee.linkeeapi.comment.command.application.dto.request.CreateCommentRequestDto;
+import com.linkee.linkeeapi.comment.command.application.dto.request.UpdateCommentRequestDto;
 import com.linkee.linkeeapi.comment.command.application.dto.response.CreateCommentResponseDto;
+import com.linkee.linkeeapi.comment.command.application.dto.response.UpdateCommentResponseDto;
 import com.linkee.linkeeapi.comment.command.application.service.CommentCommandService;
 
 import jakarta.validation.Valid;
@@ -21,10 +23,23 @@ public class CommentCommandController {
     @PostMapping
     public ResponseEntity<CreateCommentResponseDto> create(
             @PathVariable Long questionId,
-            @RequestParam Long userId, // 임시 (JWT 적용 전)
+            @RequestParam Long userId,
             @Valid @RequestBody CreateCommentRequestDto request) {
 
         CreateCommentResponseDto response = commentCommandService.createComment(questionId, userId, request);
         return ResponseEntity.ok(response);
     }
+    //댓글 수정
+    @PatchMapping("/{commentId}")
+    public ResponseEntity<UpdateCommentResponseDto> update(
+            @PathVariable Long questionId,
+            @PathVariable Long commentId,
+            @RequestParam Long userId,
+            @Valid @RequestBody UpdateCommentRequestDto request
+    ) {
+        UpdateCommentResponseDto response =
+                commentCommandService.updateComment(questionId, commentId, userId, request);
+        return ResponseEntity.ok(response);
+    }
+
 }

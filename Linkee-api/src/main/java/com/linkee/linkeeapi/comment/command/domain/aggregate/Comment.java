@@ -93,6 +93,10 @@ public class Comment extends BaseTimeEntity {
 
         return child;
     }
+    //댓글 수정
+    public void updateContent(String newContent) {
+        this.commentContent = newContent;
+    }
 
 
     // 추가(등록/대댓글 연결)
