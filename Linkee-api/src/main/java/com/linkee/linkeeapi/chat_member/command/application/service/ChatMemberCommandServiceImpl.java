@@ -87,6 +87,7 @@ public class ChatMemberCommandServiceImpl implements ChatMemberCommandService {
         foundMember.modifyLeftAt();
         chatRoom.decreaseJoinedCount();
 
+        // 방인원 0명일시 방삭제(닫기)
         if (chatRoom.getChatRoomType() == ChatRoomType.CHAT &&
                 chatRoom.getJoinedCount() <= 0) {
             chatRoom.closeRoom();
