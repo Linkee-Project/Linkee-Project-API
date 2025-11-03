@@ -1,5 +1,7 @@
 package com.linkee.linkeeapi.notice.query.service;
 
+import com.linkee.linkeeapi.common.exception.BusinessException;
+import com.linkee.linkeeapi.common.exception.ErrorCode;
 import com.linkee.linkeeapi.common.model.PageResponse;
 import com.linkee.linkeeapi.notice.command.infrastructure.repository.NoticeRepository;
 import com.linkee.linkeeapi.notice.query.dto.response.NoticeDetailResponseDto;
@@ -40,15 +42,21 @@ public class NoticeQueryServiceImpl implements NoticeQueryService {
     //공지사항 상세 조회
     @Override
     public NoticeDetailResponseDto getNoticeDetail(Long noticeId) {
+        if (noticeId == null) {
+            throw new BusinessException(ErrorCode.INVALID_NOTICE_ID);
+        }
 
         //조회수 증가
-        noticeMapper.increaseViewCount(noticeId);
+        int updated = noticeMapper.increaseViewCount(noticeId);
+        if (updated == 0) {
+            throw new BusinessException(ErrorCode.NOTICE_NOT_FOUND);
+        }
 
         //Id로 검색해서 상세조회
         NoticeDetailResponseDto notice = noticeMapper.findById(noticeId);
 
-        if(notice == null){
-            throw new IllegalStateException("존재하지 않는 공지사항 입니다");
+        if (notice == null) {
+            throw new BusinessException(ErrorCode.NOTICE_NOT_FOUND);
         }
         return notice;
     }
