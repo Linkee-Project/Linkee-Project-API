@@ -30,7 +30,12 @@ public enum ErrorCode {
 
     //신고 관련 오류(4000번대 사용)
     REPORT_NOT_FOUND("4000", "해당 신고를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
-    REPORT_NO_ACCESS("4001", "조회 권한이 없거나 존재하지 않는 신고입니다.", HttpStatus.FORBIDDEN);
+    REPORT_NO_ACCESS("4001", "조회 권한이 없거나 존재하지 않는 신고입니다.", HttpStatus.FORBIDDEN),
+
+    //관계 관련 오류(7000번대 사용)
+    RELATION_ALREADY_EXISTS("7000", "이미 친구 관계입니다.", HttpStatus.CONFLICT),
+    RELATION_REQUEST_ALREADY_EXISTS("7001", "이미 친구 요청을 보냈습니다.", HttpStatus.CONFLICT);
+
     private final String code;
     private final String message;
     private final HttpStatusCode httpStatusCode;
@@ -45,13 +50,6 @@ public enum ErrorCode {
     * .orElseThrow(() -> new BusinessException(ErrorCode.NOTICE_NOT_FOUND));
     * throw new BusinessException(ErrorCode.UNAUTHORIZED_ACCESS);
     * 이런식으로 오류를 던지면 됩니다
-    *
-    * 1000번대 공통 오류 처리는
-    * throw new BusinessException(ErrorCode.INVALID_REQUEST, "문의 제목은 필수 입력값입니다.");
-    * 이런식으로 message를 덮어씌울 수 있습니다
-    *
-    * UserFinder썼다면 user오류처리는 따로 안하셔도 됩니다
-    * userFinder가 오류 해결해줌!
     *
     * postman에
     * {
