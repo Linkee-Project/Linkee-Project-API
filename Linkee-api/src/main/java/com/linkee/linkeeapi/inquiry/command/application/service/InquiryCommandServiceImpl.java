@@ -2,6 +2,8 @@ package com.linkee.linkeeapi.inquiry.command.application.service;
 
 import com.linkee.linkeeapi.common.enums.Role;
 import com.linkee.linkeeapi.common.enums.Status;
+import com.linkee.linkeeapi.common.exception.BusinessException;
+import com.linkee.linkeeapi.common.exception.ErrorCode;
 import com.linkee.linkeeapi.inquiry.command.application.dto.request.CreateInquiryRequestDto;
 import com.linkee.linkeeapi.inquiry.command.application.dto.request.UpdateInquiryAnswerRequestDto;
 import com.linkee.linkeeapi.inquiry.command.domain.aggregate.Inquiry;
@@ -25,6 +27,18 @@ public class InquiryCommandServiceImpl implements InquiryCommandService {
     //create - builer ver.
     @Override
     public void createInquiry(CreateInquiryRequestDto request) {
+        if (request.getUserId() == null) {
+            throw new BusinessException(ErrorCode.INVALID_USER_ID);
+        }
+        if (request.getInquiryTitle() == null || request.getInquiryTitle().isBlank()) {
+            throw new BusinessException(ErrorCode.INVALID_REQUEST, "문의 제목은 필수 입력값입니다.");
+        }
+        if (request.getInquiryContent() == null || request.getInquiryContent().isBlank()) {
+            throw new BusinessException(ErrorCode.INVALID_REQUEST, "문의 내용을 입력해주세요.");
+        }
+
+        //user오류처리는 userFinder가 해줌
+
         Inquiry inquiry = Inquiry.builder()
                 .inquiryTitle(request.getInquiryTitle())
                 .inquiryContent(request.getInquiryContent())
@@ -40,29 +54,29 @@ public class InquiryCommandServiceImpl implements InquiryCommandService {
 
     }
 
-/*    //create - mapper ver.
-    @Transactional
-    public void createInquiry2(CreateInquiryRequestDto request) {
-        Inquiry inquiry = modelMapper.map(request, Inquiry.class);
-        inquiry.setUser(userFinder.getById(request.getUserId()));
-        inquiryRepository.save(inquiry);
-    }*/
-
     //Update -답변등록
     @Override
     @Transactional(readOnly = false)
     public void updateInquiryAnswer(UpdateInquiryAnswerRequestDto request) {
-        //관리자 조회
-        User adminUser = userFinder.getById(request.getAdminId());
 
-        //관리자 권한 체크
+        if (request.getInquiryId() == null) {
+            throw new BusinessException(ErrorCode.INVALID_INQUIRY_ID);
+        }
+
+        //관리자 조회
+        User adminUser = userFinder.getById(request.getAdminId()); // 없는 경우 INVALID_ADMIN_ID로 처리
         if (adminUser.getUserRole() != Role.ADMIN) {
-            throw new IllegalStateException("관리자만 답변 등록 가능");
+            throw new BusinessException(ErrorCode.UNAUTHORIZED_ACCESS);
         }
 
         //문의 조회
         Inquiry inquiry = inquiryRepository.findById(request.getInquiryId())
-                .orElseThrow(() -> new IllegalArgumentException("해당 문의를 찾을 수 없음"));
+                .orElseThrow(() -> new BusinessException(ErrorCode.INQUIRY_NOT_FOUND));
+
+        // 이미 답변된 문의인지 확인
+        if (inquiry.getAnswerStatus() == Status.Y) {
+            throw new BusinessException(ErrorCode.ALREADY_ANSWERED);
+        }
 
         //답변 등록
         //mapper 사용 x (mapper로 들어갈게 answerContent 뿐임)

@@ -1,4 +1,4 @@
-package com.linkee.linkeeapi.inquiry.command.application.cotroller;
+package com.linkee.linkeeapi.inquiry.command.application.controller;
 
 import com.linkee.linkeeapi.inquiry.command.application.dto.request.CreateInquiryRequestDto;
 import com.linkee.linkeeapi.inquiry.command.application.dto.request.UpdateInquiryAnswerRequestDto;
