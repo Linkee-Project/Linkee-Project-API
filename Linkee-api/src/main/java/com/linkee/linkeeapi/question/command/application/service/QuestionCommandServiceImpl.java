@@ -27,7 +27,6 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
     private final JpaQuestionRepository jpaQuestionRepository;
     private final UserFinder userFinder;
     private final CategoryRepository categoryRepository;
-    private final EntityManager entityManager;
 
     //문제 등록
     @Override
