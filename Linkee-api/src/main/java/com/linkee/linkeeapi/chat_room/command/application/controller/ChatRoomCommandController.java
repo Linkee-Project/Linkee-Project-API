@@ -30,9 +30,9 @@ public class ChatRoomCommandController {
     }
 
     // 채팅방 나가기
-    @PostMapping("/leave-chat-room")
+    @PostMapping("/leave-room")
     public ResponseEntity<String> leaveChatRoom(@Valid @RequestBody ChatRoomDeleteRequestDto request) {
-        chatRoomCommandService.leaveChatRoom(request);
-        return ResponseEntity.ok("채팅방에서 나갔습니다.");
+        chatRoomCommandService.leaveRoom(request);
+        return ResponseEntity.ok("방에서 나갔습니다.");
     }
 }

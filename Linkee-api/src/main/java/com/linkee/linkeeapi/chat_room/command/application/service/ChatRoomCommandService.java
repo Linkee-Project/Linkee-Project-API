@@ -11,5 +11,5 @@ public interface ChatRoomCommandService {
     //방 삭제
     void deleteGameRoom(ChatRoomDeleteRequestDto request);
 
-    void leaveChatRoom(ChatRoomDeleteRequestDto request);
+    void leaveRoom(ChatRoomDeleteRequestDto request);
 }
