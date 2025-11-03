@@ -2,8 +2,9 @@ package com.linkee.linkeeapi.bookmark.command.application.service;
 
 import com.linkee.linkeeapi.bookmark.command.domain.aggregate.entity.Bookmark;
 import com.linkee.linkeeapi.bookmark.command.infrastructure.repository.BookmarkRepository;
+import com.linkee.linkeeapi.chat_room.command.infrastructure.repository.JpaChatRoomRepository;
 import com.linkee.linkeeapi.question.command.domain.aggregate.Question;
-import com.linkee.linkeeapi.question.command.infrastructure.QuestionRepository;
+import com.linkee.linkeeapi.question.command.infrastructure.repository.JpaQuestionRepository;
 import com.linkee.linkeeapi.user.command.domain.entity.User;
 import com.linkee.linkeeapi.user.command.infrastructure.repository.UserRepository;
 import jakarta.transaction.Transactional;
@@ -16,14 +17,14 @@ public class BookmarkCommandService {
 
     private final BookmarkRepository bookmarkRepository;
     private final UserRepository userRepository;
-    private final QuestionRepository questionRepository;
+    private final JpaQuestionRepository jpaQuestionRepository;
 
 
     @Transactional
     public void createBookmark(Long userId, Long questionId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
-        Question question = questionRepository.findById(questionId)
+        Question question = jpaQuestionRepository.findById(questionId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 문제입니다."));
 
         // 중복 방지
@@ -44,7 +45,7 @@ public class BookmarkCommandService {
     public void deleteBookmark(Long userId, Long questionId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
-        Question question = questionRepository.findById(questionId)
+        Question question = jpaQuestionRepository.findById(questionId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 문제입니다."));
 
         if (!bookmarkRepository.existsByUserAndQuestion(user, question)) {
