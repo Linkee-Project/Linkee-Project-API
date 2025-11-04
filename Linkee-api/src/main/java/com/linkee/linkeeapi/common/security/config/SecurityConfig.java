@@ -33,7 +33,7 @@ public class SecurityConfig {
                 // ✅ JWT 구조이므로 세션 비활성화
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                        session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 )
 
                 // ✅ 접근 권한 설정
@@ -50,6 +50,7 @@ public class SecurityConfig {
                         .loginPage("/login")
                         .userInfoEndpoint(userInfo -> userInfo.userService(oAuth2UserService))
                         .successHandler(oAuth2SuccessHandler)
+                        .defaultSuccessUrl("/", true)
                         .failureUrl("/accessDenied") // 추가 권장
                 )
 
