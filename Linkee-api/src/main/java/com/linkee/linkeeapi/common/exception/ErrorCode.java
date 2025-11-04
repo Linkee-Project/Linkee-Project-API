@@ -45,7 +45,10 @@ public enum ErrorCode {
 
     //관계 관련 오류(7000번대 사용)
     RELATION_ALREADY_EXISTS("7000", "이미 친구 관계입니다.", HttpStatus.CONFLICT),
-    RELATION_REQUEST_ALREADY_EXISTS("7001", "이미 친구 요청을 보냈습니다.", HttpStatus.CONFLICT);
+    RELATION_REQUEST_ALREADY_EXISTS("7001", "이미 친구 요청을 보냈습니다.", HttpStatus.CONFLICT),
+
+    //북마크
+    BOOKMARK_ALREADY_EXISTS("8000","이미 북마크한 문제 입니다.", HttpStatus.CONFLICT);
 
     private final String code;
     private final String message;
