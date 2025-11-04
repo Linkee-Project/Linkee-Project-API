@@ -3,6 +3,8 @@ package com.linkee.linkeeapi.auth.authService;
 import com.linkee.linkeeapi.auth.mail.EmailService;
 import com.linkee.linkeeapi.category.command.aggregate.Category;
 import com.linkee.linkeeapi.category.command.infrastructure.repository.CategoryRepository;
+import com.linkee.linkeeapi.common.exception.BusinessException;
+import com.linkee.linkeeapi.common.exception.ErrorCode;
 import com.linkee.linkeeapi.grade.command.domain.aggregate.entity.Grade;
 import com.linkee.linkeeapi.grade.command.infrastructure.GradeRepository;
 import com.linkee.linkeeapi.user.command.application.dto.request.UserCreateRequest;
@@ -48,7 +50,7 @@ public class UserAuthService {
         List<Category> categories = categoryRepository.findAll();
         //기본 등급
         Grade defaultGrade = gradeRepository.findById(1L)
-                .orElseThrow(() -> new IllegalArgumentException("기본 등급이 존재하지 않습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_REQUEST,"등급정보가 존재하지 않습니다."));
 
         //각 카테고리별 UserGrade 생성
         for (Category category : categories) {
@@ -67,7 +69,7 @@ public class UserAuthService {
     @Transactional
     public void resetToTemporaryPassword(String email ,String newPassword) {
         User user = userRepository.findByUserEmail(email)
-                .orElseThrow(() -> new RuntimeException("가입되지 않은 이메일입니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_USER_ID));
 
         user.changePassword(passwordEncoder.encode(newPassword));
 
