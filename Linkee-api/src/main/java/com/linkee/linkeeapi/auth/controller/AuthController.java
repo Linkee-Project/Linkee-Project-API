@@ -41,10 +41,6 @@ public class AuthController {
             throw new BusinessException(ErrorCode.INVALID_USER_ID,"이미 존재하는 회원입니다.");
         }
 
-        if (!emailService.verifyCode(request.getUserEmail(), request.getInputCode())) {
-            throw new BusinessException(ErrorCode.INVALID_INCORRECT_FORMAT,"잘못된 인증번호 입니다");
-        }
-
         userAuthService.createUser(request);
 
         return ResponseEntity.ok("회원가입 완료!");
