@@ -2,7 +2,6 @@ package com.linkee.linkeeapi.alarm_box.command.application.controller;
 
 import com.linkee.linkeeapi.alarm_box.command.application.dto.request.AlarmBoxCreateRequest;
 import com.linkee.linkeeapi.alarm_box.command.application.service.AlarmBoxCommandService;
-import com.linkee.linkeeapi.alarm_box.query.service.AlarmBoxQueryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
