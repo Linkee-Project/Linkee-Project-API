@@ -4,6 +4,8 @@ import com.linkee.linkeeapi.auth.authService.UserAuthService;
 import com.linkee.linkeeapi.auth.mail.EmailRequest;
 import com.linkee.linkeeapi.auth.mail.EmailService;
 import com.linkee.linkeeapi.auth.mail.EmailVerifyRequest;
+import com.linkee.linkeeapi.common.exception.BusinessException;
+import com.linkee.linkeeapi.common.exception.ErrorCode;
 import com.linkee.linkeeapi.common.jwt.JwtTokenProvider;
 import com.linkee.linkeeapi.common.security.service.RedisRefreshTokenService;
 import com.linkee.linkeeapi.user.command.application.dto.request.UserCreateRequest;
@@ -36,11 +38,11 @@ public class AuthController {
 
         if (userRepository.findByUserEmail(request.getUserEmail()).isPresent()) {
             // 이미 존재하는 이메일일 때 처리
-            throw new IllegalArgumentException("이미 가입된 이메일입니다.");
+            throw new BusinessException(ErrorCode.INVALID_USER_ID,"이미 존재하는 회원입니다.");
         }
 
         if (!emailService.verifyCode(request.getUserEmail(), request.getInputCode())) {
-            throw new IllegalArgumentException("이메일 인증이 필요합니다.");
+            throw new BusinessException(ErrorCode.INVALID_INCORRECT_FORMAT,"잘못된 인증번호 입니다");
         }
 
         userAuthService.createUser(request);
