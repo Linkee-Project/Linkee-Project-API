@@ -1,5 +1,11 @@
 package com.linkee.linkeeapi.relation.command.application.service;
 
+import com.linkee.linkeeapi.alarm_box.command.domain.aggregate.entity.AlarmBox;
+import com.linkee.linkeeapi.alarm_box.command.infrastructure.repository.AlarmBoxRepository;
+import com.linkee.linkeeapi.alarm_template.query.dto.response.AlarmTemplateResponse;
+import com.linkee.linkeeapi.alarm_template.query.mapper.AlarmTemplateMapper;
+import com.linkee.linkeeapi.common.enums.Status;
+import com.linkee.linkeeapi.common.event.FriendRequestEvent;
 import com.linkee.linkeeapi.common.exception.BusinessException;
 import com.linkee.linkeeapi.common.exception.ErrorCode;
 import com.linkee.linkeeapi.relation.command.application.dto.request.RelationCreateRequest;
@@ -10,6 +16,7 @@ import com.linkee.linkeeapi.user.command.domain.entity.User;
 import com.linkee.linkeeapi.user.command.infrastructure.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -21,6 +28,9 @@ public class RelationCommandService {
 
     private final RelationRepository relationRepository;
     private final UserRepository userRepository;
+    private final ApplicationEventPublisher eventPublisher;
+    private final AlarmBoxRepository alarmBoxRepository;
+    private final AlarmTemplateMapper alarmTemplateMapper;
 
     @Transactional
     public void createRelation(RelationCreateRequest request) {
@@ -56,6 +66,8 @@ public class RelationCommandService {
 
             relationRepository.save(relation);
         }
+        // sse
+        eventPublisher.publishEvent(new FriendRequestEvent(this, requester, receiver));
     }
 
 
@@ -65,6 +77,18 @@ public class RelationCommandService {
                 .orElseThrow(() -> new IllegalArgumentException("잘못 된 사용자입니다"));
 
         relation.modifyRelationStatus(status);
+
+        // 친구 요청을 수락하거나 거절 하면 알림 업데이트
+        if (status == RelationStatus.A || status == RelationStatus.R) {
+            User receiver = relation.getReceiver();
+            AlarmTemplateResponse alarmTemplate = alarmTemplateMapper.selectAlarmTemplateById(1L);
+            String alarmContent = String.format("%s%s", relation.getRequester().getUserNickname(), alarmTemplate.templateContent());
+
+            Optional<AlarmBox> alarmBoxOptional = alarmBoxRepository
+                    .findFirstByUserAndAlarmBoxContentAndIsCheckedOrderByAlarmBoxIdDesc(receiver, alarmContent, Status.N);
+            alarmBoxOptional.ifPresent(AlarmBox::checkedAlarm);
+
+        }
 
     }
 
