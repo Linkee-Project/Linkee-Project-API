@@ -3,6 +3,8 @@ package com.linkee.linkeeapi.question.command.application.service;
 import com.linkee.linkeeapi.category.command.aggregate.Category;
 import com.linkee.linkeeapi.category.command.infrastructure.repository.CategoryRepository;
 import com.linkee.linkeeapi.common.enums.Status;
+import com.linkee.linkeeapi.common.exception.BusinessException;
+import com.linkee.linkeeapi.common.exception.ErrorCode;
 import com.linkee.linkeeapi.question.command.application.dto.request.CreateQuestionRequestDto;
 import com.linkee.linkeeapi.question.command.application.dto.request.UpdateQuestionRequestDto;
 import com.linkee.linkeeapi.question.command.domain.aggregate.Question;
@@ -11,7 +13,6 @@ import com.linkee.linkeeapi.question_option.command.domain.aggregate.QuestionOpt
 import com.linkee.linkeeapi.user.command.application.service.util.UserFinder;
 import com.linkee.linkeeapi.user.command.domain.entity.User;
 
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,7 +33,10 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
     @Override
     public void createQuestion(CreateQuestionRequestDto request) {
 
-        User user = userFinder.getById(request.getUserId());
+        if (request.getUserId() == null) {
+            throw new BusinessException(ErrorCode.INVALID_USER_ID);
+        }
+
         Category category = categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(() -> new IllegalArgumentException("카테고리를 찾을 수 없습니다."));
 
@@ -42,7 +46,7 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
                 .questionTitle(request.getQuestionTitle())
                 .questionQuestion(request.getQuestionQuestion())
                 .questionAnswer(request.getQuestionAnswer())
-                .user(user)
+                .user(userFinder.getById(request.getUserId()))
                 .isQualified(Status.N)
                 .isDeleted(Status.N)
                 .questionViews(0L)
@@ -69,8 +73,9 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
         User user = userFinder.getById(request.getUserId());
 
         Question question = jpaQuestionRepository.findByIdWithOptions(questionId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 문제입니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.QUESTION_NOT_FOUND));
 
+        //문제 수정 권한 검증
         question.assertUpdatableBy(user, question.getUser().getUserId());
 
         // 제목 수정
@@ -124,9 +129,9 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
         User user = userFinder.getById(userId);
 
         Question question = jpaQuestionRepository.findByIdWithOptions(questionId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 문제입니다."));
-
-        question.assertDeletableBy(userId, question.getUser().getUserId());
+                .orElseThrow(() -> new BusinessException(ErrorCode.QUESTION_NOT_FOUND));
+        //문제 삭제 권한 검증
+        question.assertDeletableBy(user, question.getUser().getUserId());
         question.softDelete();
     }
     }
