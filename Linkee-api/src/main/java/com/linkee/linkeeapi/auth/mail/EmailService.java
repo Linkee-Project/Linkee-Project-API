@@ -40,7 +40,7 @@ public class EmailService {
         return sb.toString();
     }
 
-    // 인증번호 발송
+    // 로그인 인증번호 발송
     public void sendAuthEmail(String email) {
 
         if(email == null || email.isBlank()) {
@@ -73,7 +73,7 @@ public class EmailService {
         mailSender.send(message);
     }
 
-    // 인증번호 검증
+    // 로그인 인증번호 검증
     public boolean verifyCode(String email, String code) {
         String key = "EMAIL_AUTH:" + email;
         String savedCode = redisTemplate.opsForValue().get(key);
@@ -84,4 +84,7 @@ public class EmailService {
         }
         return false;
     }
+
+
+
 }
