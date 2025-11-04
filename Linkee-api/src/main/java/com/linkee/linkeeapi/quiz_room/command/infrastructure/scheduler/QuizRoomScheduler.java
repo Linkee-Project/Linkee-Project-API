@@ -26,7 +26,7 @@ public class QuizRoomScheduler {
     @Transactional
     public void cleanupZombieRooms() {
         //  DB에서 직접 10분 이상 업데이트 안 된 방만 조회
-        LocalDateTime cutoffTime = LocalDateTime.now().minusMinutes(3);
+        LocalDateTime cutoffTime = LocalDateTime.now().minusMinutes(10);
         List<QuizRoom> staleRooms = quizRoomRepository
                 .findByRoomStatusAndUpdatedAtBefore(RoomStatus.P, cutoffTime);
 
