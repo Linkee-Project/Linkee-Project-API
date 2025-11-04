@@ -43,7 +43,7 @@ public class RoomMemberCommandServiceImpl implements RoomMemberCommandService {
 
         RoomMember roomMember = RoomMember.builder()
                 .member(user)
-                .quizroom(quizRoom)
+                .quizRoom(quizRoom)
                 .isReady(Status.N) // 초기 상태는 '준비 안 됨' (N)
                 .joinedAt(LocalDateTime.now())
                 .build();
