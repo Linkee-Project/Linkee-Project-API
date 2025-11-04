@@ -40,7 +40,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         }
 
         User user = userRepository.findByUserEmail(email)
-                .orElseGet(() -> userRepository.save(new User(naverId, name, Role.USER)));
+                .orElseGet(() -> userRepository.save(new User(naverId, email, name, Role.USER)));
 
         return new CustomUserDetails(user, attributes);
     }
