@@ -4,8 +4,11 @@ import com.linkee.linkeeapi.bookmark.query.dto.request.BookmarkSearchRequest;
 import com.linkee.linkeeapi.bookmark.query.dto.response.BookmarkResponse;
 import com.linkee.linkeeapi.bookmark.query.service.BookmarkQueryService;
 import com.linkee.linkeeapi.common.model.PageResponse;
+import com.linkee.linkeeapi.user.command.infrastructure.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class BookmarkQueryController {
 
     private final BookmarkQueryService bookmarkQueryService;
+    private final UserRepository userRepository;
 
 
     @GetMapping
@@ -27,11 +31,15 @@ public class BookmarkQueryController {
     }
 
     // 내 북마크 조회
-    @GetMapping("/{userId}")
+    @GetMapping("/me")
     public ResponseEntity<PageResponse<BookmarkResponse>> getBookmarksByUserId(
-            @PathVariable Long userId,
+            @AuthenticationPrincipal UserDetails userDetails,
             BookmarkSearchRequest request
     ) {
+        String loginUserEmail = userDetails.getUsername();
+
+        Long userId = userRepository.findByUserEmail(loginUserEmail).orElseThrow().getUserId();
+
         request.setUserId(userId);
 
         PageResponse<BookmarkResponse> response = bookmarkQueryService.selectBookmarksByUserId(request);
