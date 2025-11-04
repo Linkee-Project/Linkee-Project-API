@@ -17,7 +17,6 @@ spring:
       mail.smtp.starttls.enable: true
       mail.smtp.starttls.required: true
       mail.smtp.from: ${MAIL_FROM:charlymarket001@gmail.com}
-
   data:
     redis:
       host: localhost

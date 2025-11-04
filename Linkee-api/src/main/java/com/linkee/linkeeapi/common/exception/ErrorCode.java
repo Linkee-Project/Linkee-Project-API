@@ -32,6 +32,13 @@ public enum ErrorCode {
     REPORT_NOT_FOUND("4000", "해당 신고를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     REPORT_NO_ACCESS("4001", "조회 권한이 없거나 존재하지 않는 신고입니다.", HttpStatus.FORBIDDEN),
 
+    //문제 관련 오류(5000번대 사용)
+    QUESTION_NOT_FOUND("5000","해당 문제를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    QUESTION_UPDATE_NOT_ALLOWED("5001", "검증된 문제는 수정할 수 없습니다.", HttpStatus.CONFLICT),
+    QUESTION_DELETE_NOT_ALLOWED("5002", "검증된 문제는 삭제할 수 없습니다.", HttpStatus.CONFLICT),
+    FORBIDDEN_QUESTION_ACCESS("5003", "문제에 대한 권한이 없습니다.", HttpStatus.FORBIDDEN),
+    INVALID_ANSWER_INDEX("5004", "정답 인덱스가 옵션과 일치하지 않습니다.", HttpStatus.BAD_REQUEST),
+
     //관계 관련 오류(7000번대 사용)
     RELATION_ALREADY_EXISTS("7000", "이미 친구 관계입니다.", HttpStatus.CONFLICT),
     RELATION_REQUEST_ALREADY_EXISTS("7001", "이미 친구 요청을 보냈습니다.", HttpStatus.CONFLICT);
