@@ -21,6 +21,9 @@ public class EmailService {
     // application.yml에서 TTL 값 가져오기
     @Value("${auth.code.expiration-millis}")
     private long authCodeTTL;
+    // 메일 from 유저 가져오기
+    @Value("${spring.mail.username}")
+    private String mailUsername;
 
     public EmailService(JavaMailSender mailSender, StringRedisTemplate redisTemplate) {
         this.mailSender = mailSender;
@@ -52,8 +55,8 @@ public class EmailService {
 
         // 메일 발송
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(email);
-        message.setFrom(System.getenv("MAIL_USERNAME")); // 환경변수 기반
+        message.setTo(email.trim());
+        message.setFrom(mailUsername);  // 환경변수 기반
         message.setSubject("(Linkee) 이메일 인증번호 안내");
         message.setText("인증번호: [" + code +"]");
         String text = String.join("\n",
