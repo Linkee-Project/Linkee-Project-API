@@ -38,7 +38,7 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
         }
 
         Category category = categoryRepository.findById(request.getCategoryId())
-                .orElseThrow(() -> new IllegalArgumentException("카테고리를 찾을 수 없습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.CATEGORY_NOT_FOUND));
 
         // Question 생성
         Question question = Question.builder()
