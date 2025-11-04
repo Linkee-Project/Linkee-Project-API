@@ -45,6 +45,13 @@ public class User extends BaseTimeEntity {
     private Role userRole = Role.USER;
 
 
+    public User(String userEmail, String userNickname, Role userRole) {
+        this.userEmail = userEmail;
+        this.userNickname = userNickname;
+        this.userPassword = ""; // 소셜 로그인은 비밀번호 X → 빈 문자열 저장
+        this.userRole = userRole;
+        this.userStatus = Status.Y; // 활성 상태 기본값
+    }
 
 
     public void modifyUserNickName(String userNickname){
