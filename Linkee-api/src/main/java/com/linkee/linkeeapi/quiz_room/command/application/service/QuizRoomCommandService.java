@@ -19,4 +19,11 @@ public interface QuizRoomCommandService {
     void deleteQuizRoom(QuizRoomDeleteRequestDto request);
 
     void leaveQuizRoom(QuizRoomDeleteRequestDto request);
+
+    void startGame(Long quizRoomId);
+
+    void advanceNextQuestion(Long quizRoomId);
+
+    //  스케줄러 등에 의해 외부에서 강제로 게임을 강제로 종료시키는 메서드
+    void forceEndRoom(Long quizRoomId);
 }
