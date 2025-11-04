@@ -55,4 +55,8 @@ public class User extends BaseTimeEntity {
     public void deactivateUser() {
         this.userStatus = Status.N;
     }
+
+    public void changePassword(String encode) {
+        this.userPassword = encode;
+    }
 }

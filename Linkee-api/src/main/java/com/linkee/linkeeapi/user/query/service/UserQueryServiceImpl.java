@@ -1,7 +1,10 @@
 package com.linkee.linkeeapi.user.query.service;
 
 import com.linkee.linkeeapi.auth.authService.AuthService;
+import com.linkee.linkeeapi.common.enums.Status;
 import com.linkee.linkeeapi.common.model.PageResponse;
+import com.linkee.linkeeapi.user.command.domain.entity.User;
+import com.linkee.linkeeapi.user.command.infrastructure.repository.UserRepository;
 import com.linkee.linkeeapi.user.query.dto.request.UserSearchRequest;
 import com.linkee.linkeeapi.user.query.dto.response.UserListResponse;
 import com.linkee.linkeeapi.user.query.dto.response.UserMeResponse;
@@ -18,7 +21,7 @@ public class UserQueryServiceImpl implements UserQueryService{
 
 
     private final UserMapper userMapper;
-    private final UserGradeRepository userGradeRepository;
+    private final UserRepository userRepository;
     private final AuthService authService;
 
     @Override
@@ -55,6 +58,12 @@ public class UserQueryServiceImpl implements UserQueryService{
     // id 값으로 한건조회(자기정보)
     @Override
     public UserMeResponse getUserMe(String userEmail) {
+
+        User foundUser = userRepository.findByUserEmail(userEmail).orElseThrow();
+
+        if(foundUser.getUserStatus() == Status.N){
+            throw new IllegalArgumentException("비활성화 된 회원입니다");
+        }
 
         System.out.println("service에서 호출 :" + authService.getCurrentUsername());
         return userMapper.selectUserMe(userEmail);
