@@ -16,11 +16,9 @@ public interface QuizRoomCommandService {
      */
     Long create(QuizRoomCreateRequestDto request, Long userId);
 
-    void deleteQuizRoom(QuizRoomDeleteRequestDto request);
-
     void leaveQuizRoom(QuizRoomDeleteRequestDto request);
 
-    void startGame(Long quizRoomId);
+    void startGame(Long quizRoomId, Long userId);
 
     void advanceNextQuestion(Long quizRoomId);
 

@@ -3,6 +3,8 @@ package com.linkee.linkeeapi.quiz_room.command.application.service;
 import com.linkee.linkeeapi.category.command.aggregate.Category;
 import com.linkee.linkeeapi.category.command.infrastructure.repository.CategoryRepository;
 import com.linkee.linkeeapi.common.enums.RoomStatus;
+import com.linkee.linkeeapi.common.exception.BusinessException;
+import com.linkee.linkeeapi.common.exception.ErrorCode;
 import com.linkee.linkeeapi.quiz_current_index.command.domain.aggregate.QuizCurrentIndex;
 import com.linkee.linkeeapi.quiz_current_index.command.infrastructure.repository.QuizCurrentIndexRepository;
 import com.linkee.linkeeapi.quiz_room.command.application.dto.request.QuizRoomCreateRequestDto;
@@ -33,7 +35,6 @@ public class QuizRoomCommandServiceImpl implements QuizRoomCommandService {
 
     private final QuizRoomRepository quizRoomRepository;
     private final CategoryRepository categoryRepository;
-    private final UserRepository userRepository;
     private final RoomMemberRepository roomMemberRepository;
     private final QuizCurrentIndexRepository quizCurrentIndexRepository;
     private final UserFinder userFinder;
@@ -56,7 +57,7 @@ public class QuizRoomCommandServiceImpl implements QuizRoomCommandService {
         // 2. 요청된 카테고리 ID에 해당하는 카테고리 정보를 조회합니다.
         // 카테고리가 존재하지 않으면 예외를 발생시킵니다.
         Category category = categoryRepository.findById(request.getCategoryId())
-                .orElseThrow(() -> new IllegalArgumentException("Category not found with ID: " + request.getCategoryId()));
+                .orElseThrow(() -> new BusinessException(ErrorCode.CATEGORY_NOT_FOUND));
 
         // 3. Builder 패턴을 사용하여 새로운 QuizRoom 엔티티를 생성합니다.
         // DTO와 조회된 엔티티 정보를 바탕으로 필드를 설정합니다.
@@ -80,23 +81,6 @@ public class QuizRoomCommandServiceImpl implements QuizRoomCommandService {
         return newQuizRoom.getQuizRoomId();
     }
 
-    @Override
-    @Transactional
-    public void deleteQuizRoom(QuizRoomDeleteRequestDto request) {
-        QuizRoom quizRoom = quizRoomRepository.findById(request.getQuizRoomId())
-                .orElseThrow(() -> new IllegalArgumentException("Quiz room not found with ID: " + request.getQuizRoomId()));
-
-        //  1. 방장인지 확인
-        if (!quizRoom.getRoomOwner().getUserId().equals(request.getUserId())) {
-            throw new IllegalArgumentException("방장만 방을 삭제할 수 있습니다.");
-        }
-        //  2. 대기중인 방인지 확인 (대기중 상태에서만 나갈 수 있음)
-        if (quizRoom.getRoomStatus() != RoomStatus.W) {
-            throw new IllegalStateException("대기 중인 방만 나갈 수 (삭제할 수) 있습니다.");
-        }
-        //  3. 모든 검증 통과 후 게임 종료 처리
-        endGame(quizRoom);
-    }
 
     private void endGame(QuizRoom quizRoom) {
         //  1. 퀴즈방 상태를 '종료(E)'로 변경하고 종료 시간 기록
@@ -117,36 +101,47 @@ public class QuizRoomCommandServiceImpl implements QuizRoomCommandService {
     @Transactional
     public void leaveQuizRoom(QuizRoomDeleteRequestDto request) {
         QuizRoom quizRoom = quizRoomRepository.findById(request.getQuizRoomId())
-                .orElseThrow(() -> new IllegalArgumentException("Quiz room not found with ID: " + request.getQuizRoomId()));
+                .orElseThrow(() -> new BusinessException(ErrorCode.QUIZ_ROOM_NOT_FOUND));
 
-        if (quizRoom.getRoomStatus() == RoomStatus.P) {
-            throw new IllegalStateException("게임 중에는 방을 나갈 수 없습니다.");
+        //  게임 중에는 아무도 나갈 수 없음
+        if(quizRoom.getRoomStatus() == RoomStatus.P) {
+            throw new BusinessException(ErrorCode.QUIZ_ROOM_GAME_IN_PLAY);
+
+        }
+        // 대기 상태에서 나가는 경우
+        if(quizRoom.getRoomOwner().getUserId().equals(request.getUserId())) {
+
+            // 방장이 나가면 방 자동 삭제
+            endGame(quizRoom);
+        } else {
+            //  일반 멤버가 나가면 인원수만 감소
+            quizRoom.setJoinedCount(quizRoom.getJoinedCount() - 1);
+            quizRoomRepository.save(quizRoom);
         }
 
-        if (quizRoom.getRoomOwner().getUserId().equals(request.getUserId())) {
-            throw new IllegalArgumentException("방장은 방을 나갈 수 없습니다. 방 삭제 기능을 이용해주세요.");
-        }
-
-        quizRoom.setJoinedCount(quizRoom.getJoinedCount() - 1);
-        quizRoomRepository.save(quizRoom);
     }
 
     // 게임 시작
     @Override
     @Transactional
-    public void startGame(Long quizRoomId) {
+    public void startGame(Long quizRoomId, Long userId) {
         //  1. 퀴즈방을 조회합니다.
         QuizRoom quizRoom = quizRoomRepository.findById(quizRoomId)
-                .orElseThrow(() -> new IllegalArgumentException("Quiz room not found with ID: " + quizRoomId));
-        /* 2. 게임 시작 전제조건을 확인
-        *  2-1. 방 상태가 대기(W) 상태인지 확인 */
+                .orElseThrow(() -> new BusinessException(ErrorCode.QUIZ_ROOM_NOT_FOUND));
+        // 2. 게임 시작 전제조건을 확인
+        // 방장만 시작 할 수 있다
+        if(!quizRoom.getRoomOwner().getUserId().equals(userId)) {
+            throw new BusinessException(ErrorCode.QUIZ_ROOM_UNAUTHORIZED);
+        }
+
+        // 2-1. 방 상태가 대기(W) 상태인지 확인
         if (quizRoom.getRoomStatus() != RoomStatus.W) {
-            throw new IllegalStateException("게임이 대기 상태일 때만 시작할 수 있습니다. ");
+            throw new BusinessException(ErrorCode.QUIZ_ROOM_NOT_WAITING);
         }
         //  2-2. 해당 퀴즈방의 모든 멤버가 준비 상태인지 확인
         List<RoomMember> members = roomMemberRepository.findByQuizRoom(quizRoom);
         if (members.stream().anyMatch(member -> !member.isReady())){
-            throw new IllegalStateException("모든 참가자가 준비 완료 상태어야 게임을 시작할 수 있습니다.");
+            throw new BusinessException(ErrorCode.QUIZ_ROOM_NOT_READY);
         }
 
         //  3. 퀴즈방의 상태를 '진행'으로 변경합니다.
@@ -166,11 +161,15 @@ public class QuizRoomCommandServiceImpl implements QuizRoomCommandService {
     public void advanceNextQuestion(Long quizRoomId) {
         //  1. 퀴즈방을 조회한다
         QuizRoom quizRoom = quizRoomRepository.findById(quizRoomId)
-                .orElseThrow(() -> new IllegalArgumentException("Quiz room not found with ID: " + quizRoomId));
+                .orElseThrow(() -> new BusinessException(ErrorCode.QUIZ_ROOM_NOT_FOUND));
+        // "진행 중" 상태인지 확인하는 로직
+        if(quizRoom.getRoomStatus() != RoomStatus.P) {
+            throw new BusinessException(ErrorCode.QUIZ_ROOM_NOT_IN_PLAY);
+        }
 
         //  2. 해당 퀴즈방의 현재 문제 인덱스 정보를 조회합니다.
         QuizCurrentIndex quizIndex = quizCurrentIndexRepository.findByQuizRoom(quizRoom)
-                .orElseThrow(()->new IllegalStateException("Quiz Index not found room ID: " + quizRoomId));
+                .orElseThrow(()-> new BusinessException(ErrorCode.QUIZ_INDEX_NOT_FOUND));
 
         //  3. 마지막 문제인지 확인합니다.
         if(quizIndex.getCurrentQuizIndex() >= quizRoom.getRoomQuizLimit()) {
@@ -187,7 +186,7 @@ public class QuizRoomCommandServiceImpl implements QuizRoomCommandService {
     @Transactional
     public void forceEndRoom(Long quizRoomId) {
         QuizRoom quizRoom = quizRoomRepository.findById(quizRoomId)
-                .orElseThrow(()-> new IllegalArgumentException("Quiz room not found with ID: " + quizRoomId));
+                .orElseThrow(()->  new BusinessException(ErrorCode.QUIZ_ROOM_NOT_FOUND));
 
         endGame(quizRoom);
     }

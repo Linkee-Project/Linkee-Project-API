@@ -23,7 +23,6 @@ public enum ErrorCode {
     INVALID_NOTICE_ID("2001", "잘못된 공지사항 ID입니다.", HttpStatus.BAD_REQUEST),
     DATABASE_ERROR("2002", "데이터베이스 처리 중 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
 
-
     //문의 관련 오류 (3000번대 사용)
     INQUIRY_NOT_FOUND("3000", "해당 문의를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     INVALID_INQUIRY_ID("3001", "잘못된 문의 ID입니다.", HttpStatus.BAD_REQUEST),
@@ -48,7 +47,19 @@ public enum ErrorCode {
     RELATION_REQUEST_ALREADY_EXISTS("7001", "이미 친구 요청을 보냈습니다.", HttpStatus.CONFLICT),
 
     //북마크
-    BOOKMARK_ALREADY_EXISTS("8000","이미 북마크한 문제 입니다.", HttpStatus.CONFLICT);
+    BOOKMARK_ALREADY_EXISTS("8000","이미 북마크한 문제 입니다.", HttpStatus.CONFLICT),
+
+    //퀴즈룸 관련 오류(9000번대 사용)
+    QUIZ_ROOM_NOT_FOUND("9000", "퀴즈방을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    QUIZ_ROOM_NOT_WAITING("9001", "대기 중인 방만 시작할 수 있습니다.", HttpStatus.BAD_REQUEST),
+//    QUIZ_ROOM_NOT_READY("9002", "모든 참가자가 준비 완료 상태여야 합니다.", HttpStatus.BAD_REQUEST),
+//    QUIZ_ROOM_GAME_IN_PLAY("9003", "게임 진행 중에는 방을 나갈 수 없습니다.", HttpStatus.BAD_REQUEST),
+    QUIZ_ROOM_UNAUTHORIZED("9004", "방장만 시작할 수 있습니다.", HttpStatus.FORBIDDEN),
+    QUIZ_INDEX_NOT_FOUND("9005", "퀴즈 인덱스를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    QUIZ_ROOM_NOT_IN_PLAY("9006", "진행 중인 게임에 대해서만 요청할 수 있습니다.", HttpStatus.BAD_REQUEST),
+    QUIZ_ROOM_NOT_IN_WAITING_STATE("9007", "대기 중인 방에만 참여할 수 있습니다.", HttpStatus.BAD_REQUEST),
+    QUIZ_ROOM_FULL("9008", "방이 가득 찼습니다.", HttpStatus.BAD_REQUEST),
+    USER_ALREADY_IN_ROOM("9009", "이미 참여한 방입니다.", HttpStatus.BAD_REQUEST);
 
     private final String code;
     private final String message;

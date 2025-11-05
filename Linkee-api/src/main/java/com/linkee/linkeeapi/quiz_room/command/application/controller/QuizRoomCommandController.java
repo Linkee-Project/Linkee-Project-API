@@ -28,18 +28,11 @@ public class QuizRoomCommandController {
      */
     @PostMapping
     public ApiResponse<Long> createQuizRoom(@RequestBody QuizRoomCreateRequestDto request) {
-        //  추후 Spring Security가 적용되면 @AuthenticationPrincipal 에서 유저 정보를 받아와야 합니다.
+        // 추후 Spring Security가 적용되면 @AuthenticationPrincipal 에서 유저 정보를 받아와야 합니다.
         Long userId = 1L; // 임시로 방장(유저) ID를 1로 설정합니다.
 
         Long quizRoomId = quizRoomCommandService.create(request, userId);
         return ApiResponse.success(quizRoomId);
-    }
-
-    // 방장 퀴즈방 나가기 (삭제)
-    @PostMapping("/delete-quiz-room")
-    public ResponseEntity<String> deleteQuizRoom(@Valid @RequestBody QuizRoomDeleteRequestDto request) {
-        quizRoomCommandService.deleteQuizRoom(request);
-        return ResponseEntity.ok("퀴즈방이 성공적으로 종료되었습니다.");
     }
 
     // 퀴즈방 나가기 (멤버)
@@ -55,7 +48,8 @@ public class QuizRoomCommandController {
     @PostMapping("/{quizRoomId}/start")
     public ResponseEntity<String> startGame(@PathVariable Long quizRoomId) {
         //  요청을 보낸 사용자가 방장인지 확인하는 로직 추가 필요
-        quizRoomCommandService.startGame(quizRoomId);
+        Long userId = 1L;
+        quizRoomCommandService.startGame(quizRoomId,  userId);
         return ResponseEntity.ok("게임이 시작되었습니다.");
     }
 
