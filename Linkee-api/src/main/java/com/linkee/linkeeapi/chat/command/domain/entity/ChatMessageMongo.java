@@ -11,15 +11,13 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(collection = "chat_messages") // MongoDB 컬렉션 이름
+@Document(collection = "chat_messages")
 public class ChatMessageMongo {
-
     @Id
     private String id;
-
-    private Long roomId;             // 채팅방 ID
-    private Long senderId;           // 보낸 사람 ID
-    private String senderNickname;   // 보낸 사람 닉네임
-    private String messageContent;   // 메시지 내용
-    private LocalDateTime sentAt;    // 전송 시각
+    private Long roomId;
+    private Long senderId;
+    private String senderNickname;
+    private String message;
+    private LocalDateTime sentAt;
 }

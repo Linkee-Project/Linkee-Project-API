@@ -59,7 +59,10 @@ public enum ErrorCode {
     QUIZ_ROOM_NOT_IN_PLAY("9006", "진행 중인 게임에 대해서만 요청할 수 있습니다.", HttpStatus.BAD_REQUEST),
     QUIZ_ROOM_NOT_IN_WAITING_STATE("9007", "대기 중인 방에만 참여할 수 있습니다.", HttpStatus.BAD_REQUEST),
     QUIZ_ROOM_FULL("9008", "방이 가득 찼습니다.", HttpStatus.BAD_REQUEST),
-    USER_ALREADY_IN_ROOM("9009", "이미 참여한 방입니다.", HttpStatus.BAD_REQUEST);
+    USER_ALREADY_IN_ROOM("9009", "이미 참여한 방입니다.", HttpStatus.BAD_REQUEST),
+
+    // 채팅룸
+    CHAT_ROOM_NOT_FOUND("9010","채팅방을 찾을 수 없습니다" ,HttpStatus.NOT_FOUND );
 
     private final String code;
     private final String message;

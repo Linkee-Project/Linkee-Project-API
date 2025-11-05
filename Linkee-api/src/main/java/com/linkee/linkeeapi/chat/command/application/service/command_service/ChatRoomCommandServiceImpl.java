@@ -41,7 +41,7 @@ public class ChatRoomCommandServiceImpl implements ChatRoomCommandService {
 
     // ✅ 채팅방/게임방 생성
     @Transactional
-    public void createRoom(ChatRoomCreateRequestDto request) {
+    public void createRoom(ChatRoomCreateRequestDto request ,User user) {
         /* 기본값 설정*/
         ChatRoomType roomType = request.getChatRoomType();
         Status isPrivate;
@@ -55,7 +55,6 @@ public class ChatRoomCommandServiceImpl implements ChatRoomCommandService {
 
         Integer roomCode = request.getRoomCode();
         Integer capacity = request.getRoomCapacity();
-        User owner = userFinder.getById(request.getRoomOwnerId());
 
         if (request.getChatRoomName().trim().isEmpty()) {
             throw new IllegalArgumentException("채팅방 이름은 비워둘 수 없습니다.");
@@ -74,13 +73,36 @@ public class ChatRoomCommandServiceImpl implements ChatRoomCommandService {
                 .chatRoomType(roomType)
                 .isPrivate(isPrivate)
                 .roomCode(validatedRoomCode)
-                .roomOwner(owner)
+                .roomOwner(user)
                 .roomCapacity(capacity)
                 .roomStatus(Status.Y)
                 .joinedCount(1)
                 .build();
 
         chatRoomRepository.save(chatRoom);
+    }
+
+
+    public void enterRoom(Long roomId, User user) {
+        ChatRoom room = chatRoomRepository.findById(roomId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 채팅방입니다."));
+
+        boolean alreadyJoined = chatMemberRepository.existsByChatRoomAndUser(room, user);
+        if (alreadyJoined) return;
+
+        if (room.getRoomCapacity() != null && room.getJoinedCount() >= room.getRoomCapacity()) {
+            throw new IllegalStateException("방 인원이 가득 찼습니다.");
+        }
+
+        ChatMember member = ChatMember.builder()
+                .chatRoom(room)
+                .user(user)
+                .build();
+
+        chatMemberRepository.save(member);
+
+        room.increaseJoinedCount();
+        chatRoomRepository.save(room);
     }
 
 
