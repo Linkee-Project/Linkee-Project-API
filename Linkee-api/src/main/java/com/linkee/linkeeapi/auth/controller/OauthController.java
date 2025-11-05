@@ -57,10 +57,9 @@ public class OauthController {
 
 
     // ✅ Redis에 저장된 RefreshToken 삭제 (소셜로그인 로그아웃)
-    @PostMapping("/logout")
-    public ResponseEntity<String> logout(@RequestParam String email) {
-        authRedisRepository.delete(email);
-        return ResponseEntity.ok("로그아웃 성공 (RefreshToken 삭제됨)");
+    @PostMapping("/logout") public ResponseEntity<String> logout(@RequestParam String email) {
+        authRedisRepository.delete(email); // Redis에서 RefreshToken 삭제
+        return ResponseEntity.ok("로그아웃 완료");
     }
 
     @RequestMapping("/accessDenied")

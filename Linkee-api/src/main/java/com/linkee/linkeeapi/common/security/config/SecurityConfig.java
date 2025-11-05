@@ -50,7 +50,7 @@ public class SecurityConfig {
                         .loginPage("/login")
                         .userInfoEndpoint(userInfo -> userInfo.userService(oAuth2UserService))
                         .successHandler(oAuth2SuccessHandler)
-                        .defaultSuccessUrl("/", true)
+                        //.defaultSuccessUrl("/", true)
                         .failureUrl("/accessDenied") // 추가 권장
                 )
 
