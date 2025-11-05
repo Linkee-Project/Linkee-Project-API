@@ -1,9 +1,9 @@
 package com.linkee.linkeeapi.qna.command.application.service;
 
-import com.linkee.linkeeapi.chat_member.command.domain.aggregate.entity.ChatMember;
-import com.linkee.linkeeapi.chat_member.command.infrastructure.repository.ChatMemberRepository;
-import com.linkee.linkeeapi.chat_room.command.domain.aggregate.ChatRoom;
-import com.linkee.linkeeapi.chat_room.command.infrastructure.repository.JpaChatRoomRepository;
+import com.linkee.linkeeapi.chat.command.domain.entity.ChatMember;
+import com.linkee.linkeeapi.chat.command.domain.repository.ChatMemberRepository;
+import com.linkee.linkeeapi.chat.command.domain.entity.ChatRoom;
+import com.linkee.linkeeapi.chat.command.domain.repository.JpaChatRoomRepository;
 import com.linkee.linkeeapi.qna.command.application.dto.request.CreateQnaRequestDto;
 import com.linkee.linkeeapi.qna.command.domain.aggregate.Qna;
 import com.linkee.linkeeapi.qna.command.infrastructure.repository.JpaQnaRepository;
