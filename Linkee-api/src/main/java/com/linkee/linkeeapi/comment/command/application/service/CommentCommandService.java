@@ -12,6 +12,8 @@ import com.linkee.linkeeapi.comment.command.application.dto.response.UpdateComme
 import com.linkee.linkeeapi.comment.command.domain.aggregate.Comment;
 import com.linkee.linkeeapi.comment.command.infrastructure.repository.JpaCommentRepository;
 import com.linkee.linkeeapi.common.enums.Status;
+import com.linkee.linkeeapi.common.exception.BusinessException;
+import com.linkee.linkeeapi.common.exception.ErrorCode;
 import com.linkee.linkeeapi.question.command.domain.aggregate.Question;
 import com.linkee.linkeeapi.question.command.infrastructure.repository.JpaQuestionRepository;
 import com.linkee.linkeeapi.user.command.application.service.util.UserFinder;
@@ -35,7 +37,6 @@ public class CommentCommandService {
 
     private final AlarmBoxCommandService alarmBoxCommandService;
     private final AlarmTemplateQueryService alarmTemplateQueryService;
-    private final ObjectMapper objectMapper;
 
     //댓글 등록
     public CreateCommentResponseDto createComment(Long questionId, Long userId, CreateCommentRequestDto req) {
@@ -55,7 +56,7 @@ public class CommentCommandService {
         }
 
         // 알림 로직
-        Long templateId;
+        long templateId;
         if (saved.getParent() == null) {
             // 새 루트 댓글은 5번 템플릿
             templateId = 5L;
@@ -63,8 +64,23 @@ public class CommentCommandService {
             // 대댓글은 6번 템플릿
             templateId = 6L;
         }
-        ResponseEntity<AlarmTemplateResponse> responseEntity = alarmTemplateQueryService.selectAlarmTemplateByAlarmTemplateId(templateId);
-        String alarmContent = responseEntity.getBody().templateContent();
+        String alarmContent;
+
+        try {
+            ResponseEntity<AlarmTemplateResponse> responseEntity =
+                    alarmTemplateQueryService.selectAlarmTemplateByAlarmTemplateId(templateId);
+
+            AlarmTemplateResponse templateResponse = responseEntity.getBody();
+
+            if (templateResponse == null || templateResponse.templateContent() == null) {
+                throw new BusinessException(ErrorCode.INVALID_REQUEST);
+            }
+
+            alarmContent = templateResponse.templateContent();
+
+        } catch (Exception e) {
+            throw new BusinessException(ErrorCode.INVALID_REQUEST);
+        }
 
         Set<Long> recipients = new HashSet<>();
 
