@@ -1,20 +1,23 @@
 package com.linkee.linkeeapi.auth.controller;
 
 import com.linkee.linkeeapi.auth.authService.UserAuthService;
+import com.linkee.linkeeapi.auth.mail.EmailRequest;
 import com.linkee.linkeeapi.auth.mail.EmailService;
-import com.linkee.linkeeapi.common.jwt.JwtTokenProvider;
+import com.linkee.linkeeapi.auth.mail.EmailVerifyRequest;
+import com.linkee.linkeeapi.common.exception.BusinessException;
+import com.linkee.linkeeapi.common.exception.ErrorCode;
+import com.linkee.linkeeapi.common.security.jwt.JwtTokenProvider;
 import com.linkee.linkeeapi.common.security.service.RedisRefreshTokenService;
 import com.linkee.linkeeapi.user.command.application.dto.request.UserCreateRequest;
 import com.linkee.linkeeapi.user.command.domain.entity.User;
 import com.linkee.linkeeapi.user.command.infrastructure.repository.UserRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequiredArgsConstructor
@@ -38,7 +41,7 @@ public class AuthController {
             throw new IllegalArgumentException("이미 가입된 이메일입니다.");
         }
 
-        if (!emailService.verifyCode(request.getUserEmail(), request.getInputCode())) {
+        if (!emailService.verifyCode(request.getUserEmail(), request.getUserEmail())) {
             throw new IllegalArgumentException("이메일 인증이 필요합니다.");
         }
 
@@ -73,6 +76,39 @@ public class AuthController {
                 "refreshToken", refreshToken
         ));
     }
+
+
+    // 비밀번호 변경을 위한 이메일 인증코드전송
+    @PostMapping("/password/reset/request")
+    public ResponseEntity<String> requestPasswordReset(@RequestBody EmailRequest emailRequest) {
+
+        userRepository.findByUserEmail(emailRequest.getEmail())
+                .orElseThrow( ()-> new IllegalArgumentException("유저 정보가 없습니다"));
+
+        emailService.sendAuthEmail(emailRequest.getEmail());
+
+        return ResponseEntity.ok("인증 코드가 발송되었습니다.");
+    }
+
+    // 인증 코드검증
+    @PostMapping("/password/reset/verify")
+    public String verifyAuth(@RequestBody @Valid EmailVerifyRequest req) {
+        boolean result = emailService.verifyCode(req.getEmail(), req.getCode());
+        return result ? "인증 성공!" : "인증 실패 또는 만료됨";
+    }
+
+    // 새로운 비밀번호로 변경
+    @PostMapping("/password/reset")
+    public ResponseEntity<String> resetPassword(@RequestParam String email,
+                                                @RequestParam String newPassword) {
+
+        userAuthService.resetToTemporaryPassword(email,newPassword);
+
+        return ResponseEntity.ok("비밀번호가 변경되었습니다.");
+    }
+
+
+
 
 
     @DeleteMapping("/logout")

@@ -33,9 +33,8 @@ public class UserQueryController {
     @GetMapping("/me")
     public ResponseEntity<UserMeResponse> getUserMe(@AuthenticationPrincipal UserDetails userDetails) {
         String userEmail = userDetails.getUsername();
-        UserMeResponse response = userQueryService.getUserMe(userEmail);
 
-        System.out.println("컨트롤러에서 호출:" + userDetails.getUsername() + userDetails.getAuthorities());
+        UserMeResponse response = userQueryService.getUserMe(userEmail);
 
         return ResponseEntity.ok(response);
     }

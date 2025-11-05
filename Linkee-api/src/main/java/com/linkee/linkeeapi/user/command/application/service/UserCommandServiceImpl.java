@@ -1,7 +1,9 @@
 package com.linkee.linkeeapi.user.command.application.service;
 
+import com.linkee.linkeeapi.common.enums.Status;
+import com.linkee.linkeeapi.common.exception.BusinessException;
+import com.linkee.linkeeapi.common.exception.ErrorCode;
 import com.linkee.linkeeapi.relation.command.infrastructure.repository.RelationRepository;
-import com.linkee.linkeeapi.user.command.application.dto.request.UpdateUserNickNameRequest;
 import com.linkee.linkeeapi.user.command.domain.entity.User;
 import com.linkee.linkeeapi.user.command.infrastructure.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,11 +20,15 @@ public class UserCommandServiceImpl implements UserCommandService{
 
     @Transactional
     @Override
-    public void updateNickname(UpdateUserNickNameRequest request) {
-        User user = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+    public void updateNickname(Long userId ,String newNickName) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_USER_ID));
 
-        user.modifyUserNickName(request.getNickName());
+        if(user.getUserStatus() == Status.N){
+            throw new BusinessException(ErrorCode.INVALID_USER_ID,"탈퇴한 회원입니다.");
+        }
+
+        user.modifyUserNickName(newNickName);
     }
 
 
@@ -30,7 +36,7 @@ public class UserCommandServiceImpl implements UserCommandService{
     @Override
     public void deleteUser(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_USER_ID));
 
         user.deactivateUser();
 

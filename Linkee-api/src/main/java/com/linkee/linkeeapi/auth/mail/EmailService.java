@@ -1,6 +1,8 @@
 package com.linkee.linkeeapi.auth.mail;
 
 
+import com.linkee.linkeeapi.common.exception.BusinessException;
+import com.linkee.linkeeapi.common.exception.ErrorCode;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -21,6 +23,9 @@ public class EmailService {
     // application.yml에서 TTL 값 가져오기
     @Value("${auth.code.expiration-millis}")
     private long authCodeTTL;
+    // 메일 from 유저 가져오기
+    @Value("${spring.mail.username}")
+    private String mailUsername;
 
     public EmailService(JavaMailSender mailSender, StringRedisTemplate redisTemplate) {
         this.mailSender = mailSender;
@@ -37,11 +42,11 @@ public class EmailService {
         return sb.toString();
     }
 
-    // 인증번호 발송
+    // 로그인 인증번호 발송
     public void sendAuthEmail(String email) {
 
         if(email == null || email.isBlank()) {
-            throw new IllegalArgumentException("이메일 주소를 입력해주세요.");
+            throw new BusinessException(ErrorCode.INVALID_INCORRECT_FORMAT,"잘못된 이메일 주소입니다.");
         }
 
 
@@ -52,8 +57,8 @@ public class EmailService {
 
         // 메일 발송
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setTo(email);
-        message.setFrom(System.getenv("MAIL_USERNAME")); // 환경변수 기반
+        message.setTo(email.trim());
+        message.setFrom(mailUsername);  // 환경변수 기반
         message.setSubject("(Linkee) 이메일 인증번호 안내");
         message.setText("인증번호: [" + code +"]");
         String text = String.join("\n",
@@ -70,7 +75,7 @@ public class EmailService {
         mailSender.send(message);
     }
 
-    // 인증번호 검증
+    // 로그인 인증번호 검증
     public boolean verifyCode(String email, String code) {
         String key = "EMAIL_AUTH:" + email;
         String savedCode = redisTemplate.opsForValue().get(key);
@@ -81,4 +86,7 @@ public class EmailService {
         }
         return false;
     }
+
+
+
 }

@@ -5,7 +5,7 @@ import com.linkee.linkeeapi.user.command.application.dto.request.UserCreateReque
 
 public interface UserCommandService {
 
-    void updateNickname(UpdateUserNickNameRequest request);
+    void updateNickname(Long userId ,String newNickName);
 
     void deleteUser(Long userId);
 }
