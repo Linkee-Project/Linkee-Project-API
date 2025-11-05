@@ -1,6 +1,5 @@
 package com.linkee.linkeeapi.comment.command.application.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.linkee.linkeeapi.alarm_box.command.application.dto.request.AlarmBoxCreateRequest;
 import com.linkee.linkeeapi.alarm_box.command.application.service.AlarmBoxCommandService;
 import com.linkee.linkeeapi.alarm_template.query.dto.response.AlarmTemplateResponse;
