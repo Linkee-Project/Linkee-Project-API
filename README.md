@@ -8,203 +8,114 @@
 
 ![ChatGPT Image 2025년 10월 15일 오후 05_09_11 (1).png](attachment:900020d4-66c2-41cd-82b0-e2616056e7f3:ChatGPT_Image_2025년_10월_15일_오후_05_09_11_(1).png)
 
-<aside>
 
-> 함께 퀴즈로 배우고, 토론으로 성장하는 실시간 CS 지식 퀴즈 플랫폼
-> 
+
+---
+## 목차 (Table of Contents)
+
+1. [👩‍👧‍👦 1. 멤버 소개](#-1-멤버-소개)
+
+
+## 📂 프로젝트 파일 구조
+
+```
+charly-market/
+│
+├── .github/
+│   └── ISSUE_TEMPLATE/         # 이슈 템플릿 관련 파일들
+│
+├── Docs/                       # 문서 및 기획 관련 내용
+│
+├── Integration Test/           # 통합 테스트 관련 코드
+│
+├── db/                         # 데이터베이스 관련 파일들
+│  └── domain                   # 도메인별 테스트 코드
+|  └── init                     # 데이터베이스 생성 코드 및 더미 데이터
+|
+├── flowchart/                  # 플로우차트 이미지 또는 문서
+│
+├── README.md                   # 현재 README 파일
+│
+└── 찰리 프로젝트 기획서.md     # 프로젝트 기획서 한국어 문서
+```
 
 ---
 
-## 🎯 **프로젝트 개요**
+## 👩‍👧‍👦 1. 멤버 소개
 
-사용자가 **실시간 퀴즈방을 생성하고**,
 
-참여자들과 **대화하며 문제를 풀어가는 CS 지식 학습 플랫폼**입니다.
+<div align="center">
 
-사용자들은 운영 측에서 제공하는 **일반 퀴즈방**이나
+| 유한세 | 김상재 | 김 진 |
+|--------|--------|--------|
+|<img width="150" height="150" alt="image (15)" src="https://github.com/user-attachments/assets/2c38376b-4b67-43fc-ba88-4fbf2c5d49e3" />| <img width="150" height="150" alt="image (16)" src="https://github.com/user-attachments/assets/0fc0dbfc-5954-4056-9fad-46b75c9224c8" /> | <img width="150" height="150" alt="IMG_7128" src="https://github.com/user-attachments/assets/2aef33c7-7883-4932-af31-dac933230542" />|
 
-직접 문제를 내는 **자율 퀴즈방**을 통해,
+| 김명진 | 정동욱 |
+|--------|--------|
+|<img width="150" height="150" alt="image (17)" src="https://github.com/user-attachments/assets/bfe7f4bf-1f85-4cad-9354-525063a424de" /> | <img width="150" height="150" alt="KakaoTalk_20251105_144003874" src="https://github.com/user-attachments/assets/4e307545-a820-4551-9773-094f203fc07a" />|
 
-자연스럽게 **지식을 공유하고 경쟁하며 학습하는 경험**을 제공합니다.
+
+</div>
+
+
+
+## ⚒️ 2. 서비스 소개
+   
+---
+
+## 🚀 3. 기술 스택
+
+  🚀  Stacks   
+<img src="https://img.shields.io/badge/MariaDB-003545?style=for-the-badge&logo=mariadb&logoColor=white"/>
+<img src="https://img.shields.io/badge/docker-2496ED?style=for-the-badge&logo=docker&logoColor=white"/>
+
+ ⚒️  Tools    
+<img src="https://img.shields.io/badge/HeidiSQL-b0fb0c?style=for-the-badge&logoColor=white"/>
+<img src="https://img.shields.io/badge/ERDCLOUDE-72099f?style=for-the-badge&logoColor=white"/>
+<img src="https://img.shields.io/badge/canva-00C4CC?style=for-the-badge&logo=canva&logoColor=white"/>
+<img src="https://img.shields.io/badge/dbeaver-382923?style=for-the-badge&logo=dbeaver&logoColor=white"/>
+
+👥  Collaboration      
+<img src="https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white"/>
+<img src="https://img.shields.io/badge/discord-5865F2?style=for-the-badge&logo=discord&logoColor=white"/>
+<img src="https://img.shields.io/badge/notion-000000?style=for-the-badge&logo=notion&logoColor=white"/>
+---
+
+## 🗂️ 4. 프로젝트 산출물
+
+- ### 🕖 WBS **(Work Breakdown Structure)**
+  WBS를 자세히 보려면 [여기](https://www.notion.so/25b36d2af8f580fab019e6d2211cd7a5?v=25b36d2af8f5802b830b000cb9f5aefe&source=copy_link)를 클릭하세요요
+
+
+
+- ### 📚 요구사항 명세서
+
+  요구사항 명세서를 자세히 보려면 [여기](https://docs.google.com/spreadsheets/d/1gjJ8mYfv-hq05CkPhD09bkD4a0_2K8PejZSjfwREuMI/edit?gid=1507918672#gid=1507918672)를 클릭하세요
+  
+  
+- ### 🖼️ UML **(Unified Modeling Language)**
+
+  UML을 자세히 보려면 [여기](https://www.canva.com/design/DAGw914rlWc/A6U_UKm-gqUP5vZRQ2hHxA/edit)를 클릭하세요
+
+
+
+- ### 🗺️ ERD **(Entity Relationship Diagram)**
+
+  ERD를 자세히 보려면 [여기](https://www.erdcloud.com/d/cTij9aNCYr9CxJZnf)를 클릭하세요
+
+  
+- ### 🗞️ 테스트 케이스 작성 및 테스트
+  테스트 코드를 자세히 보려면 db > domain 을 확인해주세요
+  
+- ### 🔁 통합테스트 시나리오 및 코드
+  통합테스트 시나리오를 자세히 보려면 [여기](https://www.notion.so/26136d2af8f5802e914afbc54cf37e47?source=copy_link)를 클릭하세요  
+  
+---
+## ⚠️ 5. Trouble Shooting
+
+
 
 ---
 
-## 💡 **기획 의도**
+# 🍺 6. 프로젝트 회고록
 
-혼자 공부하면 쉽게 한계에 부딪히지만,
-
-다른 사람과 함께 문제를 풀고 토론하면 지식이 빠르게 확장됩니다.
-
-**Linkee** 는 이러한 학습 경험을 온라인으로 옮겨와
-
-CS 전공자와 개발자들이 함께 배우고 성장하는
-
-**지식 커뮤니티 기반 퀴즈 플랫폼**을 만드는 것을 목표로 합니다.
-
----
-
-## 🧩 **주요 기능 정리**
-
-### 1️⃣ 회원 / 사용자 관리
-
-- 이메일 및 SNS 연동 회원가입 지원
-- 프로필 설정: 닉네임, 전공/관심 분야, 프로필 이미지
-- 회원 정보 수정, 비밀번호 변경, 탈퇴 기능
-- 친구 추가 및 차단 기능
-- 프로필을 통한 사용자 신고 기능
-
----
-
-### 2️⃣ 퀴즈방 생성 및 참여 🎮
-
-- **일반 퀴즈방**:
-    - 운영 측에서 검증한 문제 데이터 중 랜덤 출제
-    - 참가자들이 채팅으로 자유롭게 답변
-    - 정답이 나오면 자동 채점 및 점수 반영
-- **자율 퀴즈방**:
-    - 사용자가 직접 문제와 정답을 등록
-    - 참여자들이 자유롭게 답변 시도
-    - 정답 시 자동 처리 및 다음 출제자에게 순서 이동
-- **퀴즈방 기능 공통사항**
-    - 퀴즈방 생성 / 수정 / 삭제 / 참여 / 초대 / 나가기
-    - 참가자 실시간 점수판 및 랭킹 표시
-    - 퀴즈 진행 로그 저장
-
----
-
-### 3️⃣ 커뮤니케이션 💬
-
-- **1:1 채팅**
-    - 친구 목록에서 선택하여 개인 대화 가능
-    - 실시간 메시지 송수신
-    - 메시지 읽음/안읽음 상태 표시
-    - 대화 내 이미지, 코드 스니펫, 링크 공유
-- **전체 채팅**
-    - 전체 유저가 참여 가능한 공개 채팅방 제공
-    - 접속자 실시간 표시 (온라인 / 오프라인 구분)
-    - 채팅 내 퀴즈 관련 대화 및 이벤트 공유
-- **알림 기능**
-    - 친구 요청, 채팅 메시지, 퀴즈 초대, 정답 알림 등 실시간 푸시 알림
-    - 미확인 알림이 있을 경우 헤더 아이콘에 뱃지 표시
-    - 알림 읽음 처리 및 알림 로그 확인 가능
-- **신고 기능**
-    - 사용자 프로필 또는 채팅 내에서 신고 가능
-    - 신고 사유(부적절 발언, 스팸 등) 선택
-    - 운영자 페이지에서 신고 내역 조회 및 조치(경고, 제한, 정지 등)
-
----
-
-## 4️⃣ 문제 게시판 / 커뮤니티 📚
-
-- **문제 게시판**
-    - 모든 사용자가 CS 관련 문제 등록 가능
-    - 문제 유형(네트워크, OS, DB 등) 선택 가능
-    - 댓글 및 토론 기능 지원
-    - 운영 측이 검증 후 채택된 문제는 공식 DB로 추가
-- **공지사항 게시판**
-    - 운영자 전용 공지사항 등록 (점검, 업데이트, 이벤트 등)
-- **문의 게시판**
-    - 사용자가 문의 작성 → 운영자가 답변 등록
-    - 답변 완료 시 사용자 알림 발송
-
----
-
-### 5️⃣ 랭킹 및 피드 🏆
-
-- **사용자 랭킹**
-    - 정답률, 점수, 채택된 문제 수 기반으로 순위 계산
-    - 일간 / 주간 / 전체 랭킹 제공
-- **메인 피드**
-    - 채택된 문제 수가 많은 사용자 TOP 랭킹 표시
-    - 최근 활동(문제 제출, 정답, 채택 등) 피드로 노출
-
----
-
-### 6️⃣ 관리자(Admin) 기능 ⚙️
-
-- 사용자 관리: 계정 활성화 / 비활성화 / 신고 처리
-- 문제 관리: 검수, 승인 / 반려 / 삭제
-- 퀴즈방 모니터링 및 로그 조회
-- 공지사항 등록 및 알림 관리
-
----
-
-### 7️⃣ 알림 및 로그 🔔
-
-- 실시간 푸시 알림(메시지, 친구, 퀴즈, 문의 등)
-- 사용자별 알림 로그 조회 및 읽음처리
-- 사용자 활동 로그(퀴즈 참여, 점수, 문제 등록 등) 저장
-
-## 🚀 **핵심 차별점**
-
-| 기존 퀴즈 플랫폼 | Linkee |
-| --- | --- |
-| 단순 객관식 문제풀이 | 실시간 채팅 기반 토론형 퀴즈 |
-| 시스템 문제만 제공 | 사용자 생성형 문제 데이터 |
-| 개인 플레이 중심 | 실시간 멀티 유저 경쟁 |
-| 비소셜형 구조 | 친구, 1:1 채팅, 알림 통합 |
-| 일방향 채점 | 실시간 정답 감지 + 점수 갱신 |
-| 단순 기록 | 활동 로그 + 피드 + 랭킹 시스템 |
-
-**Linkee** 는 “CS 학습”을 게임처럼 즐길 수 있는 플랫폼입니다.
-
-실시간 채팅을 통해 문제를 풀고, 토론하며 배우고,
-
-나만의 문제를 만들어 다른 사람을 성장시킬 수 있는
-
-**참여형 학습 커뮤니티**를 지향합니다.
-
-</aside>
-
----
-
-## 🚀  Stacks
-
-<aside>
-<img src="attachment:1dc9333e-bc3a-488d-968e-8ddf8e9e8352:image.png" alt="attachment:1dc9333e-bc3a-488d-968e-8ddf8e9e8352:image.png" width="40px" /> MariaDB
-
-</aside>
-
-<aside>
-<img src="attachment:75690f65-9e58-4eb5-98bd-a4707dfb25ad:image.png" alt="attachment:75690f65-9e58-4eb5-98bd-a4707dfb25ad:image.png" width="40px" /> Doker
-
-</aside>
-
-## 🛠  Tools
-
-<aside>
-<img src="attachment:3279f081-caf8-48f0-9292-b30a06a749a2:image.png" alt="attachment:3279f081-caf8-48f0-9292-b30a06a749a2:image.png" width="40px" /> ERD cloude
-
-</aside>
-
-<aside>
-<img src="attachment:b3b97c59-a557-4fb4-9811-2e399d0f0ed9:image.png" alt="attachment:b3b97c59-a557-4fb4-9811-2e399d0f0ed9:image.png" width="40px" /> CANVA
-
-</aside>
-
-<aside>
-<img src="attachment:1fa8049f-d4ff-4954-ab74-ef2623626896:image.png" alt="attachment:1fa8049f-d4ff-4954-ab74-ef2623626896:image.png" width="40px" /> DBeaver
-
-</aside>
-
-<aside>
-<img src="attachment:9c1266db-a826-4463-88ad-357c23b3a2ed:image.png" alt="attachment:9c1266db-a826-4463-88ad-357c23b3a2ed:image.png" width="40px" /> heidisql
-
-</aside>
-
-## 👥  Collaboration
-
-<aside>
-<img src="https://cdn-icons-png.flaticon.com/512/25/25231.png" alt="https://cdn-icons-png.flaticon.com/512/25/25231.png" width="40px" /> **GitHub**
-
-</aside>
-
-<aside>
-<img src="https://cdn.icon-icons.com/icons2/2389/PNG/512/notion_logo_icon_145025.png" alt="https://cdn.icon-icons.com/icons2/2389/PNG/512/notion_logo_icon_145025.png" width="40px" /> **Notion**
-
-</aside>
-
-<aside>
-<img src="https://cdn-icons-png.flaticon.com/512/5968/5968756.png" alt="https://cdn-icons-png.flaticon.com/512/5968/5968756.png" width="40px" /> **Discord**
-
-</aside>
