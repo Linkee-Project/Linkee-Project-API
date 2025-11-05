@@ -1,4 +1,4 @@
-package com.linkee.linkeeapi.comment.command.application.application;
+package com.linkee.linkeeapi.comment.command.application.controller;
 
 import com.linkee.linkeeapi.comment.command.application.dto.request.CreateCommentRequestDto;
 import com.linkee.linkeeapi.comment.command.application.dto.request.UpdateCommentRequestDto;
