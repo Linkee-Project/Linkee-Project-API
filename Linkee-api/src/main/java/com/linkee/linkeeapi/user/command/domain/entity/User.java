@@ -36,7 +36,7 @@ public class User extends BaseTimeEntity {
 
     //네이버 로그인 id를 받아오기 위한 칼럼 추가
     @Column(name = "user_login_id", nullable = false, length = 50)
-    private String userLoginId;
+    private String userLoginId = "";
 
 
     @Enumerated(EnumType.STRING)
@@ -50,13 +50,27 @@ public class User extends BaseTimeEntity {
     private Role userRole = Role.USER;
 
 
-    public User(String userLoginId, String userEmail, String userNickname, Role userRole) {
-        this.userLoginId = userLoginId;
-        this.userEmail = userEmail;
-        this.userNickname = userNickname;
-        this.userPassword = ""; // 소셜 로그인은 비밀번호 X → 빈 문자열 저장
-        this.userRole = userRole;
-        this.userStatus = Status.Y; // 활성 상태 기본값
+    // 일반 회원가입용
+    public static User createNormalUser(String email, String password, String nickname) {
+        return User.builder()
+                .userEmail(email)
+                .userPassword(password)
+                .userNickname(nickname)
+                .userRole(Role.USER)
+                .userStatus(Status.Y)
+                .build();
+    }
+
+    // 소셜 로그인용
+    public static User createSocialUser(String loginId, String email, String nickname, Role userRole) {
+        return User.builder()
+                .userLoginId(loginId)
+                .userEmail(email)
+                .userNickname(nickname)
+                .userPassword("")  // 소셜 로그인은 비밀번호 없음
+                .userRole(userRole)
+                .userStatus(Status.Y)
+                .build();
     }
 
 
