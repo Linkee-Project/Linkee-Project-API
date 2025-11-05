@@ -41,7 +41,7 @@ public class AuthController {
             throw new IllegalArgumentException("이미 가입된 이메일입니다.");
         }
 
-        if (!emailService.verifyCode(request.getUserEmail(), request.getInputCode())) {
+        if (!emailService.verifyCode(request.getUserEmail(), request.getUserEmail())) {
             throw new IllegalArgumentException("이메일 인증이 필요합니다.");
         }
 
