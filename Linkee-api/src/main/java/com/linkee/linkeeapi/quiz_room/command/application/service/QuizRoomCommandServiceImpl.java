@@ -15,7 +15,6 @@ import com.linkee.linkeeapi.room_member.command.domain.aggregate.RoomMember;
 import com.linkee.linkeeapi.room_member.command.infrastructure.repository.RoomMemberRepository;
 import com.linkee.linkeeapi.user.command.application.service.util.UserFinder;
 import com.linkee.linkeeapi.user.command.domain.entity.User;
-import com.linkee.linkeeapi.user.command.infrastructure.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
