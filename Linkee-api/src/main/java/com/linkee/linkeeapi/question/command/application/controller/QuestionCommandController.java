@@ -25,7 +25,7 @@ public class QuestionCommandController {
     }
 
     //문제 수정
-    @PutMapping("/{questionId}")
+    @PatchMapping("/{questionId}")
     public ResponseEntity<String> update(@PathVariable Long questionId,
                                          @Valid @RequestBody UpdateQuestionRequestDto request) {
 

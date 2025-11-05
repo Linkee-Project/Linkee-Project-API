@@ -1,6 +1,8 @@
 package com.linkee.linkeeapi.auth.mail;
 
 
+import com.linkee.linkeeapi.common.exception.BusinessException;
+import com.linkee.linkeeapi.common.exception.ErrorCode;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -44,7 +46,7 @@ public class EmailService {
     public void sendAuthEmail(String email) {
 
         if(email == null || email.isBlank()) {
-            throw new IllegalArgumentException("이메일 주소를 입력해주세요.");
+            throw new BusinessException(ErrorCode.INVALID_INCORRECT_FORMAT,"잘못된 이메일 주소입니다.");
         }
 
 

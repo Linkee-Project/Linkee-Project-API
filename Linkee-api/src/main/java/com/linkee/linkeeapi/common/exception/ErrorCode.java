@@ -14,8 +14,9 @@ public enum ErrorCode {
     //1000번대는 공통 오류 처리 (가져다 쓰세요!)
     UNAUTHORIZED_ACCESS("1000", "관리자만 접근 가능합니다", HttpStatus.UNAUTHORIZED),
     INVALID_REQUEST("1001", "잘못된 요청입니다.", HttpStatus.BAD_REQUEST),
-    INVALID_USER_ID("1002", "해당 사용자가  없습니다", HttpStatus.BAD_REQUEST),
+    INVALID_USER_ID("1002", "해당 사용자가 없습니다", HttpStatus.BAD_REQUEST),
     INVALID_ADMIN_ID("1003", "잘못된 관리자 ID입니다.", HttpStatus.BAD_REQUEST),
+    INVALID_INCORRECT_FORMAT("1004","잘못된 형식입니다.", HttpStatus.BAD_REQUEST),
 
     //공지사항 관련 오류(2000번대 사용)
     NOTICE_NOT_FOUND("2000", "해당 공지사항이 없습니다", HttpStatus.NOT_FOUND),
@@ -32,9 +33,22 @@ public enum ErrorCode {
     REPORT_NOT_FOUND("4000", "해당 신고를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     REPORT_NO_ACCESS("4001", "조회 권한이 없거나 존재하지 않는 신고입니다.", HttpStatus.FORBIDDEN),
 
+    //문제 관련 오류(5000번대 사용)
+    QUESTION_NOT_FOUND("5000","해당 문제를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    QUESTION_UPDATE_NOT_ALLOWED("5001", "검증된 문제는 수정할 수 없습니다.", HttpStatus.CONFLICT),
+    QUESTION_DELETE_NOT_ALLOWED("5002", "검증된 문제는 삭제할 수 없습니다.", HttpStatus.CONFLICT),
+    FORBIDDEN_QUESTION_ACCESS("5003", "문제에 대한 권한이 없습니다.", HttpStatus.FORBIDDEN),
+    INVALID_ANSWER_INDEX("5004", "정답 인덱스가 옵션과 일치하지 않습니다.", HttpStatus.BAD_REQUEST),
+
+    //카데고리 관려 오류(6000번대 사용)
+    CATEGORY_NOT_FOUND("6000","해당 카테고리를 찾을 수 없습니다.",HttpStatus.NOT_FOUND),
+
     //관계 관련 오류(7000번대 사용)
     RELATION_ALREADY_EXISTS("7000", "이미 친구 관계입니다.", HttpStatus.CONFLICT),
-    RELATION_REQUEST_ALREADY_EXISTS("7001", "이미 친구 요청을 보냈습니다.", HttpStatus.CONFLICT);
+    RELATION_REQUEST_ALREADY_EXISTS("7001", "이미 친구 요청을 보냈습니다.", HttpStatus.CONFLICT),
+
+    //북마크
+    BOOKMARK_ALREADY_EXISTS("8000","이미 북마크한 문제 입니다.", HttpStatus.CONFLICT);
 
     private final String code;
     private final String message;
