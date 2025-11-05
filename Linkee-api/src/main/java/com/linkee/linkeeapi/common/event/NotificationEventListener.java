@@ -5,6 +5,7 @@ import com.linkee.linkeeapi.alarm_box.command.application.service.AlarmBoxComman
 import com.linkee.linkeeapi.alarm_template.query.dto.response.AlarmTemplateResponse;
 import com.linkee.linkeeapi.alarm_template.query.mapper.AlarmTemplateMapper;
 import com.linkee.linkeeapi.common.sse.service.SseService;
+import com.linkee.linkeeapi.inquiry.command.domain.aggregate.Inquiry;
 import com.linkee.linkeeapi.user.command.domain.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
@@ -17,6 +18,7 @@ public class NotificationEventListener {
     private final AlarmTemplateMapper alarmTemplateMapper;
     private final SseService sseService;
 
+    // 1. 친구 요청 알림
     @EventListener
     public void handleFriendRequestEvent(FriendRequestEvent event) {
         User requester = event.getRequester();
@@ -32,8 +34,25 @@ public class NotificationEventListener {
         alarmBoxCommandService.createAlarmBox(alarmBoxCreateRequest);
 
         sseService.send(receiver.getUserId(), "newNotification", alarmContent);
+
     }
 
+    // 3. 문의 답변 등록 알림
+    @EventListener
+    public void handleInquiryAnsweredEvent(InquiryAnsweredEvent event) {
+        Inquiry inquiry = event.getInquiry();
+        User inquirer = inquiry.getUser(); // 문의를 작성한 사용자
 
+        AlarmTemplateResponse alarmTemplate = alarmTemplateMapper.selectAlarmTemplateById(3L);
+        String alarmContent = alarmTemplate.templateContent();
+
+        AlarmBoxCreateRequest alarmBoxCreateRequest = AlarmBoxCreateRequest.builder()
+                .alarmBoxContent(alarmContent)
+                .userId(inquirer.getUserId())
+                .build();
+        alarmBoxCommandService.createAlarmBox(alarmBoxCreateRequest);
+
+        sseService.send(inquirer.getUserId(), "inquiryAnswered", alarmContent);
+    }
 
 }

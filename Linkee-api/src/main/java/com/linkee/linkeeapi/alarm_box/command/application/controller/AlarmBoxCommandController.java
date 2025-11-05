@@ -2,8 +2,10 @@ package com.linkee.linkeeapi.alarm_box.command.application.controller;
 
 import com.linkee.linkeeapi.alarm_box.command.application.dto.request.AlarmBoxCreateRequest;
 import com.linkee.linkeeapi.alarm_box.command.application.service.AlarmBoxCommandService;
+import com.linkee.linkeeapi.common.security.model.CustomUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -33,4 +35,12 @@ public class AlarmBoxCommandController {
         return ResponseEntity.ok("삭제 성공");
     }
 
+    @PatchMapping("/check-all")
+    public ResponseEntity<String> checkAllAlarms(@AuthenticationPrincipal CustomUser customUser) {
+        Long userId = customUser.getUserId();
+
+        service.checkAllAlarms(userId); // userId를 서비스에 전달
+
+        return ResponseEntity.ok("모든 알림을 확인했습니다.");
+    }
 }
