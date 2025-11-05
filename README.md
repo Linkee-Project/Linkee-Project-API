@@ -6,7 +6,7 @@
 
 🌟 **프로젝트명: Linkee (링키)**
 
-![ChatGPT Image 2025년 10월 15일 오후 05_09_11 (1).png](attachment:900020d4-66c2-41cd-82b0-e2616056e7f3:ChatGPT_Image_2025년_10월_15일_오후_05_09_11_(1).png)
+<img width="600" height="600" alt="ChatGPT Image 2025년 10월 15일 오후 05_09_11 (1) (1)" src="https://github.com/user-attachments/assets/ab453c50-5f3a-4732-baf8-25057305de24" />
 
 
 
