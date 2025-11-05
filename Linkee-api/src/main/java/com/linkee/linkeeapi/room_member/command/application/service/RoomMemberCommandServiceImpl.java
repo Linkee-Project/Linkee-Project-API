@@ -1,6 +1,9 @@
 package com.linkee.linkeeapi.room_member.command.application.service;
 
+import com.linkee.linkeeapi.common.enums.RoomStatus;
 import com.linkee.linkeeapi.common.enums.Status;
+import com.linkee.linkeeapi.common.exception.BusinessException;
+import com.linkee.linkeeapi.common.exception.ErrorCode;
 import com.linkee.linkeeapi.quiz_room.command.domain.aggregate.QuizRoom;
 import com.linkee.linkeeapi.quiz_room.command.infrastructure.repository.QuizRoomRepository;
 import com.linkee.linkeeapi.room_member.command.application.dto.request.RoomMemberCreateRequest;
@@ -15,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
-/**
+/*
  * RoomMemberCommandService 인터페이스의 구현체.
  * 룸 멤버 관련 비즈니스 로직을 실제로 처리합니다.
  */
@@ -36,10 +39,24 @@ public class RoomMemberCommandServiceImpl implements RoomMemberCommandService {
      */
     @Override
     public RoomMemberCreateResponse createRoomMember(RoomMemberCreateRequest request) {
+        //  1. 유저와 퀴즈방 조회
         User user = userRepository.findById(request.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_USER_ID));
         QuizRoom quizRoom = quizRoomRepository.findById(request.getQuizRoomId())
-                .orElseThrow(() -> new IllegalArgumentException("QuizRoom not found"));
+                .orElseThrow(() ->  new BusinessException(ErrorCode.QUIZ_ROOM_NOT_FOUND));
+
+        //  대기중인 방인지 확인
+        if (quizRoom.getRoomStatus() != RoomStatus.W) {
+            throw new BusinessException(ErrorCode.QUIZ_ROOM_NOT_IN_WAITING_STATE);
+        }
+        //  방이 가득 찼는지 확인
+        if (quizRoom.getJoinedCount() >= quizRoom.getRoomCapacity()) {
+            throw new BusinessException(ErrorCode.QUIZ_ROOM_FULL);
+        }
+        //  이미 참여한 유저인지 확인(중복 방지)
+        if (roomMemberRepository.existsByQuizRoomAndMember(quizRoom, user)) {
+            throw new BusinessException(ErrorCode.USER_ALREADY_IN_ROOM);
+        }
 
         RoomMember roomMember = RoomMember.builder()
                 .member(user)
@@ -49,6 +66,10 @@ public class RoomMemberCommandServiceImpl implements RoomMemberCommandService {
                 .build();
 
         roomMemberRepository.save(roomMember);
+
+        //  퀴즈방의 현재 인원 수 1 증가
+        quizRoom.setJoinedCount(quizRoom.getJoinedCount() + 1);
+        quizRoomRepository.save(quizRoom);
 
         return RoomMemberCreateResponse.builder()
                 .quizRoomId(quizRoom.getQuizRoomId())
