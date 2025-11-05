@@ -3,11 +3,11 @@ package com.linkee.linkeeapi.chat.command.application.service.command_service;
 import com.linkee.linkeeapi.chat.command.domain.dto.command_dto.request.ChatMemberCreateRequest;
 import com.linkee.linkeeapi.chat.command.domain.dto.command_dto.response.ChatMemberCreateResponse;
 import com.linkee.linkeeapi.chat.command.domain.dto.command_dto.response.ChatMemberDeleteResponse;
-import com.linkee.linkeeapi.chat.command.domain.entity.ChatMember;
-import com.linkee.linkeeapi.chat.command.domain.repository.ChatMemberRepository;
-import com.linkee.linkeeapi.chat.command.domain.entity.ChatRoom;
-import com.linkee.linkeeapi.chat.command.domain.entity.ChatRoomType;
-import com.linkee.linkeeapi.chat.command.domain.repository.JpaChatRoomRepository;
+import com.linkee.linkeeapi.chat.chat_command.chat_domain.entity.ChatMember;
+import com.linkee.linkeeapi.chat.chat_command.chat_repository.ChatMemberRepository;
+import com.linkee.linkeeapi.chat.chat_command.chat_domain.entity.ChatRoom;
+import com.linkee.linkeeapi.chat.chat_command.chat_domain.entity.ChatRoomType;
+import com.linkee.linkeeapi.chat.chat_command.chat_repository.ChatRoomRepository;
 import com.linkee.linkeeapi.user.command.domain.entity.User;
 import com.linkee.linkeeapi.user.command.infrastructure.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ public class ChatMemberCommandServiceImpl implements ChatMemberCommandService {
 
     private final ChatMemberRepository chatMemberRepository;
     private final UserRepository userRepository;
-    private final JpaChatRoomRepository  jpaChatRoomRepository;
+    private final ChatRoomRepository jpaChatRoomRepository;
 
     @Override
     public ChatMemberCreateResponse createChatMember(ChatMemberCreateRequest request) {

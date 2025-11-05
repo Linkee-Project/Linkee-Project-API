@@ -1,5 +1,6 @@
 package com.linkee.linkeeapi.chat.command.domain.entity;
 
+import com.linkee.linkeeapi.chat.chat_command.chat_domain.entity.ChatRoom;
 import com.linkee.linkeeapi.user.command.domain.entity.User;
 import jakarta.persistence.*;
 import lombok.*;

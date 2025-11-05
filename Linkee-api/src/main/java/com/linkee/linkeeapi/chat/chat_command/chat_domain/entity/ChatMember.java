@@ -1,23 +1,31 @@
-package com.linkee.linkeeapi.chat.command.domain.entity;
+package com.linkee.linkeeapi.chat.chat_command.chat_domain.entity;
 
 import com.linkee.linkeeapi.common.enums.Status;
 import com.linkee.linkeeapi.user.command.domain.entity.User;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "tb_chat_member")
+@Table(
+        name = "tb_chat_member",
+        uniqueConstraints = @UniqueConstraint(
+                name = "uk_chatroom_user",
+                columnNames = {"chat_room_id", "user_id"}
+        )
+)
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 @Builder
 public class ChatMember {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "chat_member_id")
@@ -43,7 +51,6 @@ public class ChatMember {
     @Column(name = "is_read", nullable = false, columnDefinition = "ENUM('Y','N') DEFAULT 'N'")
     private Status isRead = Status.N;
 
-
     public void modifyIsRead(){
         this.isRead = Status.Y;
     }
@@ -52,8 +59,16 @@ public class ChatMember {
         this.leftAt = LocalDateTime.now();
     }
 
-    //읽음 여부 로직추가
     public void setIsRead(Status status) {
         this.isRead = status;
     }
+
+    public void setLeftAt(LocalDateTime now) {
+        this.leftAt = now;
+    }
+
+    public void setJoinedAt(LocalDateTime now) {
+        this.joinedAt = now;
+    }
 }
+

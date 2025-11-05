@@ -1,6 +1,6 @@
 package com.linkee.linkeeapi.chat.command.domain.dto.command_dto.request;
 
-import com.linkee.linkeeapi.chat.command.domain.entity.ChatRoomType;
+import com.linkee.linkeeapi.chat.chat_command.chat_domain.entity.ChatRoomType;
 import com.linkee.linkeeapi.common.enums.Status;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

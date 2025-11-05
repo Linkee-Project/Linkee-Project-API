@@ -1,4 +1,4 @@
-package com.linkee.linkeeapi.chat.command.domain.entity;
+package com.linkee.linkeeapi.chat.chat_command.chat_domain.entity;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;

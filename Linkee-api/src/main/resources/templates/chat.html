@@ -2,134 +2,185 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>채팅 테스트</title>
-    <script src="https://cdn.jsdelivr.net/npm/sockjs-client/dist/sockjs.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/stompjs/lib/stomp.min.js"></script>
+    <title>Linkee Chat</title>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.6.1/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
     <style>
-        #rooms li { cursor: pointer; }
-        #rooms li.selected { font-weight: bold; color: blue; }
+        body { font-family: Arial; }
+        #rooms, #members, #messages { border: 1px solid #ccc; padding: 10px; margin: 10px 0; height: 150px; overflow-y: auto; }
+        input, button { margin: 5px; }
     </style>
 </head>
 <body>
-<h1>채팅 테스트</h1>
+
+<h2>Linkee Chat</h2>
 
 <div>
-    <input type="text" id="tokenInput" placeholder="JWT 토큰 입력">
-    <button onclick="connect()">연결</button>
+    <label>JWT Token:</label>
+    <input type="text" id="tokenInput" size="60">
+    <button onclick="saveToken()">Save Token</button>
 </div>
 
 <div>
-    <input type="text" id="roomName" placeholder="방 이름">
-    <button onclick="createRoom()">방 생성</button>
+    <h3>Rooms</h3>
+    <ul id="roomList"></ul>
+    <button onclick="fetchRooms()">방 목록 갱신</button>
 </div>
 
 <div>
-    <h3>방 목록</h3>
-    <ul id="rooms"></ul>
+    <h3>Room Join</h3>
+    <input type="number" id="roomIdInput" placeholder="Room ID">
+    <input type="text" id="nicknameInput" placeholder="Nickname">
+    <button onclick="joinRoom()">방 입장</button>
+    <button onclick="leaveRoom()">방 퇴장</button>
 </div>
 
-<div>
-    <h3>메시지</h3>
-    <div id="messages" style="border:1px solid #ccc; height:200px; overflow:auto;"></div>
-    <input type="text" id="messageInput" placeholder="메시지 입력">
-    <button onclick="sendMessage()">전송</button>
+<div id="members">
+    <h3>Members</h3>
+    <ul id="memberList"></ul>
+</div>
+
+<div id="messages">
+    <h3>Messages</h3>
+    <ul id="messageList"></ul>
+    <input type="text" id="msgInput" placeholder="메시지 입력">
+    <button onclick="sendMessage()">Send</button>
 </div>
 
 <script>
     let stompClient = null;
-    let currentRoomId = null;
+    let roomId = null;
+    let nickname = null;
 
-    function connect() {
-        const token = document.getElementById("tokenInput").value.trim();
-        if (!token) return alert("토큰 입력 필요");
-
-        const socket = new SockJS('/ws');
-        stompClient = Stomp.over(socket);
-
-        stompClient.connect(
-            { "Authorization": `Bearer ${token}` },
-            frame => {
-                console.log("Connected: " + frame);
-                loadRooms();
-            },
-            error => {
-                console.error("연결 실패", error);
-                alert("연결 실패: 토큰 확인");
-            }
-        );
+    function saveToken() {
+        const token = document.getElementById('tokenInput').value;
+        if(!token) return alert("토큰을 입력하세요");
+        localStorage.setItem('token', token);
+        alert('Token saved!');
+        fetchRooms(); // 토큰 저장 후 방 목록 바로 조회
     }
 
-    function loadRooms() {
-        const token = document.getElementById("tokenInput").value.trim();
-        fetch("/api/v1/chat/rooms", {
-            headers: { "Authorization": `Bearer ${token}` }
+    function fetchRooms() {
+        const token = localStorage.getItem('token');
+        if(!token) return alert("토큰을 먼저 저장하세요");
+
+        fetch('/chat/rooms', {
+            headers: { 'Authorization': 'Bearer ' + token }
         })
             .then(res => res.json())
-            .then(data => {
-                const roomsUl = document.getElementById("rooms");
-                roomsUl.innerHTML = "";
-                data.forEach(room => {
-                    const li = document.createElement("li");
-                    li.textContent = room.roomName + " (" + room.roomOwnerName + ")";
-                    li.dataset.roomId = room.roomId;
-                    li.onclick = () => joinRoom(room.roomId, li);
-                    roomsUl.appendChild(li);
+            .then(rooms => {
+                const list = document.getElementById('roomList');
+                list.innerHTML = '';
+                if (!Array.isArray(rooms)) {
+                    console.error("Rooms is not array:", rooms);
+                    return;
+                }
+                rooms.forEach(r => {
+                    const li = document.createElement('li');
+                    li.textContent = `ID: ${r.chatRoomId}, Name: ${r.chatRoomName}`;
+                    li.style.cursor = 'pointer';
+                    li.onclick = () => { document.getElementById('roomIdInput').value = r.chatRoomId; };
+                    list.appendChild(li);
                 });
-            }).catch(console.error);
+            })
+            .catch(err => console.error(err));
     }
 
-    function createRoom() {
-        const roomName = document.getElementById("roomName").value.trim();
-        if (!roomName) return alert("방 이름 입력");
-
-        const token = document.getElementById("tokenInput").value.trim();
-        fetch("/api/v1/chat/room?roomName=" + encodeURIComponent(roomName), {
-            method: "POST",
-            headers: { "Authorization": `Bearer ${token}` }
-        })
-            .then(res => loadRooms())
-            .catch(console.error);
-    }
-
-    function joinRoom(roomId, liElement) {
-        document.querySelectorAll("#rooms li").forEach(li => li.classList.remove("selected"));
-        liElement.classList.add("selected");
-        currentRoomId = roomId;
-        subscribeRoom(roomId);
-    }
-
-    function subscribeRoom(roomId) {
-        if (!stompClient) return;
-        if (stompClient.subscriptions) {
-            Object.values(stompClient.subscriptions).forEach(sub => sub.unsubscribe());
-        }
-
-        stompClient.subscribe("/topic/chatroom/" + roomId, msg => {
-            const message = JSON.parse(msg.body);
-            showMessage(message.senderNickname, message.message);
+    function connectWebSocket() {
+        const socket = new SockJS('/ws');
+        stompClient = Stomp.over(socket);
+        stompClient.connect({}, () => {
+            console.log('STOMP connected');
         });
     }
 
-    function showMessage(sender, message) {
-        const messagesDiv = document.getElementById("messages");
-        const div = document.createElement("div");
-        div.textContent = sender + ": " + message;
-        messagesDiv.appendChild(div);
-        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    connectWebSocket();
+
+    function joinRoom() {
+        roomId = document.getElementById('roomIdInput').value;
+        nickname = document.getElementById('nicknameInput').value;
+        const token = localStorage.getItem('token');
+        if(!roomId || !nickname || !token) return alert("방 ID, 닉네임, 토큰 모두 필요");
+
+        fetch(`/chat/rooms/${roomId}/join`, {
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + token }
+        })
+            .then(res => res.json())
+            .then(member => {
+                console.log('Joined:', member);
+                subscribeMembers();
+                subscribeMessages();
+                fetchRoomMessages();
+            })
+            .catch(err => console.error(err));
+    }
+
+    function leaveRoom() {
+        if(!roomId) return;
+        const token = localStorage.getItem('token');
+        fetch(`/chat/rooms/${roomId}/leave`, {
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + token }
+        })
+            .then(() => {
+                document.getElementById('memberList').innerHTML = '';
+                document.getElementById('messageList').innerHTML = '';
+                roomId = null;
+                nickname = null;
+            })
+            .catch(err => console.error(err));
     }
 
     function sendMessage() {
-        const msg = document.getElementById("messageInput").value.trim();
-        if (!currentRoomId) return alert("방 선택");
-        if (!msg) return;
+        const msg = document.getElementById('msgInput').value;
+        if (!msg || !roomId || !nickname) return;
+        stompClient.send(`/app/room/${roomId}/send`, {}, JSON.stringify({ message: msg }));
+        document.getElementById('msgInput').value = '';
+    }
 
-        const token = document.getElementById("tokenInput").value.trim();
-        stompClient.send("/app/message", { "Authorization": `Bearer ${token}` }, JSON.stringify({
-            roomId: currentRoomId,
-            message: msg
-        }));
-        document.getElementById("messageInput").value = "";
+    function subscribeMembers() {
+        stompClient.subscribe(`/topic/room/${roomId}/members`, msg => {
+            const members = JSON.parse(msg.body);
+            const list = document.getElementById('memberList');
+            list.innerHTML = '';
+            members.forEach(m => {
+                const li = document.createElement('li');
+                li.textContent = m.userNickname;
+                list.appendChild(li);
+            });
+        });
+    }
+
+    function subscribeMessages() {
+        stompClient.subscribe(`/topic/room/${roomId}`, msg => {
+            const m = JSON.parse(msg.body);
+            const list = document.getElementById('messageList');
+            const li = document.createElement('li');
+            li.textContent = `${m.senderNickname}: ${m.message}`;
+            list.appendChild(li);
+            list.scrollTop = list.scrollHeight; // 스크롤 자동 하단
+        });
+    }
+
+    function fetchRoomMessages() {
+        const token = localStorage.getItem('token');
+        fetch(`/chat/rooms/${roomId}/messages`, {
+            headers: { 'Authorization': 'Bearer ' + token }
+        })
+            .then(res => res.json())
+            .then(messages => {
+                const list = document.getElementById('messageList');
+                list.innerHTML = '';
+                messages.forEach(m => {
+                    const li = document.createElement('li');
+                    li.textContent = `${m.senderNickname}: ${m.message}`;
+                    list.appendChild(li);
+                });
+                list.scrollTop = list.scrollHeight;
+            });
     }
 </script>
+
 </body>
 </html>

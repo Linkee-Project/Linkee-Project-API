@@ -1,12 +1,12 @@
 package com.linkee.linkeeapi.chat.command.application.service.command_service;
 
-import com.linkee.linkeeapi.chat.command.domain.entity.ChatMember;
-import com.linkee.linkeeapi.chat.command.domain.repository.ChatMemberRepository;
+import com.linkee.linkeeapi.chat.chat_command.chat_domain.entity.ChatMember;
+import com.linkee.linkeeapi.chat.chat_command.chat_repository.ChatMemberRepository;
 import com.linkee.linkeeapi.chat.command.domain.dto.command_dto.request.ChatRoomCreateRequestDto;
 import com.linkee.linkeeapi.chat.command.domain.dto.command_dto.request.ChatRoomDeleteRequestDto;
-import com.linkee.linkeeapi.chat.command.domain.entity.ChatRoom;
-import com.linkee.linkeeapi.chat.command.domain.entity.ChatRoomType;
-import com.linkee.linkeeapi.chat.command.domain.repository.JpaChatRoomRepository;
+import com.linkee.linkeeapi.chat.chat_command.chat_domain.entity.ChatRoom;
+import com.linkee.linkeeapi.chat.chat_command.chat_domain.entity.ChatRoomType;
+import com.linkee.linkeeapi.chat.chat_command.chat_repository.ChatRoomRepository;
 import com.linkee.linkeeapi.common.enums.Status;
 import com.linkee.linkeeapi.user.command.domain.entity.User;
 import com.linkee.linkeeapi.user.command.application.service.util.UserFinder;
@@ -22,7 +22,7 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public class ChatRoomCommandServiceImpl implements ChatRoomCommandService {
 
-    private final JpaChatRoomRepository chatRoomRepository;
+    private final ChatRoomRepository chatRoomRepository;
     private final UserFinder userFinder;
     private final ChatMemberRepository chatMemberRepository;
 
@@ -156,7 +156,7 @@ public class ChatRoomCommandServiceImpl implements ChatRoomCommandService {
         chatRoomRepository.save(chatRoom);
 
         //모든 멤버에 leftAt 기록 남기기
-        List<ChatMember> members = chatMemberRepository.findAllByChatRoom(chatRoom);
+        List<ChatMember> members = chatMemberRepository.findByChatRoom(chatRoom);
         for (ChatMember member : members) {
             if(member.getLeftAt() == null) {
                 member.modifyLeftAt();

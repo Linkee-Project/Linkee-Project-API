@@ -1,13 +1,13 @@
 package com.linkee.linkeeapi.chat.command.application.service.command_service;
 
-import com.linkee.linkeeapi.chat.command.domain.entity.ChatMember;
-import com.linkee.linkeeapi.chat.command.domain.repository.ChatMemberRepository;
+import com.linkee.linkeeapi.chat.chat_command.chat_domain.entity.ChatMember;
+import com.linkee.linkeeapi.chat.chat_command.chat_repository.ChatMemberRepository;
 import com.linkee.linkeeapi.chat.command.domain.dto.command_dto.request.ChatMessageCreateRequest;
 import com.linkee.linkeeapi.chat.command.domain.dto.command_dto.request.MarkAsReadRequest;
 import com.linkee.linkeeapi.chat.command.domain.entity.ChatMessage;
 import com.linkee.linkeeapi.chat.command.domain.repository.ChatMessageRepository;
-import com.linkee.linkeeapi.chat.command.domain.entity.ChatRoom;
-import com.linkee.linkeeapi.chat.command.domain.repository.JpaChatRoomRepository;
+import com.linkee.linkeeapi.chat.chat_command.chat_domain.entity.ChatRoom;
+import com.linkee.linkeeapi.chat.chat_command.chat_repository.ChatRoomRepository;
 import com.linkee.linkeeapi.common.enums.Status;
 import com.linkee.linkeeapi.user.command.domain.entity.User;
 import com.linkee.linkeeapi.user.command.application.service.util.UserFinder;
@@ -22,7 +22,7 @@ public class ChatMessageCommandServiceImpl implements ChatMessageCommandService{
 
     private final ChatMessageRepository chatMessageRepository;
     private final UserFinder userFinder;
-    private final JpaChatRoomRepository chatRoomRepository;
+    private final ChatRoomRepository chatRoomRepository;
     private final ChatMemberRepository chatMemberRepository;
 
     /*
@@ -46,7 +46,7 @@ public class ChatMessageCommandServiceImpl implements ChatMessageCommandService{
         chatMessageRepository.save(message);
 
         //모든 멤버의 isRead=N //새로운 메세지가 등록되었으므로
-        List<ChatMember> members = chatMemberRepository.findAllByChatRoom(foundRoom);
+        List<ChatMember> members = chatMemberRepository.findByChatRoom(foundRoom);
         for (ChatMember member : members) {
             if(!member.getUser().getUserId().equals(request.getSenderId())) {
                 member.setIsRead(Status.N);

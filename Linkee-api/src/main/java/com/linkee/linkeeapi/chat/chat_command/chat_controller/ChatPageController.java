@@ -1,4 +1,4 @@
-package com.linkee.linkeeapi.chat.command.application.controller.chat_controller;
+package com.linkee.linkeeapi.chat.chat_command.chat_controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
