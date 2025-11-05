@@ -35,6 +35,7 @@ public class User extends BaseTimeEntity {
     private String userNickname;
 
     //네이버 로그인 id를 받아오기 위한 칼럼 추가
+    @Builder.Default
     @Column(name = "user_login_id", nullable = false, length = 50)
     private String userLoginId = "";
 
