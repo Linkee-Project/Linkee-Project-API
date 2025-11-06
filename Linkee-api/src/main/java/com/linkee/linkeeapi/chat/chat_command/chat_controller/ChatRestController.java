@@ -5,6 +5,8 @@ import com.linkee.linkeeapi.chat.chat_command.chat_domain.entity.ChatRoom;
 import com.linkee.linkeeapi.chat.chat_command.chat_repository.ChatMessageMongoRepository;
 import com.linkee.linkeeapi.chat.chat_command.chat_repository.ChatRoomRepository;
 import com.linkee.linkeeapi.common.enums.Status;
+import com.linkee.linkeeapi.common.exception.BusinessException;
+import com.linkee.linkeeapi.common.exception.ErrorCode;
 import com.linkee.linkeeapi.common.security.jwt.JwtTokenProvider;
 import com.linkee.linkeeapi.user.command.domain.entity.User;
 import com.linkee.linkeeapi.user.command.infrastructure.repository.UserRepository;
@@ -37,7 +39,7 @@ public class ChatRestController {
     public ResponseEntity<?> getRoomMessages(@PathVariable Long roomId,
                                              @RequestHeader("Authorization") String token) {
         if (!jwtTokenProvider.validateToken(token)) {
-            return ResponseEntity.status(401).body("Unauthorized");
+            throw new BusinessException(ErrorCode.CHAT_ROOM_NOT_FOUND);
         }
         return ResponseEntity.ok(chatMessageMongoRepository.findAllByRoomIdOrderBySentAtAsc(roomId));
     }
@@ -47,21 +49,22 @@ public class ChatRestController {
     public ResponseEntity<?> createRoom(@RequestHeader("Authorization") String token,
                                         @RequestParam String roomName) {
         if (!jwtTokenProvider.validateToken(token)) {
-            return ResponseEntity.status(401).body("Unauthorized");
+            throw new BusinessException(ErrorCode.CHAT_ROOM_NOT_FOUND);
         }
 
         String userEmail = jwtTokenProvider.getUsername(token);
         User owner = userRepository.findByUserEmail(userEmail)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_USER_ID));
 
         ChatRoom room = ChatRoom.builder()
                 .chatRoomName(roomName)
                 .roomOwner(owner)
-                .joinedCount(0)
+                .joinedCount(1)
                 .roomStatus(Status.Y)
                 .build();
 
         chatRoomRepository.save(room);
+
         return ResponseEntity.ok(room);
     }
 }
