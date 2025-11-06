@@ -1,9 +1,11 @@
 package com.linkee.linkeeapi.chat_member.command.application.controller;
 
-import com.linkee.linkeeapi.chat_member.command.application.dto.reqeust.ChatMemberCreateRequest;
-import com.linkee.linkeeapi.chat_room.command.domain.aggregate.ChatRoom;
-import com.linkee.linkeeapi.chat_room.command.domain.aggregate.ChatRoomType;
-import com.linkee.linkeeapi.chat_room.command.infrastructure.repository.JpaChatRoomRepository;
+
+import com.linkee.linkeeapi.chat.chat_command.chat_domain.entity.ChatRoom;
+import com.linkee.linkeeapi.chat.chat_command.chat_domain.entity.ChatRoomType;
+import com.linkee.linkeeapi.chat.chat_command.chat_repository.ChatRoomRepository;
+import com.linkee.linkeeapi.chat.command.application.controller.command_controller.ChatMemberCommandController;
+import com.linkee.linkeeapi.chat.command.domain.dto.command_dto.request.ChatMemberCreateRequest;
 import com.linkee.linkeeapi.common.enums.Status;
 import com.linkee.linkeeapi.user.command.domain.entity.User;
 import com.linkee.linkeeapi.user.command.infrastructure.repository.UserRepository;
@@ -29,7 +31,7 @@ class ChatMemberCommandControllerTest {
     private UserRepository userRepository;
 
     @Autowired
-    private JpaChatRoomRepository chatRoomRepository;
+    private ChatRoomRepository chatRoomRepository;
 
 
     @Test

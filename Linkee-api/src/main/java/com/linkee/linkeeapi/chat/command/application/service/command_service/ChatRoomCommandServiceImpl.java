@@ -44,6 +44,7 @@ public class ChatRoomCommandServiceImpl implements ChatRoomCommandService {
     // ✅ 채팅방/게임방 생성
     @Transactional
     public ChatRoom createRoom(ChatRoomCreateRequestDto request) {
+
         User user = userFinder.getById(request.getRoomOwnerId());
 
         ChatRoomType roomType = request.getChatRoomType();

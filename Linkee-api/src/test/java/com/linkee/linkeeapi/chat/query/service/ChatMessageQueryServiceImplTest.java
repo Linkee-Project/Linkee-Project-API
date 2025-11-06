@@ -7,8 +7,7 @@ import com.linkee.linkeeapi.chat.command.domain.dto.query_dto.response.ChatMessa
 import com.linkee.linkeeapi.chat.chat_command.chat_domain.entity.ChatRoom;
 import com.linkee.linkeeapi.chat.chat_command.chat_domain.entity.ChatRoomType;
 import com.linkee.linkeeapi.chat.command.application.service.query_serivce.ChatMessageQueryService;
-import com.linkee.linkeeapi.common.enums.Role;
-import com.linkee.linkeeapi.common.enums.Status;
+
 import com.linkee.linkeeapi.common.model.PageResponse;
 import com.linkee.linkeeapi.user.command.domain.entity.User;
 import org.junit.jupiter.api.DisplayName;
