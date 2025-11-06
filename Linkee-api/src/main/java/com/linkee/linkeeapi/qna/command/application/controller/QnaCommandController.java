@@ -19,9 +19,9 @@ public class QnaCommandController {
 
     private final QnaCommandService qnaCommandService;
 
-    @PostMapping
+/*    @PostMapping
     public ResponseEntity<String> createQna(@RequestBody CreateQnaRequestDto request) {
         qnaCommandService.createQna(request);
         return ResponseEntity.ok("문제가 성공적으로 등록 했습니다 ");
-    }
+    }*/
 }

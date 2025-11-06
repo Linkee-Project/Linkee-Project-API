@@ -14,7 +14,6 @@
         #chat { border: 1px solid #ccc; height: 400px; overflow-y: scroll; padding: 10px; margin-top: 10px; width: 600px; }
         #message { width: 500px; }
         .system { color: gray; font-style: italic; }
-
         /* 선택 버튼 스타일 */
         .option-btn {
             margin: 4px;
@@ -31,12 +30,13 @@
         }
     </style>
 </head>
-<body>
 
+<body>
 <h2>링키</h2>
 
 <div>
-    JWT Token: <input type="text" id="token" placeholder="JWT 입력" style="width: 400px;">
+    JWT Token:
+    <input type="text" id="token" placeholder="JWT 입력" style="width: 400px;">
     <button onclick="connect()">연결</button>
 </div>
 
@@ -44,6 +44,7 @@
 
 <h3>새 방 만들기</h3>
 <input type="text" id="newRoomName" placeholder="방 이름 입력">
+
 <div>
     <p><strong>방 타입 선택:</strong></p>
     <button class="option-btn selected" id="btnChat" onclick="selectRoomType('CHAT')">CHAT</button>
@@ -74,11 +75,22 @@
 <ul id="rooms"></ul>
 
 <h3>채팅</h3>
+
+<!-- ✅ QnA 표시 영역 추가 -->
+<div id="qna-box">
+    <p><strong>🧩 현재 문제:</strong> <span id="current-question">-</span></p>
+    <p id="answer-section"><strong>✅ 정답:</strong> <span id="current-answer"></span></p>
+    <button id="reveal-btn" onclick="revealAnswer()">정답 공개</button>
+</div>
+
 <div id="chat"></div>
 
 <input type="text" id="message" placeholder="메시지 입력">
 <button onclick="sendMessage()">전송</button>
 <button onclick="leaveRoom()">나가기</button>
+
+<!-- ✅ QnA 등록 버튼 -->
+<button onclick="createQuestion()">문제 등록</button>
 
 <script>
     let stompClient = null;
@@ -96,7 +108,6 @@
         const socket = new SockJS('http://localhost:8080/ws-chat');
         // const socket = new SockJS('http://192.168.2.49:8080/ws-chat');
         stompClient = Stomp.over(socket);
-
         stompClient.connect({'Authorization': token}, function(frame) {
             console.log('Connected: ' + frame);
             loadRooms();
@@ -106,9 +117,8 @@
 
     // 방 목록 불러오기 (아이콘 표시 + 타입별 정렬)
     function loadRooms() {
-
         fetch('http://localhost:8080/chat/rooms', {
-        // fetch('http://192.168.2.49:8080/chat/rooms', {
+            // fetch('http://192.168.2.49:8080/chat/rooms', {
             headers: { 'Authorization': token }
         })
             .then(res => res.json())
@@ -132,10 +142,12 @@
 
                     li.innerHTML = `<span>${icon}${room.chatRoomName}</span><span>참여: ${room.joinedCount}</span>`;
                     li.onclick = () => enterRoom(room.chatRoomId);
-                    if (selectedRoomId == room.chatRoomId) li.classList.add("active");
+
+                    if (selectedRoomId == room.chatRoomId)
+                        li.classList.add("active");
+
                     return li;
                 };
-
 
                 // ✅ CHAT 방 묶음
                 if (chatRooms.length > 0) {
@@ -159,23 +171,35 @@
     function enterRoom(roomId) {
         selectedRoomId = roomId;
         document.getElementById("chat").innerHTML = "";
+        document.getElementById("qna-box").style.display = "none"
         loadMessages();
 
-        stompClient.send("/app/chat.join",
-            {'roomId': roomId, 'Authorization': token}, {}
-        );
-
+        stompClient.send("/app/chat.join", {'roomId': roomId, 'Authorization': token}, {});
         subscribeRoom();
         highlightSelectedRoom();
+
+        // ✅ 현재 문제 조회
+        fetch(`http://localhost:8080/chat/qna/${roomId}/current`, {
+            headers: { 'Authorization': token }
+        })
+            .then(res => res.json())
+            .then(qna => {
+                if (qna && qna.qnaQuestion) {
+                    document.getElementById("qna-box").style.display = "block";
+                    document.getElementById("current-question").textContent = qna.qnaQuestion;
+                    if (qna.qnaAnswer) {
+                        document.getElementById("answer-section").style.display = "block";
+                        document.getElementById("current-answer").textContent = qna.qnaAnswer;
+                    }
+                }
+            });
     }
 
     // 메시지 불러오기
     function loadMessages() {
         if(!selectedRoomId) return;
-
-
         fetch('http://localhost:8080/chat/rooms/' + selectedRoomId + '/messages', {
-        // fetch('http://192.168.2.49:8080/chat/rooms/' + selectedRoomId + '/messages', {
+            // fetch('http://192.168.2.49:8080/chat/rooms/' + selectedRoomId + '/messages', {
             headers: { 'Authorization': token }
         })
             .then(res => res.json())
@@ -192,22 +216,35 @@
             });
     }
 
-    // STOMP 구독
     function subscribeRoom() {
         if(currentSubscription) {
             currentSubscription.unsubscribe();
         }
-
-        currentSubscription = stompClient.subscribe('/topic/chatroom', function(messageOutput) {
+        currentSubscription = stompClient.subscribe('/topic/chatroom/' + selectedRoomId, function(messageOutput) {
             const msg = JSON.parse(messageOutput.body);
-            if(msg.roomId == selectedRoomId){
-                if(msg.senderNickname === "SYSTEM"){
-                    showMessage(msg.message, true);
-                } else {
-                    showMessage(msg.senderNickname + ": " + msg.message, false);
-                }
+
+            // ✅ QnA 메시지 처리
+            if (msg.type === "QNA_QUESTION") {
+                document.getElementById("qna-box").style.display = "block";
+                document.getElementById("current-question").textContent = msg.question;
+                document.getElementById("answer-section").style.display = "none";
+                showMessage("🧩 새 문제가 등록되었습니다!", true);
+                return;
             }
-            loadRooms();
+
+            if (msg.type === "QNA_ANSWER") {
+                document.getElementById("answer-section").style.display = "block";
+                document.getElementById("current-answer").textContent = msg.answer;
+                showMessage("✅ 정답이 공개되었습니다!", true);
+                return;
+            }
+
+            // 기존 메시지 처리
+            if(msg.senderNickname === "SYSTEM"){
+                showMessage(msg.message, true);
+            } else {
+                showMessage(msg.senderNickname + ": " + msg.message, false);
+            }
         });
     }
 
@@ -217,16 +254,51 @@
             alert("방을 선택하고 연결하세요.");
             return;
         }
-
         const message = document.getElementById("message").value;
         if(!message) return;
-
-        stompClient.send("/app/chat.send",
-            {'Authorization': token},
+        stompClient.send("/app/chat.send", {'Authorization': token},
             JSON.stringify({roomId: parseInt(selectedRoomId), message: message})
         );
-
         document.getElementById("message").value = "";
+    }
+
+    // ✅ 문제 등록
+    function createQuestion() {
+        if (!selectedRoomId) return alert("방을 먼저 선택하세요.");
+        const question = prompt("문제를 입력하세요:");
+        if (!question) return;
+        const answer = prompt("정답을 입력하세요:");
+        if (!answer) return;
+
+        fetch(`http://localhost:8080/chat/qna/${selectedRoomId}`, {
+            method: "POST",
+            headers: {
+                "Authorization": token,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                question: question,
+                answer: answer,
+                chatMemberId: 1 // ✅ 실제 chatMemberId로 대체 필요
+            })
+        })
+            .then(res => {
+                if (!res.ok) throw new Error("등록 실패");
+                alert("문제 등록 완료!");
+            })
+            .catch(err => console.error(err));
+    }
+
+    // ✅ 정답 공개
+    function revealAnswer() {
+        fetch(`http://localhost:8080/chat/qna/${selectedRoomId}/reveal`, {
+            headers: { "Authorization": token }
+        })
+            .then(res => res.json())
+            .then(qna => {
+                document.getElementById("answer-section").style.display = "block";
+                document.getElementById("current-answer").textContent = qna.qnaAnswer;
+            });
     }
 
     // 🔧 방 생성 수정된 부분
@@ -234,17 +306,11 @@
         const roomName = document.getElementById("newRoomName").value.trim();
         if (!roomName) return alert("방 이름을 입력하세요.");
 
-        const roomCode = document.getElementById("roomCode").value
-            ? parseInt(document.getElementById("roomCode").value)
-            : null;
-
-        const roomCapacity = document.getElementById("roomCapacity").value
-            ? parseInt(document.getElementById("roomCapacity").value)
-            : null;
-
+        const roomCode = document.getElementById("roomCode").value ? parseInt(document.getElementById("roomCode").value) : null;
+        const roomCapacity = document.getElementById("roomCapacity").value ? parseInt(document.getElementById("roomCapacity").value) : null;
 
         fetch('http://localhost:8080/chat/rooms', {
-        // fetch('http://192.168.2.49:8080/chat/rooms?roomName=' + encodeURIComponent(roomName), {
+            // fetch('http://192.168.2.49:8080/chat/rooms?roomName=' + encodeURIComponent(roomName), {
             method: 'POST',
             headers: {
                 'Authorization': token,
@@ -254,7 +320,7 @@
                 chatRoomName: roomName,
                 chatRoomType: selectedRoomType,
                 isPrivate: selectedIsPrivate,
-                roomCode: roomCode,        // ✅ 추가
+                roomCode: roomCode, // ✅ 추가
                 roomCapacity: roomCapacity // ✅ 추가
             })
         })
@@ -271,7 +337,6 @@
             .catch(err => console.error("방 생성 오류:", err));
     }
 
-
     // 메시지 표시
     function showMessage(msg, isSystem=false) {
         const chatDiv = document.getElementById("chat");
@@ -287,7 +352,8 @@
         const lis = document.querySelectorAll("#rooms li");
         lis.forEach(li => {
             li.classList.remove("active");
-            if(li.dataset.roomId == selectedRoomId) li.classList.add("active");
+            if(li.dataset.roomId == selectedRoomId)
+                li.classList.add("active");
         });
     }
 
@@ -307,36 +373,30 @@
         console.log("선택된 공개 여부:", selectedIsPrivate);
     }
 
-    // 방 타입 선택
+    // 방 타입 선택 (중복 정의)
     function selectRoomType(type) {
         selectedRoomType = type;
         document.getElementById("btnChat").classList.toggle("selected", type === 'CHAT');
         document.getElementById("btnGame").classList.toggle("selected", type === 'GAME');
-
         // 🔹 게임방이면 인원수 입력 보이기
         document.getElementById("capacityContainer").style.display = (type === 'GAME') ? 'block' : 'none';
-
         console.log("선택된 방 타입:", selectedRoomType);
     }
 
-    // 공개 여부 선택
+    // 공개 여부 선택 (중복 정의)
     function selectIsPrivate(flag) {
         selectedIsPrivate = flag;
         document.getElementById("btnPublic").classList.toggle("selected", flag === 'N');
         document.getElementById("btnPrivate").classList.toggle("selected", flag === 'Y');
-
         // 🔹 비공개 선택 시 방코드 입력 보이기
         document.getElementById("roomCodeContainer").style.display = (flag === 'Y') ? 'block' : 'none';
-
         console.log("선택된 공개 여부:", selectedIsPrivate);
     }
 
     // 페이지 떠날 때 퇴장 처리
     window.addEventListener("beforeunload", function () {
         if(selectedRoomId && stompClient) {
-            stompClient.send("/app/chat.leave",
-                {'roomId': selectedRoomId, 'Authorization': token}, {}
-            );
+            stompClient.send("/app/chat.leave", {'roomId': selectedRoomId, 'Authorization': token}, {});
         }
     });
 
@@ -348,9 +408,7 @@
         }
 
         // 서버에 퇴장 요청 (ChatMember 삭제)
-        stompClient.send("/app/chat.leave",
-            {'roomId': selectedRoomId, 'Authorization': token}, {}
-        );
+        stompClient.send("/app/chat.leave", {'roomId': selectedRoomId, 'Authorization': token}, {});
 
         // 구독 해제
         if (currentSubscription) {
@@ -366,6 +424,5 @@
         loadRooms(); // 방 목록 새로고침 (참여자 수 업데이트)
     }
 </script>
-
 </body>
 </html>
