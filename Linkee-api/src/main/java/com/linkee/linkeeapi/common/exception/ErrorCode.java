@@ -38,6 +38,7 @@ public enum ErrorCode {
     QUESTION_DELETE_NOT_ALLOWED("5002", "검증된 문제는 삭제할 수 없습니다.", HttpStatus.CONFLICT),
     FORBIDDEN_QUESTION_ACCESS("5003", "문제에 대한 권한이 없습니다.", HttpStatus.FORBIDDEN),
     INVALID_ANSWER_INDEX("5004", "정답 인덱스가 옵션과 일치하지 않습니다.", HttpStatus.BAD_REQUEST),
+    QUESTION_ALREADY_QUALIFIED("5005","이미 검증된 문제입니다.",HttpStatus.CONFLICT),
 
     //카데고리 관련 오류(6000번대 사용)
     CATEGORY_NOT_FOUND("6000","해당 카테고리를 찾을 수 없습니다.",HttpStatus.NOT_FOUND),
