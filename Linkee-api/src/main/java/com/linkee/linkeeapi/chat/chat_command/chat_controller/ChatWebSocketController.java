@@ -46,6 +46,9 @@ public class ChatWebSocketController {
                 .sentAt(messageDto.getSentAt())
                 .build());
 
+        System.out.println(">>> 메시지 도착: " + messageDto.getMessage());
+        System.out.println(">>> 유저: " + sender.getUserNickname());
+
         return messageDto;
     }
 
