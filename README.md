@@ -165,22 +165,7 @@ Linkee는 사용자가 CS 관련 퀴즈에 참여하고 문제를 풀며 다른 
 
   <details> 
   <summary> DDD 이미지</summary>
-  <img width="783" height="891" alt="Image" src="https://github.com/user-attachments/assets/3104d9e9-528c-48e2-a872-1277aa6bb217" />
-
-  <img width="748" height="885" alt="Image" src="https://github.com/user-attachments/assets/5dd62fe9-a743-453c-8a9e-4bf706421455" />
-
-  <img width="991" height="891" alt="Image" src="https://github.com/user-attachments/assets/ccab5df8-c5e6-4186-bf3f-668a6b9e6780" />
-
-  <img width="938" height="888" alt="Image" src="https://github.com/user-attachments/assets/f11a63e3-015f-499a-9fdd-4c790449e6e7" />
-
-  <img width="913" height="898" alt="Image" src="https://github.com/user-attachments/assets/78bade46-ec8d-4873-a0df-5f28e70810a2" />
-
-  <img width="938" height="897" alt="Image" src="https://github.com/user-attachments/assets/8a91c85d-2635-4e76-a665-1575fdf02293" />
-
-  <img width="793" height="885" alt="Image" src="https://github.com/user-attachments/assets/1d414d86-84b7-4463-8fc4-b6599932d392" />
-
   <img width="852" height="876" alt="Image" src="https://github.com/user-attachments/assets/4c1e3e07-882a-413a-b0ae-209e2ced15ab" />
-  
   </details>
 
 
