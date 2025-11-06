@@ -6,7 +6,6 @@ import com.linkee.linkeeapi.user.command.domain.entity.User;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -21,4 +20,7 @@ public interface ChatMemberRepository extends JpaRepository<ChatMember,Long> {
     boolean existsByChatRoomAndUser(ChatRoom chatRoom, User user);
 
     void deleteByChatRoomAndUser(ChatRoom room, User user);
+
+    Optional<ChatMember> findByChatRoomAndUser_UserId(ChatRoom chatRoom, Long userId);
+
 }

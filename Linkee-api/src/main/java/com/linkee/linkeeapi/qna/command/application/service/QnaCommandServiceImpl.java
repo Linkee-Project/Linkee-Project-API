@@ -23,11 +23,12 @@ public class QnaCommandServiceImpl implements QnaCommandService{
     private final JpaQnaRepository qnaRepository;
 
     //문제 답 생성
-    public void createQna(CreateQnaRequestDto request) {
-        ChatMember chatMember =  chatMemberRepository.findById(request.getChatMemberId())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 채팅방 member 입니다"));
+    public void createQna(CreateQnaRequestDto request, Long userId) {
         ChatRoom chatRoom = chatRoomRepository.findById(request.getRoomId())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 채팅방입니다."));
+
+        ChatMember chatMember = chatMemberRepository.findByChatRoomAndUser_UserId(chatRoom, userId)
+                .orElseThrow(() -> new IllegalArgumentException("채팅방에 속한 멤버가 아닙니다."));
 
         Qna qna = Qna.builder()
                 .qnaQuestion(request.getQuestion())
@@ -35,6 +36,8 @@ public class QnaCommandServiceImpl implements QnaCommandService{
                 .chatRoom(chatRoom)
                 .chatMember(chatMember)
                 .build();
+
         qnaRepository.save(qna);
     }
+
 }
