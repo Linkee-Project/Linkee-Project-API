@@ -6,11 +6,14 @@ import com.linkee.linkeeapi.chat.command.application.service.command_service.Cha
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/chat-messages")
+@Tag(name = "자율", description = "자율방(자유 출제방) 관련 API")
+@Tag(name = "커뮤니케이션", description = "친구 및 채팅 기능 관련 API")
 public class ChatMessageCommandController {
 
     private final ChatMessageCommandService chatMessageCommandService;
