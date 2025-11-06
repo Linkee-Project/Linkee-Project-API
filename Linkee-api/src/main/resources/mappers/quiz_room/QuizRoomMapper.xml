@@ -20,6 +20,14 @@
         LIMIT #{limit} OFFSET #{offset}
     </select>
 
+    <!-- 전체 방 개수 조회 -->
+    <select id="countAllRooms" resultType="int">
+        SELECT COUNT(*)
+        FROM tb_quiz_room
+        WHERE is_private = 'N'
+          AND room_status = 'W'
+    </select>
+
     <!-- 빠른 시작 -->
     <select id="findAvailableRoom" resultType="com.linkee.linkeeapi.quiz_room.query.dto.response.QuizRoomResponseDto">
         SELECT quiz_room_id AS quizRoomId,

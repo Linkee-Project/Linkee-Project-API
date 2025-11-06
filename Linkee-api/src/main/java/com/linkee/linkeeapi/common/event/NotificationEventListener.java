@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Slf4j
+
 @Component
 @RequiredArgsConstructor
 public class NotificationEventListener {
@@ -138,5 +139,27 @@ public class NotificationEventListener {
             alarmBoxCommandService.createAlarmBox(alarmRequest);
             sseService.send(recipientId, "newComment", alarmContent);
         });
+    }
+
+    // 6. 퀴즈방 초대 알림
+    @EventListener
+    public void handleQuizRoomInvite(QuizRoomInviteEvent event) {
+        // 1. 이벤트에서 필요한 정보 추출
+        Long inviteeId = event.getInviteeId();
+        String inviterNickname = event.getInviterNickname();
+        String roomTitle = event.getRoomTitle();
+        // 2. 알림 템플릿 조회
+        AlarmTemplateResponse alarmTemplate = alarmTemplateMapper.selectAlarmTemplateById(2L);
+        // 3. 알림 내용 구성
+        String alarmContent = String.format(alarmTemplate.templateContent(), inviterNickname, roomTitle);
+        // 4. AlarmBox에 알림 저장(영속화)
+        AlarmBoxCreateRequest alarmBoxCreateRequest = AlarmBoxCreateRequest.builder()
+                .alarmBoxContent(alarmContent)
+                .userId(inviteeId)
+                .build();
+        alarmBoxCommandService.createAlarmBox(alarmBoxCreateRequest);
+        // 5. 실시간 SEE 알림 전송
+        sseService.send(inviteeId, "quizRoomInvite", alarmContent);
+
     }
 }

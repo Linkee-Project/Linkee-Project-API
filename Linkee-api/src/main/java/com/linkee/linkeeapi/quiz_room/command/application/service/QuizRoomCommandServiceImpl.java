@@ -7,6 +7,7 @@ import com.linkee.linkeeapi.common.enums.Status;
 import com.linkee.linkeeapi.common.exception.BusinessException;
 import com.linkee.linkeeapi.common.exception.ErrorCode;
 import com.linkee.linkeeapi.grade.command.domain.aggregate.entity.Grade;
+import com.linkee.linkeeapi.grade.command.infrastructure.GradeRepository;
 import com.linkee.linkeeapi.question.command.domain.aggregate.Question;
 import com.linkee.linkeeapi.question.command.infrastructure.repository.JpaQuestionRepository;
 import com.linkee.linkeeapi.quiz_current_index.command.domain.aggregate.QuizCurrentIndex;
@@ -59,6 +60,7 @@ public class QuizRoomCommandServiceImpl implements QuizRoomCommandService {
     private final RoomQuestionRepository roomQuestionRepository;
     private final QuizRoomQueryService  quizRoomQueryService;
     private final UserGradeRepository userGradeRepository;
+    private final GradeRepository gradeRepository;
 
 
 
@@ -141,9 +143,26 @@ public class QuizRoomCommandServiceImpl implements QuizRoomCommandService {
                     });
             //  3-4. 승리 횟수 1 증가 및 저장
             userGrade.modifyVictoryCount(userGrade.getVictoryCount() + 1);
+
+            //  3-5. 등급 승급 로직
+            int newVictoryCount = userGrade.getVictoryCount();
+            Long currentGradeId = userGrade.getGrade().getGradeId();
+            Long newGradeId = currentGradeId;
+
+            if (newVictoryCount >= 30) {//  30승 이상 골드
+                newGradeId = 3L;
+            } else if (newVictoryCount >= 10) {//   10승 이상 실버
+                newGradeId = 2L;
+            }   //  ~9승까지는 브론즈이므로 별도 처리 필요 없음
+
+            if (!currentGradeId.equals(newGradeId)) {
+                Grade newGrade = gradeRepository.findById(newGradeId)
+                        .orElseThrow(() -> new BusinessException(ErrorCode.GRADE_NOT_FOUND, "새로운 등급 정보를 찾을 수 없습니다."));
+                userGrade.modifyGrade(newGrade);
+
+            }
             userGradeRepository.save(userGrade);
         }
-
     }
 
 
@@ -202,7 +221,13 @@ public class QuizRoomCommandServiceImpl implements QuizRoomCommandService {
         //  3-2. 문제 목록을 랜덤으로 섞음
         Collections.shuffle(qualifiedQuestions);
 
-        //  3-3. 필요한 만큼의 문제를 방에 할다 (quizOrder 설정)
+        //  3-2-1. 문제가 충분한지 확인
+        if (qualifiedQuestions.size() < quizRoom.getRoomQuizLimit()) {
+            throw new BusinessException(ErrorCode.INSUFFICIENT_QUESTIONS);
+        }
+
+
+        //  3-3. 필요한 만큼의 문제를 방에 할당 (quizOrder 설정)
         for (int i = 0; i < quizRoom.getRoomQuizLimit(); i++) {
             Question selectedQuestion = qualifiedQuestions.get(i);
             RoomQuestionCreateRequest createRequest = RoomQuestionCreateRequest.builder()
@@ -235,6 +260,12 @@ public class QuizRoomCommandServiceImpl implements QuizRoomCommandService {
         //  1. 퀴즈방과 현재 문제 인덱스를 조회
         QuizRoom quizRoom = quizRoomRepository.findById(quizRoomId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.QUIZ_ROOM_NOT_FOUND));
+        // 추가: 게임이 진해중(P) 상태인지 확인
+        if (quizRoom.getRoomStatus() != RoomStatus.P) {
+            throw new BusinessException(ErrorCode.QUIZ_ROOM_NOT_IN_PLAY);
+
+        }
+
         QuizCurrentIndex quizIndex = quizCurrentIndexRepository.findByQuizRoom(quizRoom)
                 .orElseThrow(() -> new BusinessException(ErrorCode.QUIZ_INDEX_NOT_FOUND));
 
@@ -276,7 +307,7 @@ public class QuizRoomCommandServiceImpl implements QuizRoomCommandService {
     }
 
     @Override
-    @Transactional
+    @Transactional  // 좀비방 강제 종료
     public void forceEndRoom(Long quizRoomId) {
         QuizRoom quizRoom = quizRoomRepository.findById(quizRoomId)
                 .orElseThrow(()->  new BusinessException(ErrorCode.QUIZ_ROOM_NOT_FOUND));

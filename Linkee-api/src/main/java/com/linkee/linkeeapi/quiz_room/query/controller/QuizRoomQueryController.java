@@ -1,5 +1,6 @@
 package com.linkee.linkeeapi.quiz_room.query.controller;
 
+import com.linkee.linkeeapi.common.model.PageResponse;
 import com.linkee.linkeeapi.common.model.dto.ApiResponse;
 import com.linkee.linkeeapi.quiz_room.query.dto.response.PlayStateResponseDto;
 import com.linkee.linkeeapi.quiz_room.query.dto.response.QuizRoomListResponseDto;
@@ -26,13 +27,13 @@ public class QuizRoomQueryController {
 
     private final QuizRoomQueryService quizRoomService;
 
-    // 방 목록 조회
+    // 방 목록 조회 (페이징)
     @GetMapping
-    public ApiResponse<List<QuizRoomListResponseDto>> getRooms(
+    public ApiResponse<PageResponse<QuizRoomListResponseDto>> getRooms(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        List<QuizRoomListResponseDto> rooms = quizRoomService.findAllRooms(page, size);
+        PageResponse<QuizRoomListResponseDto> rooms = quizRoomService.findAllRooms(page, size);
         return ApiResponse.success(rooms);
     }
 
