@@ -259,6 +259,7 @@
         stompClient.send("/app/chat.send", {'Authorization': token},
             JSON.stringify({roomId: parseInt(selectedRoomId), message: message})
         );
+        showMessage("나: " + message, false);
         document.getElementById("message").value = "";
     }
 
