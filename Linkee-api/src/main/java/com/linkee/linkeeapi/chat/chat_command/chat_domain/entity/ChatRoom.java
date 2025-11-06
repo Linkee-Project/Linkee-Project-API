@@ -47,7 +47,7 @@ public class ChatRoom extends BaseTimeEntity {
     @Column(name = "room_capacity")
     private Integer roomCapacity;
 
-    @Builder.Default
+
     @Enumerated(EnumType.STRING)
     @Builder.Default
     @Column(name = "room_status", nullable = false, columnDefinition = "ENUM('Y','N') DEFAULT 'Y'" )

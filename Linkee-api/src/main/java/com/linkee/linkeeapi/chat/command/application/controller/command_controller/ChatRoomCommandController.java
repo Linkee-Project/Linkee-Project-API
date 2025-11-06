@@ -4,6 +4,7 @@ import com.linkee.linkeeapi.chat.command.domain.dto.command_dto.request.ChatRoom
 import com.linkee.linkeeapi.chat.command.domain.dto.command_dto.request.ChatRoomDeleteRequestDto;
 import com.linkee.linkeeapi.chat.command.application.service.command_service.ChatRoomCommandService;
 import com.linkee.linkeeapi.user.command.domain.entity.User;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,8 @@ public class ChatRoomCommandController {
     // 채팅방 / 게임방 생성
     @PostMapping
     public ResponseEntity<String> createRoom(@Valid @RequestBody ChatRoomCreateRequestDto request) {
-        chatRoomCommandService.createRoom(request);
+        User user = new User();
+        chatRoomCommandService.createRoom(request,user);
         return ResponseEntity.ok("방이 성공적으로 생성되었습니다.");
     }
 
