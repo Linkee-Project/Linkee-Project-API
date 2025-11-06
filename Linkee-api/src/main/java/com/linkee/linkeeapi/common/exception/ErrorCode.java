@@ -40,7 +40,7 @@ public enum ErrorCode {
     INVALID_ANSWER_INDEX("5004", "정답 인덱스가 옵션과 일치하지 않습니다.", HttpStatus.BAD_REQUEST),
     QUESTION_ALREADY_QUALIFIED("5005","이미 검증된 문제입니다.",HttpStatus.CONFLICT),
 
-    //카데고리 관려 오류(6000번대 사용)
+    //카데고리 관련 오류(6000번대 사용)
     CATEGORY_NOT_FOUND("6000","해당 카테고리를 찾을 수 없습니다.",HttpStatus.NOT_FOUND),
 
     //관계 관련 오류(7000번대 사용)
@@ -62,8 +62,10 @@ public enum ErrorCode {
     QUIZ_ROOM_FULL("9008", "방이 가득 찼습니다.", HttpStatus.BAD_REQUEST),
     USER_ALREADY_IN_ROOM("9009", "이미 참여한 방입니다.", HttpStatus.BAD_REQUEST),
 
-    // 채팅룸
-    CHAT_ROOM_NOT_FOUND("9010","채팅방을 찾을 수 없습니다" ,HttpStatus.NOT_FOUND );
+    //댓글 관련 오류(10000번대 사용)
+    COMMENT_NOT_FOUND("10000", "존재하지 않는 댓글입니다.", HttpStatus.NOT_FOUND),
+    COMMENT_PARENT_NOT_FOUND("10001", "부모 댓글이 존재하지 않습니다.", HttpStatus.NOT_FOUND),
+    COMMENT_FORBIDDEN_ACCESS("10002", "댓글 작성자만 수행할 수 있습니다.", HttpStatus.FORBIDDEN);
 
     private final String code;
     private final String message;

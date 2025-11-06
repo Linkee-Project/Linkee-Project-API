@@ -4,6 +4,7 @@ import com.linkee.linkeeapi.category.command.aggregate.Category;
 import com.linkee.linkeeapi.category.command.infrastructure.repository.CategoryRepository;
 import com.linkee.linkeeapi.common.enums.Role;
 import com.linkee.linkeeapi.common.enums.Status;
+import com.linkee.linkeeapi.common.event.QuestionVerifiedEvent;
 import com.linkee.linkeeapi.common.exception.BusinessException;
 import com.linkee.linkeeapi.common.exception.ErrorCode;
 import com.linkee.linkeeapi.question.command.application.dto.request.CreateQuestionRequestDto;
@@ -16,6 +17,7 @@ import com.linkee.linkeeapi.user.command.application.service.util.UserFinder;
 import com.linkee.linkeeapi.user.command.domain.entity.User;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +32,7 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
     private final JpaQuestionRepository jpaQuestionRepository;
     private final UserFinder userFinder;
     private final CategoryRepository categoryRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     //문제 등록
     @Override
@@ -152,6 +155,9 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
 
         // 4) 상태 검증 & 검증 처리
         q.verifyByAdmin(adminUser); // 내부에서 이미 검증됨이면 QUESTION_ALREADY_QUALIFIED 던짐
+
+        // 알림 이벤트
+        eventPublisher.publishEvent(new QuestionVerifiedEvent(this, q));
 
     }
 
