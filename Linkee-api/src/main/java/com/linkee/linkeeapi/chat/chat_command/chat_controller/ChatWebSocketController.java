@@ -1,10 +1,17 @@
 package com.linkee.linkeeapi.chat.chat_command.chat_controller;
 
 import com.linkee.linkeeapi.chat.chat_command.chat_domain.dto.ChatMessageDto;
+import com.linkee.linkeeapi.chat.chat_command.chat_domain.entity.ChatMember;
 import com.linkee.linkeeapi.chat.chat_command.chat_domain.entity.ChatMessageMongo;
 import com.linkee.linkeeapi.chat.chat_command.chat_domain.entity.ChatRoom;
+import com.linkee.linkeeapi.chat.chat_command.chat_domain.entity.ChatRoomType;
+import com.linkee.linkeeapi.chat.chat_command.chat_repository.ChatMemberRepository;
 import com.linkee.linkeeapi.chat.chat_command.chat_repository.ChatMessageMongoRepository;
 import com.linkee.linkeeapi.chat.chat_command.chat_repository.ChatRoomRepository;
+import com.linkee.linkeeapi.chat.chat_command.chat_service.ChatRoomInOutService;
+import com.linkee.linkeeapi.chat.chat_command.chat_service.ChatService;
+import com.linkee.linkeeapi.common.exception.BusinessException;
+import com.linkee.linkeeapi.common.exception.ErrorCode;
 import com.linkee.linkeeapi.common.security.jwt.JwtTokenProvider;
 import com.linkee.linkeeapi.user.command.domain.entity.User;
 import com.linkee.linkeeapi.user.command.infrastructure.repository.UserRepository;
@@ -13,8 +20,10 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 
 @Controller
@@ -24,8 +33,7 @@ public class ChatWebSocketController {
     private final ChatMessageMongoRepository chatMessageMongoRepository;
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
-    private final ChatRoomRepository chatRoomRepository;
-
+    private final ChatRoomInOutService chatService;
     // 메시지 전송
     @MessageMapping("/chat.send")
     @SendTo("/topic/chatroom")
@@ -52,47 +60,23 @@ public class ChatWebSocketController {
         return messageDto;
     }
 
-    // 방 입장 알림
+
+
     @MessageMapping("/chat.join")
     @SendTo("/topic/chatroom")
     public ChatMessageDto joinRoom(@Header("roomId") Long roomId,
                                    @Header("Authorization") String token) {
-
-        User user = validateTokenAndGetUser(token);
-        ChatRoom room = chatRoomRepository.findById(roomId)
-                .orElseThrow(() -> new RuntimeException("Room not found"));
-
-        room.increaseJoinedCount();
-        chatRoomRepository.save(room);
-
-        return ChatMessageDto.builder()
-                .roomId(roomId)
-                .message(user.getUserNickname() + "님이 입장했습니다.")
-                .senderNickname("SYSTEM")
-                .sentAt(LocalDateTime.now())
-                .build();
+        return chatService.joinRoom(roomId, token);
     }
 
-    // 방 퇴장 알림
     @MessageMapping("/chat.leave")
     @SendTo("/topic/chatroom")
     public ChatMessageDto leaveRoom(@Header("roomId") Long roomId,
                                     @Header("Authorization") String token) {
-
-        User user = validateTokenAndGetUser(token);
-        ChatRoom room = chatRoomRepository.findById(roomId)
-                .orElseThrow(() -> new RuntimeException("Room not found"));
-
-        room.decreaseJoinedCount();
-        chatRoomRepository.save(room);
-
-        return ChatMessageDto.builder()
-                .roomId(roomId)
-                .message(user.getUserNickname() + "님이 퇴장했습니다.")
-                .senderNickname("SYSTEM")
-                .sentAt(LocalDateTime.now())
-                .build();
+        return chatService.leaveRoom(roomId, token);
     }
+
+
 
     private User validateTokenAndGetUser(String token) {
         if (!jwtTokenProvider.validateToken(token)) {

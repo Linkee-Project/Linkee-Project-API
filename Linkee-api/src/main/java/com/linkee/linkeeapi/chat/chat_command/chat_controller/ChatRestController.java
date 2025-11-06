@@ -1,18 +1,29 @@
 package com.linkee.linkeeapi.chat.chat_command.chat_controller;
 
 
+import com.linkee.linkeeapi.chat.chat_command.chat_domain.dto.response.ChatRoomResponseDto;
 import com.linkee.linkeeapi.chat.chat_command.chat_domain.entity.ChatRoom;
 import com.linkee.linkeeapi.chat.chat_command.chat_repository.ChatMessageMongoRepository;
 import com.linkee.linkeeapi.chat.chat_command.chat_repository.ChatRoomRepository;
+import com.linkee.linkeeapi.chat.chat_command.chat_service.ChatRoomCreateService;
+import com.linkee.linkeeapi.chat.command.application.service.command_service.ChatRoomCommandService;
+import com.linkee.linkeeapi.chat.command.domain.dto.command_dto.request.ChatRoomCreateRequestDto;
 import com.linkee.linkeeapi.common.enums.Status;
 import com.linkee.linkeeapi.common.exception.BusinessException;
 import com.linkee.linkeeapi.common.exception.ErrorCode;
 import com.linkee.linkeeapi.common.security.jwt.JwtTokenProvider;
+import com.linkee.linkeeapi.common.security.model.CustomUser;
+import com.linkee.linkeeapi.common.security.service.CustomUserDetails;
 import com.linkee.linkeeapi.user.command.domain.entity.User;
 import com.linkee.linkeeapi.user.command.infrastructure.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -24,6 +35,8 @@ public class ChatRestController {
     private final ChatMessageMongoRepository chatMessageMongoRepository;
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
+    private final ChatRoomCommandService chatRoomCommandService;
+    private final ChatRoomCreateService chatRoomCreateService;
 
     // 전체 방 조회
     @GetMapping("/rooms")
@@ -31,7 +44,18 @@ public class ChatRestController {
         if (!jwtTokenProvider.validateToken(token)) {
             return ResponseEntity.status(401).body("Unauthorized");
         }
-        return ResponseEntity.ok(chatRoomRepository.findAll());
+
+        List<ChatRoomResponseDto> rooms = chatRoomRepository.findAll().stream()
+                .map(room -> new ChatRoomResponseDto(
+                        room.getChatRoomId(),
+                        room.getChatRoomName(),
+                        room.getChatRoomType(),
+                        room.getIsPrivate(),
+                        room.getJoinedCount()
+                ))
+                .toList();
+
+        return ResponseEntity.ok(rooms);
     }
 
     // 특정 방 메시지 조회
@@ -46,25 +70,20 @@ public class ChatRestController {
 
     // 새 방 만들기
     @PostMapping("/rooms")
-    public ResponseEntity<?> createRoom(@RequestHeader("Authorization") String token,
-                                        @RequestParam String roomName) {
-        if (!jwtTokenProvider.validateToken(token)) {
-            throw new BusinessException(ErrorCode.CHAT_ROOM_NOT_FOUND);
-        }
+    public ResponseEntity<?> createRoom(
+            @RequestHeader("Authorization") String token,
+            @RequestBody ChatRoomCreateRequestDto request) {
 
-        String userEmail = jwtTokenProvider.getUsername(token);
-        User owner = userRepository.findByUserEmail(userEmail)
+        String pureToken = token.replace("Bearer ", "");
+        String userEmail = jwtTokenProvider.getUsername(pureToken); // ✅ 이메일 꺼내기
+        User user = userRepository.findByUserEmail(userEmail)
                 .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_USER_ID));
 
-        ChatRoom room = ChatRoom.builder()
-                .chatRoomName(roomName)
-                .roomOwner(owner)
-                .joinedCount(1)
-                .roomStatus(Status.Y)
-                .build();
+        request.setRoomOwnerId(user.getUserId()); // ✅ DB에서 찾은 ID 주입
 
-        chatRoomRepository.save(room);
-
-        return ResponseEntity.ok(room);
+        return chatRoomCreateService.createRoom(request);
     }
+
+
+
 }
