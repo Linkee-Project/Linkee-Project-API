@@ -66,7 +66,11 @@ public enum ErrorCode {
     COMMENT_NOT_FOUND("10000", "존재하지 않는 댓글입니다.", HttpStatus.NOT_FOUND),
     COMMENT_PARENT_NOT_FOUND("10001", "부모 댓글이 존재하지 않습니다.", HttpStatus.NOT_FOUND),
     COMMENT_FORBIDDEN_ACCESS("10002", "댓글 작성자만 수행할 수 있습니다.", HttpStatus.FORBIDDEN),
-    CHAT_ROOM_NOT_FOUND("11111","방이존재하지 않습니다" ,HttpStatus.NOT_FOUND );
+    CHAT_ROOM_NOT_FOUND("11111","방이존재하지 않습니다" ,HttpStatus.NOT_FOUND ),
+
+    //알림 관련 오류(12000번대 사용)
+    ALARM_TEMPLATE_NOT_FOUND("12000", "알림 템플릿을 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
+
 
     private final String code;
     private final String message;
