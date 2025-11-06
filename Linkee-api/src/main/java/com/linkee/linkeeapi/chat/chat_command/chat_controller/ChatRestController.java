@@ -71,9 +71,19 @@ public class ChatRestController {
     // 새 방 만들기
     @PostMapping("/rooms")
     public ResponseEntity<?> createRoom(
-            @RequestBody ChatRoomCreateRequestDto request,
-            @AuthenticationPrincipal CustomUser user) {
+            @RequestHeader("Authorization") String token,
+            @RequestBody ChatRoomCreateRequestDto request) {
 
-        return chatRoomCreateService.createRoom(request, user); // ✅ 서비스가 ResponseEntity를 리턴
+        String pureToken = token.replace("Bearer ", "");
+        String userEmail = jwtTokenProvider.getUsername(pureToken); // ✅ 이메일 꺼내기
+        User user = userRepository.findByUserEmail(userEmail)
+                .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_USER_ID));
+
+        request.setRoomOwnerId(user.getUserId()); // ✅ DB에서 찾은 ID 주입
+
+        return chatRoomCreateService.createRoom(request);
     }
+
+
+
 }
