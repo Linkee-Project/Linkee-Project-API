@@ -27,6 +27,7 @@ public class ChatRoom extends BaseTimeEntity {
     private ChatRoomType chatRoomType;
 
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     @Column(name = "is_private", nullable = false, columnDefinition = "ENUM('Y','N') DEFAULT 'Y'")
     private Status isPrivate = Status.N;
 
@@ -38,11 +39,13 @@ public class ChatRoom extends BaseTimeEntity {
     private User roomOwner;
 
     @Column(name = "joined_count", nullable = false)
+    @Builder.Default
     private Integer joinedCount = 1;
 
     @Column(name = "room_capacity")
     private Integer roomCapacity;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(name = "room_status", nullable = false, columnDefinition = "ENUM('Y','N') DEFAULT 'Y'" )
     private Status roomStatus = Status.Y;
