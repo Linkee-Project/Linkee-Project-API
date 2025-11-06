@@ -1,5 +1,7 @@
 package com.linkee.linkeeapi.room_user_log.command.application.service;
 
+import com.linkee.linkeeapi.common.exception.BusinessException;
+import com.linkee.linkeeapi.common.exception.ErrorCode;
 import com.linkee.linkeeapi.room_member.command.infrastructure.repository.RoomMemberRepository;
 import com.linkee.linkeeapi.room_question.command.infrastructure.repository.RoomQuestionRepository;
 import com.linkee.linkeeapi.room_user_log.command.application.dto.request.RoomUserLogCreateRequestDto;
@@ -27,10 +29,10 @@ public class RoomUserLogCommandServiceImpl implements RoomUserLogCommandService 
     public Long createRoomUserLog(RoomUserLogCreateRequestDto requestDto) {
         // room_question_id 로 문제 존재 여부 확인
         RoomQuestion roomQuestion = roomQuestionRepository.findById(requestDto.getRoomQuestionId())
-                .orElseThrow(() -> new IllegalArgumentException("RoomQuestion not found"));
+                .orElseThrow(() -> new BusinessException(ErrorCode.ROOM_QUESTION_NOT_FOUND));
         // room_member_id 로 퀴즈방 내 사용자 존재 여부 확인
         RoomMember roomMember = roomMemberRepository.findById(requestDto.getRoomMemberId())
-                .orElseThrow(() -> new IllegalArgumentException("RoomMember not found"));
+                .orElseThrow(() -> new BusinessException(ErrorCode.ROOM_MEMBER_NOT_FOUND));
         // RoomUserLog 엔티티 생성 (문제, 사용자, 정답 여부 매핑)
         RoomUserLog roomUserLog = RoomUserLog.builder()
                 .roomQuestion(roomQuestion)

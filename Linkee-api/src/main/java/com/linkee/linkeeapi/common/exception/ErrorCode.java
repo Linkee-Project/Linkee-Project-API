@@ -39,6 +39,7 @@ public enum ErrorCode {
     FORBIDDEN_QUESTION_ACCESS("5003", "문제에 대한 권한이 없습니다.", HttpStatus.FORBIDDEN),
     INVALID_ANSWER_INDEX("5004", "정답 인덱스가 옵션과 일치하지 않습니다.", HttpStatus.BAD_REQUEST),
     QUESTION_ALREADY_QUALIFIED("5005","이미 검증된 문제입니다.",HttpStatus.CONFLICT),
+    INSUFFICIENT_QUESTIONS("5006","퀴즈를 시작하기에 문제가 충분하지 않습니다.",HttpStatus.BAD_REQUEST),
 
     //카데고리 관련 오류(6000번대 사용)
     CATEGORY_NOT_FOUND("6000","해당 카테고리를 찾을 수 없습니다.",HttpStatus.NOT_FOUND),
@@ -61,6 +62,7 @@ public enum ErrorCode {
     QUIZ_ROOM_NOT_IN_WAITING_STATE("9007", "대기 중인 방에만 참여할 수 있습니다.", HttpStatus.BAD_REQUEST),
     QUIZ_ROOM_FULL("9008", "방이 가득 찼습니다.", HttpStatus.BAD_REQUEST),
     USER_ALREADY_IN_ROOM("9009", "이미 참여한 방입니다.", HttpStatus.BAD_REQUEST),
+    INVALID_ROOM_CODE("9010", "잘못된 방 코드입니다.", HttpStatus.BAD_REQUEST),
 
     //댓글 관련 오류(10000번대 사용)
     COMMENT_NOT_FOUND("10000", "존재하지 않는 댓글입니다.", HttpStatus.NOT_FOUND),
@@ -71,7 +73,15 @@ public enum ErrorCode {
     //알림 관련 오류(12000번대 사용)
     ALARM_TEMPLATE_NOT_FOUND("12000", "알림 템플릿을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     CHAT_ROOM_NOT_FOUND("11111","방이존재하지 않습니다." ,HttpStatus.NOT_FOUND ),
-    ROOM_IS_FULL("11112","방의 인원이 가득 찼습니다.", HttpStatus.BAD_REQUEST );
+    ROOM_IS_FULL("11112","방의 인원이 가득 찼습니다.", HttpStatus.BAD_REQUEST ),
+
+    //퀴즈방 유저 기록 관련 오류(13000번대 사용)
+    ROOM_QUESTION_NOT_FOUND("13000", "해당 퀴즈 질문을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    ROOM_MEMBER_NOT_FOUND("13001", "해당 퀴즈방 멤버를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+
+    // 등급 관련 오류(14000번대 사용)
+    GRADE_NOT_FOUND("14000", "해당 등급 정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
+
 
     private final String code;
     private final String message;

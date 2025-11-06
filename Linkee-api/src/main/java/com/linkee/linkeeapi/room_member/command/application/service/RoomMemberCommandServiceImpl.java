@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 /*
  * RoomMemberCommandService 인터페이스의 구현체.
@@ -45,6 +46,18 @@ public class RoomMemberCommandServiceImpl implements RoomMemberCommandService {
         QuizRoom quizRoom = quizRoomRepository.findById(request.getQuizRoomId())
                 .orElseThrow(() ->  new BusinessException(ErrorCode.QUIZ_ROOM_NOT_FOUND));
 
+        // 비공개 방일 경우 코드 검증
+        if (quizRoom.getIsPrivate() == Status.Y) {
+            System.out.println("--- DEBUG ---");
+            System.out.println("Request Code: '" + request.getRoomCode() + "'");
+            System.out.println("DB Code     : '" + quizRoom.getRoomCode() + "'");
+            System.out.println("Are they equal? " + java.util.Objects.equals(request.getRoomCode(), quizRoom.getRoomCode()));
+            System.out.println("-------------");
+            if (!java.util.Objects.equals(request.getRoomCode(), quizRoom.getRoomCode())) {
+                throw new BusinessException(ErrorCode.INVALID_ROOM_CODE);
+            }
+        }
+
         //  대기중인 방인지 확인
         if (quizRoom.getRoomStatus() != RoomStatus.W) {
             throw new BusinessException(ErrorCode.QUIZ_ROOM_NOT_IN_WAITING_STATE);
@@ -61,7 +74,8 @@ public class RoomMemberCommandServiceImpl implements RoomMemberCommandService {
         RoomMember roomMember = RoomMember.builder()
                 .member(user)
                 .quizRoom(quizRoom)
-                .isReady(Status.N) // 초기 상태는 '준비 안 됨' (N)
+                .isReady(user.getUserId()
+                        .equals(quizRoom.getRoomOwner().getUserId()) ? Status.Y : Status.N) // 초기 상태는 '준비 안 됨' (N) 방장이면 자동으로 준비완료
                 .joinedAt(LocalDateTime.now())
                 .build();
 
@@ -81,16 +95,19 @@ public class RoomMemberCommandServiceImpl implements RoomMemberCommandService {
     /*
      * 특정 룸 멤버의 준비 상태(isReady)를 토글합니다. (Y <-> N)
      * @param roomMemberId 준비 상태를 변경할 룸 멤버의 ID
-     * @throws IllegalArgumentException 룸 멤버를 찾을 수 없을 경우 발생
      */
     @Override
     @Transactional
     public void toggleReady(Long roomMemberId) {
         RoomMember roomMember = roomMemberRepository.findById(roomMemberId)
-                .orElseThrow(() -> new IllegalArgumentException("RoomMember not found"));
+                .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_USER_ID));
 
         //  1. 게임 상태 검증
         QuizRoom quizRoom = roomMember.getQuizRoom();
+        System.out.println("--- toggleReady DEBUG ---");
+        System.out.println("Room ID: " + quizRoom.getQuizRoomId());
+        System.out.println("Room Status: " + quizRoom.getRoomStatus());
+        System.out.println("-------------------------");
         if(quizRoom.getRoomStatus() != RoomStatus.W) {  // 대기(W) 상태가 아닐 경우
             throw new BusinessException(ErrorCode.QUIZ_ROOM_NOT_WAITING);
         }
@@ -107,26 +124,24 @@ public class RoomMemberCommandServiceImpl implements RoomMemberCommandService {
     /*
      * 특정 룸 멤버가 스스로 방을 나간 시간을 기록합니다. (자발적 나감)
      * @param roomMemberId 방을 나갈 룸 멤버의 ID
-     * @throws IllegalArgumentException 룸 멤버를 찾을 수 없을 경우 발생
      */
     @Override
     @Transactional
     public void selfLeaveRoom(Long roomMemberId) {
         RoomMember roomMember = roomMemberRepository.findById(roomMemberId)
-                .orElseThrow(() -> new IllegalArgumentException("RoomMember not found"));
+                .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_USER_ID));
         roomMember.setLeftedAt(LocalDateTime.now());
     }
 
     /*
      * 방장이 특정 룸 멤버를 강제로 내보낸 시간을 기록합니다. (강퇴)
      * @param roomMemberId 강퇴할 룸 멤버의 ID
-     * @throws IllegalArgumentException 룸 멤버를 찾을 수 없을 경우 발생
      */
     @Override
     @Transactional
     public void kickRoomMember(Long roomMemberId) {
         RoomMember roomMember = roomMemberRepository.findById(roomMemberId)
-                .orElseThrow(() -> new IllegalArgumentException("RoomMember not found"));
+                .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_USER_ID));
         roomMember.setLeftedAt(LocalDateTime.now());
     }
 }
