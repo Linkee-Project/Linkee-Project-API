@@ -1,10 +1,12 @@
 package com.linkee.linkeeapi.chat_room.query.controller;
 
-import com.linkee.linkeeapi.chat_room.query.dto.request.ChatRoomListRequestDto;
-import com.linkee.linkeeapi.chat_room.query.dto.request.GameRoomListRequestDto;
-import com.linkee.linkeeapi.chat_room.query.dto.response.ChatRoomListResponseDto;
-import com.linkee.linkeeapi.chat_room.query.dto.response.GameRoomListResponseDto;
-import com.linkee.linkeeapi.chat_room.query.service.ChatRoomQueryServiceImpl;
+
+import com.linkee.linkeeapi.chat.command.application.controller.query_controller.ChatRoomQueryController;
+import com.linkee.linkeeapi.chat.command.application.service.query_serivce.ChatRoomQueryServiceImpl;
+import com.linkee.linkeeapi.chat.command.domain.dto.query_dto.request.ChatRoomListRequestDto;
+import com.linkee.linkeeapi.chat.command.domain.dto.query_dto.request.GameRoomListRequestDto;
+import com.linkee.linkeeapi.chat.command.domain.dto.query_dto.response.ChatRoomListResponseDto;
+import com.linkee.linkeeapi.chat.command.domain.dto.query_dto.response.GameRoomListResponseDto;
 import com.linkee.linkeeapi.common.model.PageResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

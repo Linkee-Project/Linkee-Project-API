@@ -1,13 +1,14 @@
 package com.linkee.linkeeapi.chat_room.command.application.controller;
 
-import com.linkee.linkeeapi.chat_member.command.domain.aggregate.entity.ChatMember;
-import com.linkee.linkeeapi.chat_member.command.infrastructure.repository.ChatMemberRepository;
-import com.linkee.linkeeapi.chat_room.command.application.dto.request.ChatRoomCreateRequestDto;
-import com.linkee.linkeeapi.chat_room.command.application.dto.request.ChatRoomDeleteRequestDto;
-import com.linkee.linkeeapi.chat_room.command.application.service.ChatRoomCommandServiceImpl;
-import com.linkee.linkeeapi.chat_room.command.domain.aggregate.ChatRoom;
-import com.linkee.linkeeapi.chat_room.command.domain.aggregate.ChatRoomType;
-import com.linkee.linkeeapi.chat_room.command.infrastructure.repository.JpaChatRoomRepository;
+import com.linkee.linkeeapi.chat.chat_command.chat_domain.entity.ChatMember;
+import com.linkee.linkeeapi.chat.chat_command.chat_domain.entity.ChatRoom;
+import com.linkee.linkeeapi.chat.chat_command.chat_domain.entity.ChatRoomType;
+import com.linkee.linkeeapi.chat.chat_command.chat_repository.ChatMemberRepository;
+import com.linkee.linkeeapi.chat.chat_command.chat_repository.ChatRoomRepository;
+
+import com.linkee.linkeeapi.chat.command.application.service.command_service.ChatRoomCommandServiceImpl;
+import com.linkee.linkeeapi.chat.command.domain.dto.command_dto.request.ChatRoomCreateRequestDto;
+import com.linkee.linkeeapi.chat.command.domain.dto.command_dto.request.ChatRoomDeleteRequestDto;
 import com.linkee.linkeeapi.common.enums.Status;
 import com.linkee.linkeeapi.user.command.application.service.util.UserFinder;
 import com.linkee.linkeeapi.user.command.domain.entity.User;
@@ -26,7 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ChatRoomCommandServiceTest {
 
     @Mock
-    private JpaChatRoomRepository chatRoomRepository;
+    private ChatRoomRepository chatRoomRepository;
 
     @Mock
     private UserRepository userRepository; // ✅ 추가
@@ -75,6 +76,8 @@ class ChatRoomCommandServiceTest {
         when(chatRoomRepository.save(any(ChatRoom.class))).thenReturn(chatRoom);
 
         // when
+
+        User user = new User();
         chatRoomCommandService.createRoom(request);
 
         // then

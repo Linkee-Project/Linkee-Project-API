@@ -1,9 +1,11 @@
 package com.linkee.linkeeapi.chat_member.query.controller;
 
-import com.linkee.linkeeapi.chat_member.query.dto.request.ChatMemberSearchRequest;
-import com.linkee.linkeeapi.chat_room.command.domain.aggregate.ChatRoom;
-import com.linkee.linkeeapi.chat_room.command.domain.aggregate.ChatRoomType;
-import com.linkee.linkeeapi.chat_room.command.infrastructure.repository.JpaChatRoomRepository;
+
+import com.linkee.linkeeapi.chat.chat_command.chat_domain.entity.ChatRoom;
+import com.linkee.linkeeapi.chat.chat_command.chat_domain.entity.ChatRoomType;
+import com.linkee.linkeeapi.chat.chat_command.chat_repository.ChatRoomRepository;
+import com.linkee.linkeeapi.chat.command.application.controller.query_controller.ChatMemberQueryController;
+import com.linkee.linkeeapi.chat.command.domain.dto.query_dto.request.ChatMemberSearchRequest;
 import com.linkee.linkeeapi.common.enums.RoomStatus;
 import com.linkee.linkeeapi.common.enums.Status;
 import com.linkee.linkeeapi.user.command.domain.entity.User;
@@ -29,7 +31,7 @@ class ChatMemberQueryControllerTest {
     private UserRepository userRepository;
 
     @Autowired
-    private JpaChatRoomRepository chatRoomRepository;
+    private ChatRoomRepository chatRoomRepository;
 
     @Test
     @DisplayName("채팅 멤버 전체 리스트 조회 테스트")

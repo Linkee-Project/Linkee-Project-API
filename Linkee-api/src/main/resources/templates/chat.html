@@ -78,6 +78,7 @@
 
 <input type="text" id="message" placeholder="메시지 입력">
 <button onclick="sendMessage()">전송</button>
+<button onclick="leaveRoom()">나가기</button>
 
 <script>
     let stompClient = null;
@@ -93,6 +94,7 @@
     function connect() {
         token = document.getElementById("token").value;
         const socket = new SockJS('http://localhost:8080/ws-chat');
+        // const socket = new SockJS('http://192.168.2.49:8080/ws-chat');
         stompClient = Stomp.over(socket);
 
         stompClient.connect({'Authorization': token}, function(frame) {
@@ -104,7 +106,9 @@
 
     // 방 목록 불러오기 (아이콘 표시 + 타입별 정렬)
     function loadRooms() {
+
         fetch('http://localhost:8080/chat/rooms', {
+        // fetch('http://192.168.2.49:8080/chat/rooms', {
             headers: { 'Authorization': token }
         })
             .then(res => res.json())
@@ -169,7 +173,9 @@
     function loadMessages() {
         if(!selectedRoomId) return;
 
+
         fetch('http://localhost:8080/chat/rooms/' + selectedRoomId + '/messages', {
+        // fetch('http://192.168.2.49:8080/chat/rooms/' + selectedRoomId + '/messages', {
             headers: { 'Authorization': token }
         })
             .then(res => res.json())
@@ -191,6 +197,7 @@
         if(currentSubscription) {
             currentSubscription.unsubscribe();
         }
+
         currentSubscription = stompClient.subscribe('/topic/chatroom', function(messageOutput) {
             const msg = JSON.parse(messageOutput.body);
             if(msg.roomId == selectedRoomId){
@@ -235,7 +242,9 @@
             ? parseInt(document.getElementById("roomCapacity").value)
             : null;
 
+
         fetch('http://localhost:8080/chat/rooms', {
+        // fetch('http://192.168.2.49:8080/chat/rooms?roomName=' + encodeURIComponent(roomName), {
             method: 'POST',
             headers: {
                 'Authorization': token,
@@ -330,6 +339,32 @@
             );
         }
     });
+
+    // 방 나가기 : chat_member에서 삭제
+    function leaveRoom() {
+        if (!selectedRoomId || !stompClient) {
+            alert("현재 들어가 있는 방이 없습니다.");
+            return;
+        }
+
+        // 서버에 퇴장 요청 (ChatMember 삭제)
+        stompClient.send("/app/chat.leave",
+            {'roomId': selectedRoomId, 'Authorization': token}, {}
+        );
+
+        // 구독 해제
+        if (currentSubscription) {
+            currentSubscription.unsubscribe();
+            currentSubscription = null;
+        }
+
+        // UI 초기화
+        showMessage("방을 나갔습니다.", true);
+        selectedRoomId = null;
+        document.getElementById("chat").innerHTML = "";
+        highlightSelectedRoom();
+        loadRooms(); // 방 목록 새로고침 (참여자 수 업데이트)
+    }
 </script>
 
 </body>
