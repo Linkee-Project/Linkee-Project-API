@@ -1,9 +1,5 @@
 package com.linkee.linkeeapi.comment.command.application.service;
 
-import com.linkee.linkeeapi.alarm_box.command.application.dto.request.AlarmBoxCreateRequest;
-import com.linkee.linkeeapi.alarm_box.command.application.service.AlarmBoxCommandService;
-import com.linkee.linkeeapi.alarm_template.query.dto.response.AlarmTemplateResponse;
-import com.linkee.linkeeapi.alarm_template.query.service.AlarmTemplateQueryService;
 import com.linkee.linkeeapi.comment.command.application.dto.request.CreateCommentRequestDto;
 import com.linkee.linkeeapi.comment.command.application.dto.request.UpdateCommentRequestDto;
 import com.linkee.linkeeapi.comment.command.application.dto.response.CreateCommentResponseDto;
@@ -20,12 +16,9 @@ import com.linkee.linkeeapi.user.command.application.service.util.UserFinder;
 import com.linkee.linkeeapi.user.command.domain.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
