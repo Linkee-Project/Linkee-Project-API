@@ -332,6 +332,7 @@ Linkee는 사용자가 CS 관련 퀴즈에 참여하고 문제를 풀며 다른 
       private Long senderId;
   }
   ```
+
   아무리 url 에 맞게 작성해서 넘겨도
   null 값이 넘어온다
   변수명 매핑 정확히 일치하지만 값이 controller 부터 들어오지 않았다
@@ -356,7 +357,8 @@ Linkee는 사용자가 CS 관련 퀴즈에 참여하고 문제를 풀며 다른 
       private Long chatRoomId;
       private Long senderId;
   }
-    @Setter 추가하면 값이 제대로 저장되서 넘어오는걸 확인할 수 있다
+  @Setter 추가하면 값이 제대로 저장되서 넘어오는걸 확인할 수 있다
+  ```
   </details>
 
   <details>
@@ -394,7 +396,10 @@ Linkee는 사용자가 CS 관련 퀴즈에 참여하고 문제를 풀며 다른 
     127.0.0.1:6379> keys *
     1) "TEST_KEY"
     2) "refresh:rrr223@ssdds.com"
+    ```
+
   </details>
+
   <details>
     <summary>spring User 객체를 Custom으로 사용할때 @Builder 를 사용못하는 문제</summary>
     스프링 시큐리티를 사용하면서 UserDetails 객체를 커스텀해서 사용하기 위해 User 를 상속받는 CustomUser 객체를 선언했다 하지만 lombok의 @Bulider 를 사용하려고 하니
@@ -433,9 +438,9 @@ Linkee는 사용자가 CS 관련 퀴즈에 참여하고 문제를 풀며 다른 
         );
     원래의 방식대로 생성한다
   ```
-</details>
+  </details>
 
-<details>
+  <details>
   <summary>일반 유저와 소셜로그인을 같이 사용할 때 필요 컬럼값이 달라 초기화 오류</summary>
   
   일반유저와 소셜로그인을 같이 구현할 때 가져오는 api에 따라 필요값이 달라진다
@@ -481,24 +486,239 @@ Linkee는 사용자가 CS 관련 퀴즈에 참여하고 문제를 풀며 다른 
   User user = userRepository.findByUserEmail(email)
   .orElseGet(() -> userRepository.save(User.createSocialUser(naverId, email, name)));
   ```
- </details>
+  </details>
+
+<br>
+
+ - 유한세
+    <details>
+    <summary>로그인 및 JWT인증 관련 문제</summary>
+
+    - 문제
+      - JWT 토큰을 사용한 로그인 후, 인증되지 않은 사용자 API에 접근할 수 있는 문제
+    - 원인
+      - 로그인 후 accessToken이 제대로 localStorage에 저장되지 않음
+      - 토큰을 헤더에 포함시켜 요청하는 과정이 누락됨
+    - 해결
+      - 로그인 후 JWT 토큰 저장
+
+    ```java
+    window.onload = () => {
+            //URL 파라미터에서 토큰/이메일 추출
+            const params = new URLSearchParams(window.location.search);
+            const token = params.get('token');
+            const email = params.get('email');
+            if (token && email) {
+                localStorage.setItem('accessToken', token);
+                localStorage.setItem('email', email);
+                // URL에서 쿼리 제거
+                window.history.replaceState({}, document.title, "/");
+            }
+            checkLogin();
+
+    ```
+
+    - API  요청 시 JWT 토큰 포함
+    
+    ```java
+    
+    // 요청을 보낼 때 Authorization 헤더에 토큰을 포함시킴
+    const token = localStorage.getItem('accessToken');
+    fetch('https://example.com/api/data', {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    })
+    .then(response => response.json())
+    .then(data => console.log(data));
+
+    ```
+
+    - 서버 측 JWT인증 필터
+
+    ```java
+    // JWT 인증 필터 (Spring Security)
+    public class JwtAuthenticationFilter extends OncePerRequestFilter {
+    private final JwtTokenProvider jwtTokenProvider;
+
+    public JwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider) {
+        this.jwtTokenProvider = jwtTokenProvider;
+    }
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        String token = jwtTokenProvider.resolveToken(request);
+        if (token != null && jwtTokenProvider.validateToken(token)) {
+            Authentication authentication = jwtTokenProvider.getAuthentication(token);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+          }
+          filterChain.doFilter(request, response);
+        }
+    }
+
+    ```
+
+     - JWT 토큰 제공
+     ```java
+     // JWT 토큰 생성
+      public String createToken(String username) {
+          return Jwts.builder()
+                  .setSubject(username)
+                  .setExpiration(new Date(System.currentTimeMillis() + 864_000_000)) // 만료시간 10일
+                  .signWith(SignatureAlgorithm.HS256, secretKey)
+                  .compact();
+      }
+
+      ```
 
 
+    </details>
 
-
-
-
+    <details>
+    <summary>소셜 로그인 (OAuth2)설정 오류</summary>
   
+    -  문제
+        - OAuth2 로그인 후 네이버 인증이 제대로 동작하지 않거나,  리 디렉션이 잘못되는 문제
+    
+    - 해결방법
+      - OauthController에서 `OAUTH2_AUTHORIZATION_BASE_URI + "/" + registration.getRegistrationId()` 수정
 
+      ```java
+      @GetMapping("/login")
+      public String getLoginPage(Model model) {
+          Map<String, String> oauth2AuthenticationUrls = new HashMap<>();
 
+          if (clientRegistrationRepository instanceof Iterable<?>) {
+              Iterable<ClientRegistration> clientRegistrations =
+                      (Iterable<ClientRegistration>) clientRegistrationRepository;
 
+              System.out.println("✅ [DEBUG] 등록된 OAuth2 클라이언트 목록:");
+              clientRegistrations.forEach(registration -> {
+                  System.out.println(" - " + registration.getClientName() + " (" + registration.getRegistrationId() + ")");
+                  oauth2AuthenticationUrls.put(
+                          registration.getClientName(),
+                          OAUTH2_AUTHORIZATION_BASE_URI + "/" + registration.getRegistrationId()
+                  );
+              });
+          } else {
+              System.out.println("❌ [DEBUG] clientRegistrationRepository 가 Iterable 이 아닙니다!");
+          }
 
+          model.addAttribute("oauth2AuthenticationUrls", oauth2AuthenticationUrls);
+          return "login";
+      }
+      ```
 
+    - 네이버 Application에서 Callback-uri 재설정
+    - redirect-uri OAuth설정에 맞게 수정정
+    </details>
 
+    <br>
 
+  - 김진
+    <details>
+    <summary>순환참조 관련 오류</summary>
 
+    - 문제
+    
+    **빈(Bean) 순환 참조(circular dependency)** 로 인해 스프링 컨테이너가 애플리케이션을 구동하지 못함
+        
 
+    - 원인
+        
+        QuizRoomCommandController
+        ↓ 의존
+        QuizRoomCommandServiceImpl
+        ↓ 의존
+        QuizGameAdvanceScheduler
+        ↓ 다시 의존
+        QuizRoomCommandServiceImpl (또는 Controller)
+        
 
+    - 해결 방안
+        
+        **@Lazy 사용** 
+        
+        `@Lazy`로 순환 참조 지연 로딩 처리 가능
+        
+        ```java
+        @Service
+        public class QuizRoomCommandServiceImpl {
+        private final QuizGameAdvanceScheduler scheduler;
+        public QuizRoomCommandServiceImpl(@Lazy QuizGameAdvanceScheduler scheduler) {
+        this.scheduler = scheduler;
+        }
+        }
+        ```
+        
+        QuizGameAdvanceScheduler 빈이 생성될 때 QuizRoomCommandService의 실제 인스턴스를 즉시 생성하여 주입하는 대신, QuizRoomCommandService의 프록시(Proxy) 객체를 먼저
+        주입합니다. 그리고 QuizGameAdvanceScheduler 내에서 quizRoomCommandService 필드가 실제로 사용되는 시점(즉, quizRoomCommandService.someMethod()와 같이 메서드가
+        호출될 때)에 비로소 QuizRoomCommandService의 실제 인스턴스가 생성되고 프록시가 이를 통해 호출을 위임하게 됩니다.
+    </details>
+
+    <br>
+
+  - 김명진
+    <details>
+    <summary>-</summary>
+    </details>
+
+    <br>
+
+  - 정동욱
+    <details>
+    <summary>알림 발송 관련 단방향 및 양방향 통신</summary>
+      
+      - 문제
+
+        -  알림을 양방향 통신으로 할 경우 서버에 부하가 심해질 것으로 예상
+
+    - 해결
+
+      - 처음에 redis를 사용해서 양방향 통신으로 구현하였지만 팀원들과 이야기를 해보니 서버에 부하가 심할 것 같다고 판단되어 단방향 통신으로 SSE로 구현하여 수정
+    </details>
+
+    <details>
+    <summary>친구 요청 시 중복 데이터 </summary>
+
+    - 문제
+
+      - 예를 들어 1번 유저가 2번 유저에게 친구를 보내고 반대로 2번 유저가 1번 유저에게 친구를 보내면 DB에 같이 저장이 되는 문제를 발견
+
+    - 해결
+
+      - 1, 2 or 2, 1 이렇게 DB에 저장되어있는 값을 확인하고 만약 있다면 해당 값으로 업데이트 진행하는 방식으로 해결
+
+      ```java
+      // 두 사용자 간의 관계가 이미 존재하는지 확인
+        Optional<Relation> optionalRelation = relationRepository.findByUsers(requester, receiver);
+
+        if (optionalRelation.isPresent()) {
+            // 관계가 이미 존재하면 , 재활용
+            Relation existingRelation = optionalRelation.get();
+
+            switch (existingRelation.getRelationStatus()) {
+                case A:
+                    throw new BusinessException(ErrorCode.RELATION_ALREADY_EXISTS);
+                case P:
+                    throw new BusinessException(ErrorCode.RELATION_REQUEST_ALREADY_EXISTS);
+                case R:
+                    // 거절된 상태에서 다시 요청하는 경우, 기존 데이터를 업데이트
+                    existingRelation.reRequest(requester, receiver);
+                    relationRepository.save(existingRelation);
+                    break;
+            }
+        } else {
+            Relation relation = Relation.builder()
+                    .requester(requester)
+                    .receiver(receiver)
+                    .build();
+
+            relationRepository.save(relation);
+        }
+      ```
+    </details>
 
 ---
 
