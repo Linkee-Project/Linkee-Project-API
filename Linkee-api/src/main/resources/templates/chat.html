@@ -14,6 +14,21 @@
         #chat { border: 1px solid #ccc; height: 400px; overflow-y: scroll; padding: 10px; margin-top: 10px; width: 600px; }
         #message { width: 500px; }
         .system { color: gray; font-style: italic; }
+
+        /* 선택 버튼 스타일 */
+        .option-btn {
+            margin: 4px;
+            padding: 6px 12px;
+            border: 1px solid #999;
+            background-color: #f9f9f9;
+            cursor: pointer;
+            border-radius: 6px;
+        }
+        .option-btn.selected {
+            background-color: #4CAF50;
+            color: white;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -29,7 +44,31 @@
 
 <h3>새 방 만들기</h3>
 <input type="text" id="newRoomName" placeholder="방 이름 입력">
-<button onclick="createRoom()">만들기</button>
+<div>
+    <p><strong>방 타입 선택:</strong></p>
+    <button class="option-btn selected" id="btnChat" onclick="selectRoomType('CHAT')">CHAT</button>
+    <button class="option-btn" id="btnGame" onclick="selectRoomType('GAME')">GAME</button>
+</div>
+
+<div>
+    <p><strong>공개 여부:</strong></p>
+    <button class="option-btn selected" id="btnPublic" onclick="selectIsPrivate('N')">공개</button>
+    <button class="option-btn" id="btnPrivate" onclick="selectIsPrivate('Y')">비공개</button>
+</div>
+
+<!-- 🔹 방 코드 (비공개일 때만 표시) -->
+<div id="roomCodeContainer" style="display:none;">
+    <p><strong>비공개 방 코드 입력:</strong></p>
+    <input type="number" id="roomCode" placeholder="예: 1234">
+</div>
+
+<!-- 🔹 게임방 인원수 (GAME일 때만 표시) -->
+<div id="capacityContainer" style="display:none;">
+    <p><strong>방 인원 수 (최대 5명):</strong></p>
+    <input type="number" id="roomCapacity" min="1" max="5" value="2">
+</div>
+
+<button onclick="createRoom()">방 만들기</button>
 
 <h3>방 목록</h3>
 <ul id="rooms"></ul>
@@ -46,11 +85,14 @@
     let currentSubscription = null;
     let token = null;
 
+    // 방 타입 / 공개 여부 기본값
+    let selectedRoomType = 'CHAT';
+    let selectedIsPrivate = 'N';
+
     // WebSocket 연결
     function connect() {
         token = document.getElementById("token").value;
         const socket = new SockJS('http://localhost:8080/ws-chat');
-        // const socket = new SockJS('http://192.168.2.49:8080/ws-chat');
         stompClient = Stomp.over(socket);
 
         stompClient.connect({'Authorization': token}, function(frame) {
@@ -60,28 +102,52 @@
         });
     }
 
-    // 방 목록 가져오기 및 화면 표시
+    // 방 목록 불러오기 (아이콘 표시 + 타입별 정렬)
     function loadRooms() {
         fetch('http://localhost:8080/chat/rooms', {
-        // fetch('http://192.168.2.49:8080/chat/rooms', {
             headers: { 'Authorization': token }
         })
             .then(res => res.json())
             .then(data => {
                 const ul = document.getElementById("rooms");
                 ul.innerHTML = "";
-                data.forEach(room => {
+
+                // ✅ CHAT과 GAME으로 분리
+                const chatRooms = data.filter(r => r.chatRoomType === 'CHAT');
+                const gameRooms = data.filter(r => r.chatRoomType === 'GAME');
+
+                // ✅ 방 생성 함수 (공통)
+                const createRoomItem = (room) => {
                     const li = document.createElement("li");
                     li.dataset.roomId = room.chatRoomId;
-                    li.innerHTML = `<span>${room.chatRoomName}</span><span>참여: ${room.joinedCount}</span>`;
+
+                    // 아이콘 설정 🎮 🔒
+                    let icon = "";
+                    if (room.chatRoomType === 'GAME') icon += "🎮 ";
+                    if (room.isPrivate === 'Y') icon += "🔒 ";
+
+                    li.innerHTML = `<span>${icon}${room.chatRoomName}</span><span>참여: ${room.joinedCount}</span>`;
                     li.onclick = () => enterRoom(room.chatRoomId);
+                    if (selectedRoomId == room.chatRoomId) li.classList.add("active");
+                    return li;
+                };
 
-                    if(selectedRoomId == room.chatRoomId) {
-                        li.classList.add("active");
-                    }
 
-                    ul.appendChild(li);
-                });
+                // ✅ CHAT 방 묶음
+                if (chatRooms.length > 0) {
+                    const chatHeader = document.createElement("h4");
+                    chatHeader.textContent = "💬 채팅방 목록";
+                    ul.appendChild(chatHeader);
+                    chatRooms.forEach(room => ul.appendChild(createRoomItem(room)));
+                }
+
+                // ✅ GAME 방 묶음
+                if (gameRooms.length > 0) {
+                    const gameHeader = document.createElement("h4");
+                    gameHeader.textContent = "🎮 게임방 목록";
+                    ul.appendChild(gameHeader);
+                    gameRooms.forEach(room => ul.appendChild(createRoomItem(room)));
+                }
             });
     }
 
@@ -91,7 +157,6 @@
         document.getElementById("chat").innerHTML = "";
         loadMessages();
 
-        // 입장 알림
         stompClient.send("/app/chat.join",
             {'roomId': roomId, 'Authorization': token}, {}
         );
@@ -100,12 +165,11 @@
         highlightSelectedRoom();
     }
 
-    // 선택한 방 메시지 불러오기
+    // 메시지 불러오기
     function loadMessages() {
         if(!selectedRoomId) return;
 
         fetch('http://localhost:8080/chat/rooms/' + selectedRoomId + '/messages', {
-        // fetch('http://192.168.2.49:8080/chat/rooms/' + selectedRoomId + '/messages', {
             headers: { 'Authorization': token }
         })
             .then(res => res.json())
@@ -122,12 +186,11 @@
             });
     }
 
-    // 방별 STOMP 구독
+    // STOMP 구독
     function subscribeRoom() {
         if(currentSubscription) {
             currentSubscription.unsubscribe();
         }
-
         currentSubscription = stompClient.subscribe('/topic/chatroom', function(messageOutput) {
             const msg = JSON.parse(messageOutput.body);
             if(msg.roomId == selectedRoomId){
@@ -137,7 +200,7 @@
                     showMessage(msg.senderNickname + ": " + msg.message, false);
                 }
             }
-            loadRooms(); // 실시간 참여자 수 갱신
+            loadRooms();
         });
     }
 
@@ -159,24 +222,48 @@
         document.getElementById("message").value = "";
     }
 
-    // 새 방 만들기
+    // 🔧 방 생성 수정된 부분
     function createRoom() {
-        const roomName = document.getElementById("newRoomName").value;
-        if(!roomName) return alert("방 이름을 입력하세요.");
+        const roomName = document.getElementById("newRoomName").value.trim();
+        if (!roomName) return alert("방 이름을 입력하세요.");
 
-        fetch('http://localhost:8080/chat/rooms?roomName=' + encodeURIComponent(roomName), {
-        // fetch('http://192.168.2.49:8080/chat/rooms?roomName=' + encodeURIComponent(roomName), {
+        const roomCode = document.getElementById("roomCode").value
+            ? parseInt(document.getElementById("roomCode").value)
+            : null;
+
+        const roomCapacity = document.getElementById("roomCapacity").value
+            ? parseInt(document.getElementById("roomCapacity").value)
+            : null;
+
+        fetch('http://localhost:8080/chat/rooms', {
             method: 'POST',
-            headers: { 'Authorization': token }
+            headers: {
+                'Authorization': token,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                chatRoomName: roomName,
+                chatRoomType: selectedRoomType,
+                isPrivate: selectedIsPrivate,
+                roomCode: roomCode,        // ✅ 추가
+                roomCapacity: roomCapacity // ✅ 추가
+            })
         })
-            .then(res => res.json())
-            .then(room => {
+            .then(res => {
+                if (!res.ok) throw new Error("방 생성 실패");
+                return res.json();
+            })
+            .then(() => {
+                alert("방 생성 성공!");
                 loadRooms();
                 document.getElementById("newRoomName").value = "";
-            });
+                document.getElementById("roomCode").value = "";
+            })
+            .catch(err => console.error("방 생성 오류:", err));
     }
 
-    // 화면에 메시지 출력
+
+    // 메시지 표시
     function showMessage(msg, isSystem=false) {
         const chatDiv = document.getElementById("chat");
         const p = document.createElement("p");
@@ -195,7 +282,47 @@
         });
     }
 
-    // 페이지 떠날 때 퇴장 알림
+    // 방 타입 선택
+    function selectRoomType(type) {
+        selectedRoomType = type;
+        document.getElementById("btnChat").classList.toggle("selected", type === 'CHAT');
+        document.getElementById("btnGame").classList.toggle("selected", type === 'GAME');
+        console.log("선택된 방 타입:", selectedRoomType);
+    }
+
+    // 공개 여부 선택
+    function selectIsPrivate(flag) {
+        selectedIsPrivate = flag;
+        document.getElementById("btnPublic").classList.toggle("selected", flag === 'N');
+        document.getElementById("btnPrivate").classList.toggle("selected", flag === 'Y');
+        console.log("선택된 공개 여부:", selectedIsPrivate);
+    }
+
+    // 방 타입 선택
+    function selectRoomType(type) {
+        selectedRoomType = type;
+        document.getElementById("btnChat").classList.toggle("selected", type === 'CHAT');
+        document.getElementById("btnGame").classList.toggle("selected", type === 'GAME');
+
+        // 🔹 게임방이면 인원수 입력 보이기
+        document.getElementById("capacityContainer").style.display = (type === 'GAME') ? 'block' : 'none';
+
+        console.log("선택된 방 타입:", selectedRoomType);
+    }
+
+    // 공개 여부 선택
+    function selectIsPrivate(flag) {
+        selectedIsPrivate = flag;
+        document.getElementById("btnPublic").classList.toggle("selected", flag === 'N');
+        document.getElementById("btnPrivate").classList.toggle("selected", flag === 'Y');
+
+        // 🔹 비공개 선택 시 방코드 입력 보이기
+        document.getElementById("roomCodeContainer").style.display = (flag === 'Y') ? 'block' : 'none';
+
+        console.log("선택된 공개 여부:", selectedIsPrivate);
+    }
+
+    // 페이지 떠날 때 퇴장 처리
     window.addEventListener("beforeunload", function () {
         if(selectedRoomId && stompClient) {
             stompClient.send("/app/chat.leave",
