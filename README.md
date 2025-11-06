@@ -220,12 +220,282 @@ Linkee는 사용자가 CS 관련 퀴즈에 참여하고 문제를 풀며 다른 
 
   ```java
   @Builder
-public class User {
-@Builder.Default
-private Status userStatus = Status.Y;
-}
+  public class User {
+    @Builder.Default
+    private Status userStatus = Status.Y;
+    }
+  ```
 
   </details> 
+
+  <details>
+  <summary>record 를 mybatis로 사용 할 경우 String값</summary>
+
+  mybatis 사용할때 레코드 형식으로 받아오면 String 값이
+
+  ```java
+  "templateId": 2,
+  "templateContent": "{\r\n    \"content\" : \"새로운 내용1\"\r\n}",
+  "createdAt": "2025-10-29T23:56:47.096377",
+  "updatedAt": "2025-10-29T23:56:47.096377"
+  ```
+
+  이런식으로 JSON 형식으로 넘어갈때 Jackson은 문자열 안의 줄바꿈과 쌍따옴표를 이스케이프 처리한다 그래서 레코드 를 사용하면서 String 값을 제대로 확인하고싶으면
+
+  ```java
+  Long templateId,
+  @JsonRawValue // 이 어노테이션 추가 하면 제대로 된 String 내용만 확인할 수 있다
+  String templateContent,
+  LocalDateTime createdAt,
+  LocalDateTime updatedAt
+  ```
+
+  </details>
+  <details>
+  <summary>xml mapping 문제</summary>
+
+  - SpringBoot 는 기본적으로 Application 과 같은 레벨이나 하위 패키지의 bean을 어노테이션에 따라 자동 스캔한다
+  - 하지만 이걸 직접적으로
+
+  ```java
+  @MapperScan("com.linkee.linkeeapi.inquiry.mapper")
+  @EnableJpaAuditing
+  @SpringBootApplication
+  public class LinkeeApiApplication {
+
+      public static void main(String[] args) {
+          SpringApplication.run(LinkeeApiApplication.class, args);
+      }
+  }
+  ```
+
+  이렇게 매핑해버리면 mapper 스캔을 저 디렉토리 안에서만 하게된다
+
+  그래서 다른 xml이 생기면 찾지를 못한다
+
+  - 폴더 구조가 application 보다 상위로 올라올 경우나
+  - 특별한 경우는 빼고는 MapperScan 을 직접적으로 하지않는게 좋을 거 같다
+
+  </details>
+  <details>
+  <summary>IntelliJ 테스트 문제</summary>
+
+  - 인텔리J 그래들 환경에서 테스트를 진행하는데
+  - xml, yml , gradle , 파일 경로 설정 까지 다 맞지만
+  - 계속 ClassNotFoundException 발생
+  org.gradle.internal.UncheckedException: java.lang.ClassNotFoundException: com.example.ApplicationTests
+  - 이 원인은 다음과 같다.
+  - 인텔리제이 한글깨짐을 방지하려고 vm옵션에 다음과 같이 설정해두었다.
+
+  ```
+  Dfile.encoding=UTF-8
+  Dconsole.encoding=UTF-8
+  ```
+
+  - 해당 옵션을 사용하면 스프링 프로젝트가 위치한 폴더,   상위폴더에 한글이 있으면 오류가 발생한다.
+  - 따라서 한글설정을 하고 싶은경우
+  - vm옵션을 지정하고, 폴더경로에 한글 폴더가 없게한다.
+  
+  인텔리제이 설정 →
+![](https://velog.velcdn.com/images/dhkdwlsgod/post/d6781320-b39d-41bf-b14a-b248a1e6bb50/image.png)
+![](https://velog.velcdn.com/images/dhkdwlsgod/post/e85ddcd9-8c70-4d46-b91a-003ca9f0148b/image.png)
+  - 다음과 같이 설정해주면 된다.
+  - 어지간하면 프로젝트는 한글이름이들어간 경로로 설정하지말자….
+  </details>
+
+  <details>
+  <summary>requestDTO 같을 못받아오는 문제</summary>
+
+  이런식으로 request 객체를 직접 받아와서 썼는데
+  
+  ```java
+  @GetMapping
+      public PageResponse<ChatMessageResponse> selectAllChatMessage(ChatMessageSearchRequest request){
+
+  //        System.out.println("================================\n컨트롤러 " + request.getPage() + " " +request.getSize());
+          return service.selectAllChatMessage(request);
+      }
+  ```
+
+  ```java
+  @Getter
+  @NoArgsConstructor
+  @AllArgsConstructor
+  @Builder
+  public class ChatMessageSearchRequest {
+
+      private String keyword;
+      private Integer page;
+      private Integer size;
+      private Integer offset;
+      private Long chatRoomId;
+      private Long senderId;
+  }
+  ```
+  아무리 url 에 맞게 작성해서 넘겨도
+  null 값이 넘어온다
+  변수명 매핑 정확히 일치하지만 값이 controller 부터 들어오지 않았다
+  — 
+  이건 간단 한거였는데
+  request로 받아올때
+  @Setter  가 존재하지않아서
+  받아와도 값을 저장하지 못해서 계속해서 null 값이 들어오는 것
+
+  ```java
+  @Setter
+  @Getter
+  @NoArgsConstructor
+  @AllArgsConstructor
+  @Builder
+  public class ChatMessageSearchRequest {
+
+      private String keyword;
+      private Integer page;
+      private Integer size;
+      private Integer offset;
+      private Long chatRoomId;
+      private Long senderId;
+  }
+    @Setter 추가하면 값이 제대로 저장되서 넘어오는걸 확인할 수 있다
+  </details>
+
+  <details>
+    <summary>redis 가 동작은하지만 값을 확인못하는 문제</summary>
+    도커로 레디스를 동작시켜서 값을 저장하거나 불러오는게 잘 동작하는걸 확인 했다 하지만 cmd keys *  를 통해 값이 확인이 안되고 어떤 select 1 ~15 db에서도 확인이 안된다 포트도 기본포트 , 따로 설정한 db 값도 없고 id값도 없지만 확인이 안된다 127.0.0.1:6379> keys * (empty array)
+
+  해결방안
+  - 동작은 문제없이 돌아간다 하지만
+  - 아무리해도 값을 확인을 못하는건
+  - 다른 레디스를 바라보고 있던 것
+
+  ```java
+  netstat -ano | findstr :6379 // 현재 6379 포트를 쓰고있는걸 확인
+
+  netstat -ano | findstr :6379
+    TCP    0.0.0.0:6379           0.0.0.0:0              LISTENING       4636
+    TCP    127.0.0.1:6379         127.0.0.1:55997        ESTABLISHED     4636
+    TCP    127.0.0.1:6379         127.0.0.1:56029        ESTABLISHED     4636
+    TCP    127.0.0.1:55997        127.0.0.1:6379         ESTABLISHED     21392
+    TCP    127.0.0.1:56029        127.0.0.1:6379         ESTABLISHED     8200
+    TCP    [::]:6379              [::]:0                 LISTENING       4636
+    PS C:\WINDOWS\system32> tasklist | findstr 4636
+    redis-server.exe              4636 Services                   0      4,472 K
+    Notion.exe                   14636    Console                    1     45,436 K
+
+    도커가아닌 윈도우 로컬 환경에서 redis가 동작하고 있는것이     확인된다
+    그래서 지금 값이 도커 레디스가 아닌
+    윈도우 로컬에 실행중인 레디스에 값이 저장되던 것
+
+    kill -9 4636
+
+    해당 프로세스 강제종료 후
+    도커로 실행 하면 값이 제대로 잘 들어가는 것을 알 수 있다
+
+    127.0.0.1:6379> keys *
+    1) "TEST_KEY"
+    2) "refresh:rrr223@ssdds.com"
+  </details>
+  <details>
+    <summary>spring User 객체를 Custom으로 사용할때 @Builder 를 사용못하는 문제</summary>
+    스프링 시큐리티를 사용하면서 UserDetails 객체를 커스텀해서 사용하기 위해 User 를 상속받는 CustomUser 객체를 선언했다 하지만 lombok의 @Bulider 를 사용하려고 하니
+  
+    ```java
+    @Builder
+    ^
+    return type CustomUserBuilder is not compatible with UserBuilder
+    ```
+    라는 오류 발생
+
+    찾아보니 이건
+    User 라는 스프링에서 제공하는 클래스를 상속받지만
+    User 클래스에는 @Builder를 사용하지 않아서
+    하위 클래스에서도 인식을 못하는 문제가 발생하는 것
+
+    해결방법
+  
+    ```java
+    return CustomUser.builder()
+                .userId(user.getUserId())
+                .username(user.getUserEmail())
+                .password(user.getUserPassword())
+                .authorities(user.getUserRole().name()) // role 그대로
+                .build();
+                
+                
+    이렇게 빌더를 사용하는 대신
+
+
+  return new CustomUser(
+                user.getUserId(),
+                user.getUserEmail(),
+                user.getUserPassword(),
+                user.getUserRole().name()
+        );
+    원래의 방식대로 생성한다
+  ```
+</details>
+
+<details>
+  <summary>일반 유저와 소셜로그인을 같이 사용할 때 필요 컬럼값이 달라 초기화 오류</summary>
+  
+  일반유저와 소셜로그인을 같이 구현할 때 가져오는 api에 따라 필요값이 달라진다
+  - 일반유저 → 로그인아이디를 email로 사용 , pw : 값 필수
+  - 소셜유저(네이버) → pw : 초기값이 들어가면 x , loginId 값이 따로 들어가야함
+
+  이런식으로 필요한 값들이 조금씩 달라서 유저객체를 생성자를 통해 생성할 때 오류가 발생한다 이를 해결하기위해 생성자가 아닌 메서드 형태로 일반 , 소셜 로그인을 따로 만들어서 값을 초기화 시킨다
+
+  ```java
+  Entity 에 생성자가 아닌 static 메서드 형태로 정의
+
+  // 일반 회원가입용
+  public static User createNormalUser(String email, String password, String nickname) {
+    return User.builder()
+            .userEmail(email)
+            .userPassword(password)
+            .userNickname(nickname)
+            .userRole(Role.USER)
+            .userStatus(Status.Y)
+            .build();
+  }
+
+  // 소셜 로그인용
+  public static User createSocialUser(String loginId, String email, String nickname) {
+    return User.builder()
+            .userLoginId(loginId)
+            .userEmail(email)
+            .userNickname(nickname)
+            .userPassword("")  // 소셜 로그인은 비밀번호 없음
+            .userRole(Role.USER)
+            .userStatus(Status.Y)
+            .build();
+  }
+
+  // ///////////////////////
+  호출
+  new User() 가 아니고
+
+  일반유저
+  User user = User.createNormalUser(request.getUserEmail(), encodedPassword, request.getUserNickname());
+
+  소셜유저
+  User user = userRepository.findByUserEmail(email)
+  .orElseGet(() -> userRepository.save(User.createSocialUser(naverId, email, name)));
+  ```
+ </details>
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
 
 
 
