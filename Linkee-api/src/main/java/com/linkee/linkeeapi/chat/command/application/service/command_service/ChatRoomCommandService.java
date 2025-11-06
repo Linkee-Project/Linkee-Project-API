@@ -8,6 +8,7 @@ public interface ChatRoomCommandService {
 
     //방 만들기
     void createRoom(ChatRoomCreateRequestDto request, User user);
+
     // 입장
     void enterRoom(Long roomId, User user);
     //방 삭제

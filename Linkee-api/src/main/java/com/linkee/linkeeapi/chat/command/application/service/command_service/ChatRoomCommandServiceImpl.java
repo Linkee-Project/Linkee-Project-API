@@ -25,6 +25,8 @@ public class ChatRoomCommandServiceImpl implements ChatRoomCommandService {
     private final ChatRoomRepository chatRoomRepository;
     private final UserFinder userFinder;
     private final ChatMemberRepository chatMemberRepository;
+    private ChatRoomCreateRequestDto request;
+    private User user;
 
     /*---------------------------------------create------------------------------------------*/
 
@@ -42,6 +44,8 @@ public class ChatRoomCommandServiceImpl implements ChatRoomCommandService {
     // ✅ 채팅방/게임방 생성
     @Transactional
     public void createRoom(ChatRoomCreateRequestDto request ,User user) {
+        this.request = request;
+        this.user = user;
         /* 기본값 설정*/
         ChatRoomType roomType = request.getChatRoomType();
         Status isPrivate;
