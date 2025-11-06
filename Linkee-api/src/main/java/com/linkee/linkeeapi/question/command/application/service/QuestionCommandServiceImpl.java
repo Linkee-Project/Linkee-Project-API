@@ -2,11 +2,13 @@ package com.linkee.linkeeapi.question.command.application.service;
 
 import com.linkee.linkeeapi.category.command.aggregate.Category;
 import com.linkee.linkeeapi.category.command.infrastructure.repository.CategoryRepository;
+import com.linkee.linkeeapi.common.enums.Role;
 import com.linkee.linkeeapi.common.enums.Status;
 import com.linkee.linkeeapi.common.exception.BusinessException;
 import com.linkee.linkeeapi.common.exception.ErrorCode;
 import com.linkee.linkeeapi.question.command.application.dto.request.CreateQuestionRequestDto;
 import com.linkee.linkeeapi.question.command.application.dto.request.UpdateQuestionRequestDto;
+import com.linkee.linkeeapi.question.command.application.dto.request.VerifyQuestionRequestDto;
 import com.linkee.linkeeapi.question.command.domain.aggregate.Question;
 import com.linkee.linkeeapi.question.command.infrastructure.repository.JpaQuestionRepository;
 import com.linkee.linkeeapi.question_option.command.domain.aggregate.QuestionOption;
@@ -134,5 +136,24 @@ public class QuestionCommandServiceImpl implements QuestionCommandService {
         question.assertDeletableBy(user, question.getUser().getUserId());
         question.softDelete();
     }
+    //문제 검증 변경 (관리자)
+    public void verifyQuestion(Long questionId, VerifyQuestionRequestDto request) {
+
+        // 1) 관리자 조회
+        User adminUser = userFinder.getById(request.getAdminId());
+        // 2) ROLE 검사
+        if (adminUser.getUserRole() != Role.ADMIN) {
+            throw new BusinessException(ErrorCode.FORBIDDEN_QUESTION_ACCESS);
+        }
+
+        // 3) 문제 로드
+        Question q = jpaQuestionRepository.findByIdWithOptions(questionId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.QUESTION_NOT_FOUND));
+
+        // 4) 상태 검증 & 검증 처리
+        q.verifyByAdmin(adminUser); // 내부에서 이미 검증됨이면 QUESTION_ALREADY_QUALIFIED 던짐
+
+    }
+
     }
 
