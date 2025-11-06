@@ -42,7 +42,7 @@ public class ChatMember {
     @JoinColumn(name = "chat_room_id", nullable = false, foreignKey = @ForeignKey(name = "FK_chatmember_chatroom"))
     private ChatRoom chatRoom;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(name = "FK_chatmember_user"))
     private User user;
 

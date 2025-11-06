@@ -2,184 +2,203 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>Linkee Chat</title>
+    <title>완전한 STOMP 채팅</title>
     <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.6.1/dist/sockjs.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
     <style>
-        body { font-family: Arial; }
-        #rooms, #members, #messages { border: 1px solid #ccc; padding: 10px; margin: 10px 0; height: 150px; overflow-y: auto; }
-        input, button { margin: 5px; }
+        body { font-family: Arial, sans-serif; }
+        #rooms { list-style: none; padding: 0; margin: 0; width: 300px; }
+        #rooms li { padding: 8px; border: 1px solid #ccc; margin-bottom: 4px; cursor: pointer; display: flex; justify-content: space-between; }
+        #rooms li:hover { background-color: #f0f0f0; }
+        #rooms li.active { background-color: #d0f0d0; }
+        #chat { border: 1px solid #ccc; height: 400px; overflow-y: scroll; padding: 10px; margin-top: 10px; width: 600px; }
+        #message { width: 500px; }
+        .system { color: gray; font-style: italic; }
     </style>
 </head>
 <body>
 
-<h2>Linkee Chat</h2>
+<h2>완전한 STOMP 채팅</h2>
 
 <div>
-    <label>JWT Token:</label>
-    <input type="text" id="tokenInput" size="60">
-    <button onclick="saveToken()">Save Token</button>
+    JWT Token: <input type="text" id="token" placeholder="JWT 입력" style="width: 400px;">
+    <button onclick="connect()">연결</button>
 </div>
 
-<div>
-    <h3>Rooms</h3>
-    <ul id="roomList"></ul>
-    <button onclick="fetchRooms()">방 목록 갱신</button>
-</div>
+<hr>
 
-<div>
-    <h3>Room Join</h3>
-    <input type="number" id="roomIdInput" placeholder="Room ID">
-    <input type="text" id="nicknameInput" placeholder="Nickname">
-    <button onclick="joinRoom()">방 입장</button>
-    <button onclick="leaveRoom()">방 퇴장</button>
-</div>
+<h3>새 방 만들기</h3>
+<input type="text" id="newRoomName" placeholder="방 이름 입력">
+<button onclick="createRoom()">만들기</button>
 
-<div id="members">
-    <h3>Members</h3>
-    <ul id="memberList"></ul>
-</div>
+<h3>방 목록</h3>
+<ul id="rooms"></ul>
 
-<div id="messages">
-    <h3>Messages</h3>
-    <ul id="messageList"></ul>
-    <input type="text" id="msgInput" placeholder="메시지 입력">
-    <button onclick="sendMessage()">Send</button>
-</div>
+<h3>채팅</h3>
+<div id="chat"></div>
+
+<input type="text" id="message" placeholder="메시지 입력">
+<button onclick="sendMessage()">전송</button>
 
 <script>
     let stompClient = null;
-    let roomId = null;
-    let nickname = null;
+    let selectedRoomId = null;
+    let currentSubscription = null;
+    let token = null;
 
-    function saveToken() {
-        const token = document.getElementById('tokenInput').value;
-        if(!token) return alert("토큰을 입력하세요");
-        localStorage.setItem('token', token);
-        alert('Token saved!');
-        fetchRooms(); // 토큰 저장 후 방 목록 바로 조회
-    }
-
-    function fetchRooms() {
-        const token = localStorage.getItem('token');
-        if(!token) return alert("토큰을 먼저 저장하세요");
-
-        fetch('/chat/rooms', {
-            headers: { 'Authorization': 'Bearer ' + token }
-        })
-            .then(res => res.json())
-            .then(rooms => {
-                const list = document.getElementById('roomList');
-                list.innerHTML = '';
-                if (!Array.isArray(rooms)) {
-                    console.error("Rooms is not array:", rooms);
-                    return;
-                }
-                rooms.forEach(r => {
-                    const li = document.createElement('li');
-                    li.textContent = `ID: ${r.chatRoomId}, Name: ${r.chatRoomName}`;
-                    li.style.cursor = 'pointer';
-                    li.onclick = () => { document.getElementById('roomIdInput').value = r.chatRoomId; };
-                    list.appendChild(li);
-                });
-            })
-            .catch(err => console.error(err));
-    }
-
-    function connectWebSocket() {
-        const socket = new SockJS('/ws');
+    // WebSocket 연결
+    function connect() {
+        token = document.getElementById("token").value;
+        const socket = new SockJS('http://localhost:8080/ws-chat');
         stompClient = Stomp.over(socket);
-        stompClient.connect({}, () => {
-            console.log('STOMP connected');
+
+        stompClient.connect({'Authorization': token}, function(frame) {
+            console.log('Connected: ' + frame);
+            loadRooms();
+            setInterval(loadRooms, 5000); // 5초마다 방 목록 갱신
         });
     }
 
-    connectWebSocket();
-
-    function joinRoom() {
-        roomId = document.getElementById('roomIdInput').value;
-        nickname = document.getElementById('nicknameInput').value;
-        const token = localStorage.getItem('token');
-        if(!roomId || !nickname || !token) return alert("방 ID, 닉네임, 토큰 모두 필요");
-
-        fetch(`/chat/rooms/${roomId}/join`, {
-            method: 'POST',
-            headers: { 'Authorization': 'Bearer ' + token }
+    // 방 목록 가져오기 및 화면 표시
+    function loadRooms() {
+        fetch('http://localhost:8080/chat/rooms', {
+            headers: { 'Authorization': token }
         })
             .then(res => res.json())
-            .then(member => {
-                console.log('Joined:', member);
-                subscribeMembers();
-                subscribeMessages();
-                fetchRoomMessages();
-            })
-            .catch(err => console.error(err));
-    }
+            .then(data => {
+                const ul = document.getElementById("rooms");
+                ul.innerHTML = "";
+                data.forEach(room => {
+                    const li = document.createElement("li");
+                    li.dataset.roomId = room.chatRoomId;
+                    li.innerHTML = `<span>${room.chatRoomName}</span><span>참여: ${room.joinedCount}</span>`;
+                    li.onclick = () => enterRoom(room.chatRoomId);
 
-    function leaveRoom() {
-        if(!roomId) return;
-        const token = localStorage.getItem('token');
-        fetch(`/chat/rooms/${roomId}/leave`, {
-            method: 'POST',
-            headers: { 'Authorization': 'Bearer ' + token }
-        })
-            .then(() => {
-                document.getElementById('memberList').innerHTML = '';
-                document.getElementById('messageList').innerHTML = '';
-                roomId = null;
-                nickname = null;
-            })
-            .catch(err => console.error(err));
-    }
+                    if(selectedRoomId == room.chatRoomId) {
+                        li.classList.add("active");
+                    }
 
-    function sendMessage() {
-        const msg = document.getElementById('msgInput').value;
-        if (!msg || !roomId || !nickname) return;
-        stompClient.send(`/app/room/${roomId}/send`, {}, JSON.stringify({ message: msg }));
-        document.getElementById('msgInput').value = '';
-    }
-
-    function subscribeMembers() {
-        stompClient.subscribe(`/topic/room/${roomId}/members`, msg => {
-            const members = JSON.parse(msg.body);
-            const list = document.getElementById('memberList');
-            list.innerHTML = '';
-            members.forEach(m => {
-                const li = document.createElement('li');
-                li.textContent = m.userNickname;
-                list.appendChild(li);
-            });
-        });
-    }
-
-    function subscribeMessages() {
-        stompClient.subscribe(`/topic/room/${roomId}`, msg => {
-            const m = JSON.parse(msg.body);
-            const list = document.getElementById('messageList');
-            const li = document.createElement('li');
-            li.textContent = `${m.senderNickname}: ${m.message}`;
-            list.appendChild(li);
-            list.scrollTop = list.scrollHeight; // 스크롤 자동 하단
-        });
-    }
-
-    function fetchRoomMessages() {
-        const token = localStorage.getItem('token');
-        fetch(`/chat/rooms/${roomId}/messages`, {
-            headers: { 'Authorization': 'Bearer ' + token }
-        })
-            .then(res => res.json())
-            .then(messages => {
-                const list = document.getElementById('messageList');
-                list.innerHTML = '';
-                messages.forEach(m => {
-                    const li = document.createElement('li');
-                    li.textContent = `${m.senderNickname}: ${m.message}`;
-                    list.appendChild(li);
+                    ul.appendChild(li);
                 });
-                list.scrollTop = list.scrollHeight;
             });
     }
+
+    // 방 입장
+    function enterRoom(roomId) {
+        selectedRoomId = roomId;
+        document.getElementById("chat").innerHTML = "";
+        loadMessages();
+
+        // 입장 알림
+        stompClient.send("/app/chat.join",
+            {'roomId': roomId, 'Authorization': token}, {}
+        );
+
+        subscribeRoom();
+        highlightSelectedRoom();
+    }
+
+    // 선택한 방 메시지 불러오기
+    function loadMessages() {
+        if(!selectedRoomId) return;
+
+        fetch('http://localhost:8080/chat/rooms/' + selectedRoomId + '/messages', {
+            headers: { 'Authorization': token }
+        })
+            .then(res => res.json())
+            .then(data => {
+                const chatDiv = document.getElementById("chat");
+                chatDiv.innerHTML = "";
+                data.forEach(msg => {
+                    if(msg.senderNickname === "SYSTEM"){
+                        showMessage(msg.message, true);
+                    } else {
+                        showMessage(msg.senderNickname + ": " + msg.message, false);
+                    }
+                });
+            });
+    }
+
+    // 방별 STOMP 구독
+    function subscribeRoom() {
+        if(currentSubscription) {
+            currentSubscription.unsubscribe();
+        }
+
+        currentSubscription = stompClient.subscribe('/topic/chatroom', function(messageOutput) {
+            const msg = JSON.parse(messageOutput.body);
+            if(msg.roomId == selectedRoomId){
+                if(msg.senderNickname === "SYSTEM"){
+                    showMessage(msg.message, true);
+                } else {
+                    showMessage(msg.senderNickname + ": " + msg.message, false);
+                }
+            }
+            loadRooms(); // 실시간 참여자 수 갱신
+        });
+    }
+
+    // 메시지 전송
+    function sendMessage() {
+        if (!stompClient || !selectedRoomId) {
+            alert("방을 선택하고 연결하세요.");
+            return;
+        }
+
+        const message = document.getElementById("message").value;
+        if(!message) return;
+
+        stompClient.send("/app/chat.send",
+            {'Authorization': token},
+            JSON.stringify({roomId: parseInt(selectedRoomId), message: message})
+        );
+
+        document.getElementById("message").value = "";
+    }
+
+    // 새 방 만들기
+    function createRoom() {
+        const roomName = document.getElementById("newRoomName").value;
+        if(!roomName) return alert("방 이름을 입력하세요.");
+
+        fetch('http://localhost:8080/chat/rooms?roomName=' + encodeURIComponent(roomName), {
+            method: 'POST',
+            headers: { 'Authorization': token }
+        })
+            .then(res => res.json())
+            .then(room => {
+                loadRooms(); // 새 방 목록 갱신
+                document.getElementById("newRoomName").value = "";
+            });
+    }
+
+    // 화면에 메시지 출력
+    function showMessage(msg, isSystem=false) {
+        const chatDiv = document.getElementById("chat");
+        const p = document.createElement("p");
+        if(isSystem) p.classList.add("system");
+        p.textContent = msg;
+        chatDiv.appendChild(p);
+        chatDiv.scrollTop = chatDiv.scrollHeight;
+    }
+
+    // 선택된 방 강조
+    function highlightSelectedRoom() {
+        const lis = document.querySelectorAll("#rooms li");
+        lis.forEach(li => {
+            li.classList.remove("active");
+            if(li.dataset.roomId == selectedRoomId) li.classList.add("active");
+        });
+    }
+
+    // 페이지 떠날 때 퇴장 알림
+    window.addEventListener("beforeunload", function () {
+        if(selectedRoomId && stompClient) {
+            stompClient.send("/app/chat.leave",
+                {'roomId': selectedRoomId, 'Authorization': token}, {}
+            );
+        }
+    });
 </script>
 
 </body>

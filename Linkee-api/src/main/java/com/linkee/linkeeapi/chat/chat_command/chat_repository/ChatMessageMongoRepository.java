@@ -11,4 +11,5 @@ public interface ChatMessageMongoRepository extends MongoRepository<ChatMessageM
 
     List<ChatMessageMongo> findByRoomIdOrderBySentAtAsc(Long roomId);
 
+    List<ChatMessageMongo> findAllByRoomIdOrderBySentAtAsc(Long roomId);
 }
