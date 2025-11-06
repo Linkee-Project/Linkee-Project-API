@@ -17,9 +17,8 @@ public class ChatRoomCreateService {
 
     private final ChatRoomCommandService chatRoomCommandService;
 
-    public ResponseEntity<?> createRoom(ChatRoomCreateRequestDto request, CustomUser user) {
+    public ResponseEntity<?> createRoom(ChatRoomCreateRequestDto request) { // ✅ user 제거
 
-        request.setRoomOwnerId(user.getUserId());
         ChatRoom createdRoom = chatRoomCommandService.createRoom(request);
 
         // ✅ 응답 JSON 구성
