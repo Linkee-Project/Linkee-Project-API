@@ -137,24 +137,60 @@ Linkee는 사용자가 CS 관련 퀴즈에 참여하고 문제를 풀며 다른 
 ## 🗂️ 4. 프로젝트 산출물
 
 - ### 🕖 WBS **(Work Breakdown Structure)**
-  WBS를 자세히 보려면 [여기](https://www.notion.so/25b36d2af8f580fab019e6d2211cd7a5?v=25b36d2af8f5802b830b000cb9f5aefe&source=copy_link)를 클릭하세요요
+  WBS를 자세히 보려면 [여기](https://www.notion.so/25b36d2af8f580fab019e6d2211cd7a5?v=25b36d2af8f5802b830b000cb9f5aefe&source=copy_link)를 클릭하세요
+
+  <details> <summary> WBS 이미지</summary>
+  <img width="1400" height="800" alt="WBS" src="https://github.com/user-attachments/assets/770e5cfa-048a-4ac9-abba-0cd393c1c334" />
+  </details>
+  
 
 
 
 - ### 📚 요구사항 명세서
 
-  요구사항 명세서를 자세히 보려면 [여기](https://docs.google.com/spreadsheets/d/1gjJ8mYfv-hq05CkPhD09bkD4a0_2K8PejZSjfwREuMI/edit?gid=1507918672#gid=1507918672)를 클릭하세요
-  
-  
-- ### 🖼️ UML **(Unified Modeling Language)**
+  요구사항 명세서를 자세히 보려면 [여기](https://docs.google.com/spreadsheets/d/1m9Jk_0A6LhK9aZ2RiVEwYnF6yCltFJS01lFYrovXV8I/edit?gid=680046902#gid=680046902)를 클릭하세요
 
-  UML을 자세히 보려면 [여기](https://www.canva.com/design/DAGw914rlWc/A6U_UKm-gqUP5vZRQ2hHxA/edit)를 클릭하세요
+
+  <details> 
+  <summary> 요구사항 명세서 이미지</summary>
+  <img width="1157" height="800" alt="Image" src="https://github.com/user-attachments/assets/68e3f008-a803-4412-9934-433ad9d06171" />
+  <img width="1161" height="557" alt="Image" src="https://github.com/user-attachments/assets/a4fd564b-979a-492e-83a2-09e888a51592" />
+  </details>
+
+  
+  
+- ### 🖼️ DDD **(Domain Driven Design)**
+
+  DDD을 자세히 보려면 [여기](https://miro.com/app/board/uXjVJ4xhIGY=/)를 클릭하세요
+
+  <details> 
+  <summary> DDD 이미지</summary>
+  <img width="2144" height="2182" alt="UML" src="https://github.com/user-attachments/assets/02793388-7f77-4ca4-af03-40d6aa9ca786" />
+  </details>
+
 
 
 
 - ### 🗺️ ERD **(Entity Relationship Diagram)**
 
-  ERD를 자세히 보려면 [여기](https://www.erdcloud.com/d/cTij9aNCYr9CxJZnf)를 클릭하세요
+  ERD를 자세히 보려면 [여기](https://www.erdcloud.com/d/uT2o7h2jb9BhZ62L2)를 클릭하세요
+
+  <details> 
+  <summary> ERD 이미지</summary>
+  <img width="4720" height="2032" alt="Image" src="https://github.com/user-attachments/assets/5eabab43-8f1d-4e2d-9bd9-8ca4bc9c34ef" />
+  </details>
+
+- ### 📋 API 명세서 
+
+  <details> 
+  <summary> API 명세서 이미지</summary>
+  <img width="897" height="702" alt="Image" src="https://github.com/user-attachments/assets/d830db0b-158d-471a-86fe-fa28e1a9a009" />
+  <img width="895" height="426" alt="Image" src="https://github.com/user-attachments/assets/5cbee805-7c38-4d6f-aae2-665f89b93496" />
+  <img width="596" height="715" alt="Image" src="https://github.com/user-attachments/assets/5d3d8c48-14e4-4b8f-a7c1-e3571b8d30d8" />
+  <img width="895" height="691" alt="Image" src="https://github.com/user-attachments/assets/6eb77749-d5f4-4334-a36f-5aeb25c794da" />
+  <img width="892" height="881" alt="Image" src="https://github.com/user-attachments/assets/016d5b14-8fb4-4a8c-ab70-7816dd011258" />
+  <img width="897" height="941" alt="Image" src="https://github.com/user-attachments/assets/ef71d0a8-814d-4043-b941-f3191bd1b9f9" />
+  </details>
 
   
 - ### 🗞️ 테스트 케이스 작성 및 테스트
@@ -166,9 +202,35 @@ Linkee는 사용자가 CS 관련 퀴즈에 참여하고 문제를 풀며 다른 
 ---
 ## ⚠️ 5. Trouble Shooting
 
+- 김상재
+  <details>
+
+  <summary>Builder 초기값 문제</summary>
+
+  ```java
+  @Builder
+  public class User {
+    private Status userStatus = Status.Y; // 경고 발생
+    }
+  ```
+
+  @Builder로 객체를 생성하면 userStatus = Status.Y 이 초기값은 적용되지 않는다
+  
+  만약 Builder에서도 기본값으로 적용하고 싶으면 이렇게 바꿔야 한다
+
+  ```java
+  @Builder
+public class User {
+@Builder.Default
+private Status userStatus = Status.Y;
+}
+
+  </details> 
+
+
 
 
 ---
 
-# 🍺 6. 프로젝트 회고록
+## 🍺 6. 프로젝트 회고록
 
