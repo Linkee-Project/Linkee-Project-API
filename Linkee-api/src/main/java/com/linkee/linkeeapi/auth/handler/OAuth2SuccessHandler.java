@@ -1,5 +1,6 @@
 package com.linkee.linkeeapi.auth.handler;
 
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.linkee.linkeeapi.auth.repository.AuthRedisRepository;
 import com.linkee.linkeeapi.common.security.jwt.JwtTokenProvider;
@@ -7,6 +8,7 @@ import com.linkee.linkeeapi.common.security.service.CustomUserDetails;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -15,6 +17,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
@@ -50,5 +53,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         /*response.setStatus(HttpServletResponse.SC_OK);
         response.setContentType("application/json;charset=UTF-8");
         objectMapper.writeValue(response.getWriter(), tokens);*/
+
+        log.info("✅ Access Token: {}", accessToken);
+        log.info("✅ Refresh Token: {}", refreshToken);
     }
 }
