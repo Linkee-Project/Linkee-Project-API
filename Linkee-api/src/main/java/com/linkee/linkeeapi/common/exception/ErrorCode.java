@@ -78,6 +78,7 @@ public enum ErrorCode {
     //퀴즈방 유저 기록 관련 오류(13000번대 사용)
     ROOM_QUESTION_NOT_FOUND("13000", "해당 퀴즈 질문을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
     ROOM_MEMBER_NOT_FOUND("13001", "해당 퀴즈방 멤버를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+    ALREADY_SUBMITTED_ANSWER("13002", "이미 답변을 제출했습니다.", HttpStatus.BAD_REQUEST),
 
     // 등급 관련 오류(14000번대 사용)
     GRADE_NOT_FOUND("14000", "해당 등급 정보를 찾을 수 없습니다.", HttpStatus.NOT_FOUND);

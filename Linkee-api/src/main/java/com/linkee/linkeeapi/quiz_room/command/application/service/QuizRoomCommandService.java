@@ -2,6 +2,7 @@ package com.linkee.linkeeapi.quiz_room.command.application.service;
 
 import com.linkee.linkeeapi.quiz_room.command.application.dto.request.QuizRoomCreateRequestDto;
 import com.linkee.linkeeapi.quiz_room.command.application.dto.request.QuizRoomDeleteRequestDto;
+import com.linkee.linkeeapi.quiz_room.command.application.dto.request.QuizRoomSubmitAnswerRequestDto;
 
 /*
  * 퀴즈룸 생성 관련 비즈니스 로직을 정의하는 서비스 인터페이스.
@@ -24,4 +25,9 @@ public interface QuizRoomCommandService {
 
     //  스케줄러 등에 의해 외부에서 강제로 게임을 강제로 종료시키는 메서드
     void forceEndRoom(Long quizRoomId);
+
+    /* 사용자의 답안을 제출받아 처리
+    * @param request 답안 제출 정보 (quizRoomId, 선택한 보기 인덱스)
+    * @param userId 답안을 제출하는 사용자 ID*/
+    void submitAnswer(QuizRoomSubmitAnswerRequestDto request, Long userId);
 }
