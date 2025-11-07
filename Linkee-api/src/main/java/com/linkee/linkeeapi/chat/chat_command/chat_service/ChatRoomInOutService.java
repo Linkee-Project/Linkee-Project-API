@@ -5,12 +5,14 @@ import com.linkee.linkeeapi.chat.chat_command.chat_domain.entity.ChatMember;
 import com.linkee.linkeeapi.chat.chat_command.chat_domain.entity.ChatRoom;
 import com.linkee.linkeeapi.chat.chat_command.chat_repository.ChatMemberRepository;
 import com.linkee.linkeeapi.chat.chat_command.chat_repository.ChatRoomRepository;
+import com.linkee.linkeeapi.common.enums.Status;
 import com.linkee.linkeeapi.common.exception.BusinessException;
 import com.linkee.linkeeapi.common.exception.ErrorCode;
 import com.linkee.linkeeapi.common.security.jwt.JwtTokenProvider;
 import com.linkee.linkeeapi.user.command.domain.entity.User;
 import com.linkee.linkeeapi.user.command.infrastructure.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +27,7 @@ public class ChatRoomInOutService {
     private final ChatMemberRepository chatMemberRepository;
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
+    private final SimpMessagingTemplate messagingTemplate;
 
     private User getUserFromToken(String token) {
         if (token.startsWith("Bearer ")) token = token.substring(7);
@@ -43,10 +46,23 @@ public class ChatRoomInOutService {
         ChatRoom room = chatRoomRepository.findById(roomId)
                 .orElseThrow(() -> new RuntimeException("Room not found"));
 
+        System.out.println("++++++++++++++++  " + room.getIsPrivate());
+        System.out.println("++++++++++++++++  " + inputRoomCode);
+
         // 비밀방 검증
-        if (room.getRoomCode() != null) {
-            if (inputRoomCode == null || !room.getRoomCode().equals(inputRoomCode)) {
-                throw new BusinessException(ErrorCode.INVALID_ROOM_CODE); // 틀린 비밀번호
+        if (Status.Y.equals(room.getIsPrivate())) {
+            if (room.getRoomCode() == null || !room.getRoomCode().equals(inputRoomCode)) {
+                // 실패 메시지 전송
+                ChatMessageDto failMsg = ChatMessageDto.builder()
+                        .roomId(roomId)
+                        .message("비밀번호가 틀렸습니다.")
+                        .senderNickname("SYSTEM")
+                        .sentAt(LocalDateTime.now())
+                        .build();
+                messagingTemplate.convertAndSend("/topic/chatroom/" + roomId, failMsg);
+
+                // 입장 금지
+                throw new RuntimeException("비밀번호가 틀렸습니다.");
             }
         }
 
