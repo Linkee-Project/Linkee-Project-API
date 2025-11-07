@@ -17,24 +17,51 @@
 ## 📂 프로젝트 파일 구조
 
 ```
-charly-market/
+linkee
 │
-├── .github/
-│   └── ISSUE_TEMPLATE/         # 이슈 템플릿 관련 파일들
 │
-├── Docs/                       # 문서 및 기획 관련 내용
+├── src/
+│   ├── main/
+│   │   ├── java/com/linkee/linkeeapi/
+│   │   │   ├── alarm_box/         # 알림함 도메인
+│   │   │   ├── alarm_template/    # 알림 템플릿 도메인
+│   │   │   ├── auth/              # 인증/인가 관련 (로그인, JWT 등)
+│   │   │   ├── bookmark/          # 북마크 기능
+│   │   │   ├── category/          # 카테고리 관리
+│   │   │   ├── chat/              # 채팅방 및 메시지 기능
+│   │   │   ├── comment/           # 댓글 관련 기능
+│   │   │   ├── common/            # 공통 유틸, 예외, 응답 객체 등
+│   │   │   ├── grade/             # 사용자 등급 관리
+│   │   │   ├── inquiry/           # 문의사항(1:1 문의)
+│   │   │   ├── notice/            # 공지사항 관리
+│   │   │   ├── qna/               # Q&A 기능
+│   │   │   ├── question/          # 문제(Question) 관련 도메인
+│   │   │   ├── question_option/   # 문제 옵션 관리
+│   │   │   ├── quiz_current_index/# 퀴즈 진행 상태 관리
+│   │   │   ├── quiz_room/         # 퀴즈룸 생성 및 참가 로직
+│   │   │   ├── relation/          # 친구 관계, 팔로우 등
+│   │   │   ├── report/            # 신고 관련 도메인
+│   │   │   ├── room_member/       # 퀴즈룸 참여자 관리
+│   │   │   ├── room_question/     # 퀴즈룸 내 문제 매핑
+│   │   │   ├── room_user_log/     # 퀴즈룸 내 사용자 기록
+│   │   │   ├── user/              # 회원 정보, 프로필 등
+│   │   │   ├── user_grade/        # 회원 등급 관련 로직
+│   │   │   └── LinkeeApiApplication.java # Spring Boot 메인 실행 클래스
+│   │   │
+│   │   └── resources/
+│   │       ├── application.yml    # 환경 설정 (DB, Redis, Port 등)
+│   │       ├── static/            # 정적 파일(css, js)
+│   │       └── templates/         # Thymeleaf 템플릿 (있다면)
+│   │
+│   └── test/
+│       └── java/com/linkee/linkeeapi/
+│           ├── integration/       # 통합 테스트
+│           └── unit/              # 단위 테스트
 │
-├── Integration Test/           # 통합 테스트 관련 코드
-│
-├── db/                         # 데이터베이스 관련 파일들
-│  └── domain                   # 도메인별 테스트 코드
-|  └── init                     # 데이터베이스 생성 코드 및 더미 데이터
-|
-├── flowchart/                  # 플로우차트 이미지 또는 문서
-│
-├── README.md                   # 현재 README 파일
-│
-└── 찰리 프로젝트 기획서.md     # 프로젝트 기획서 한국어 문서
+├── build.gradle                   # Gradle 설정 파일
+├── settings.gradle                # Gradle 프로젝트 설정
+└── README.md                      # 프로젝트 소개 및 실행 가이드
+
 ```
 
 ---
@@ -847,25 +874,6 @@ Linkee는 사용자가 CS 관련 퀴즈에 참여하고 문제를 풀며 다른 
         }
       ```
     </details>
-
-
-
-
-
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
 
 
 ---
