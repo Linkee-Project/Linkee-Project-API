@@ -14,6 +14,7 @@ import com.linkee.linkeeapi.quiz_current_index.command.domain.aggregate.QuizCurr
 import com.linkee.linkeeapi.quiz_current_index.command.infrastructure.repository.QuizCurrentIndexRepository;
 import com.linkee.linkeeapi.quiz_room.command.application.dto.request.QuizRoomCreateRequestDto;
 import com.linkee.linkeeapi.quiz_room.command.application.dto.request.QuizRoomDeleteRequestDto;
+import com.linkee.linkeeapi.quiz_room.command.application.dto.request.QuizRoomSubmitAnswerRequestDto;
 import com.linkee.linkeeapi.quiz_room.command.domain.aggregate.QuizRoom;
 import com.linkee.linkeeapi.quiz_room.command.infrastructure.repository.QuizRoomRepository;
 import com.linkee.linkeeapi.quiz_room.command.infrastructure.scheduler.QuizGameAdvanceScheduler;
@@ -23,6 +24,7 @@ import com.linkee.linkeeapi.room_member.command.domain.aggregate.RoomMember;
 import com.linkee.linkeeapi.room_member.command.infrastructure.repository.RoomMemberRepository;
 import com.linkee.linkeeapi.room_question.command.application.dto.request.RoomQuestionCreateRequest;
 import com.linkee.linkeeapi.room_question.command.application.service.RoomQuestionCommandService;
+import com.linkee.linkeeapi.room_question.command.domain.aggregate.RoomQuestion;
 import com.linkee.linkeeapi.room_question.command.infrastructure.repository.RoomQuestionRepository;
 import com.linkee.linkeeapi.room_user_log.command.domain.aggregate.RoomUserLog;
 import com.linkee.linkeeapi.room_user_log.command.infrastructure.repository.JpaRoomUserLogRepository;
@@ -103,7 +105,16 @@ public class QuizRoomCommandServiceImpl implements QuizRoomCommandService {
         // 4. 구성된 QuizRoom 엔티티를 데이터베이스에 저장합니다.
         quizRoomRepository.save(newQuizRoom);
 
-        // 5. 성공적으로 생성된 퀴즈룸의 고유 ID를 반환합니다.
+        // 5. 방장을 RoomMember로 등록합니다.
+        RoomMember ownerAsMember = RoomMember.builder()
+                .quizRoom(newQuizRoom)
+                .member(roomOwner)
+                .isReady(Status.Y)
+                .joinedAt(java.time.LocalDateTime.now())
+                .build();
+        roomMemberRepository.save(ownerAsMember);
+
+        // 6. 성공적으로 생성된 퀴즈룸의 고유 ID를 반환합니다.
         return newQuizRoom.getQuizRoomId();
     }
 
@@ -314,5 +325,50 @@ public class QuizRoomCommandServiceImpl implements QuizRoomCommandService {
 
         endGame(quizRoom);
     }
+
+    @Override
+    @Transactional // 답안 제출
+    public void submitAnswer(QuizRoomSubmitAnswerRequestDto request, Long userId) {
+        // 1. 퀴즈방 정보를 조회합니다.
+        QuizRoom quizRoom = quizRoomRepository.findById(request.getQuizRoomId())
+                .orElseThrow(() -> new BusinessException(ErrorCode.QUIZ_ROOM_NOT_FOUND));
+        // 2. 게임이 진행중(P) 상태인지 확인합니다.
+        if (quizRoom.getRoomStatus() != RoomStatus.P) {
+            throw new BusinessException(ErrorCode.QUIZ_ROOM_NOT_IN_PLAY);
+        }
+        // 3. 요청한 사용자가 퀴즈방에 참여한 멤버인지 확인합니다.
+        // (RoomMemberRepository에 findByQuizRoomAndMember_UserId와 같은 메서드가 필요할 수 있습니다.)
+        // 여기서는 UserFinder를 사용하여 사용자를 찾고, RoomMember를 찾는 로직을 가정합니다.
+        // 이 부분은 프로젝트의 RoomMember 조회 방식에 맞춰 수정이 필요할 수 있습니다.
+        User user = userFinder.getById(userId);
+        RoomMember member = roomMemberRepository.findByQuizRoomAndMember(quizRoom, user)
+                .orElseThrow(() ->  new BusinessException(ErrorCode.ROOM_MEMBER_NOT_FOUND));
+        // 4. 현재 진행중인 문제의 인덱스를 가져옵니다.
+        QuizCurrentIndex quizIndex = quizCurrentIndexRepository.findByQuizRoom(quizRoom)
+                .orElseThrow(() -> new BusinessException(ErrorCode.QUIZ_INDEX_NOT_FOUND));
+        // 5. 현재 문제(RoomQuestion) 정보를 조회합니다.
+        RoomQuestion currentRoomQuestion = roomQuestionRepository.findByQuizRoomAndQuizOrder(quizRoom, quizIndex.getCurrentQuizIndex())
+                .orElseThrow(() -> new BusinessException(ErrorCode.ROOM_QUESTION_NOT_FOUND));
+        // 6. 이미 해당 문제에 대해 답을 제출했는지 확인합니다.
+        jpaRoomUserLogRepository.findByRoomMemberAndRoomQuestion(member, currentRoomQuestion)
+                .ifPresent(log -> {
+                    throw new BusinessException(ErrorCode.ALREADY_SUBMITTED_ANSWER);
+                });
+        // 7. 정답 여부를 확인합니다.
+        Question question = currentRoomQuestion.getQuestion();
+        boolean isCorrect = question.getQuestionAnswer().equals(request.getSubmittedOptionIndex());
+        // 8. 답변 기록(RoomUserLog)을 생성하고 저장
+        RoomUserLog answerLog = RoomUserLog.builder()
+                .roomMember(member)
+                .roomQuestion(currentRoomQuestion)
+                .isCorrected(isCorrect ? Status.Y : Status.N)
+                .build();
+        jpaRoomUserLogRepository.save(answerLog);
+
+
+
+
+    }
+
 
 }

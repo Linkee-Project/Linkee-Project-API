@@ -3,6 +3,7 @@ package com.linkee.linkeeapi.quiz_room.command.application.controller;
 import com.linkee.linkeeapi.common.model.dto.ApiResponse;
 import com.linkee.linkeeapi.quiz_room.command.application.dto.request.QuizRoomCreateRequestDto;
 import com.linkee.linkeeapi.quiz_room.command.application.dto.request.QuizRoomDeleteRequestDto;
+import com.linkee.linkeeapi.quiz_room.command.application.dto.request.QuizRoomSubmitAnswerRequestDto;
 import com.linkee.linkeeapi.quiz_room.command.application.service.QuizRoomCommandService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -51,7 +52,7 @@ public class QuizRoomCommandController {
     public ResponseEntity<String> startGame(@PathVariable Long quizRoomId) {
         //  요청을 보낸 사용자가 방장인지 확인하는 로직 추가 필요
         Long userId = 1L;
-        quizRoomCommandService.startGame(quizRoomId,  userId);
+        quizRoomCommandService.startGame(quizRoomId, userId);
         return ResponseEntity.ok("게임이 시작되었습니다.");
     }
 
@@ -62,5 +63,14 @@ public class QuizRoomCommandController {
     public ResponseEntity<String> advanceNextQuestion(@PathVariable Long quizRoomId) {
         quizRoomCommandService.advanceNextQuestion(quizRoomId);
         return ResponseEntity.ok("다음 문제로 진행되었습니다.");
+    }
+
+    @PostMapping("/submit-answer")
+    public ResponseEntity<String> submitAnswer(@RequestBody QuizRoomSubmitAnswerRequestDto request) {
+        // 추후 Spring Security 적용 시 @AuthenticationPrincipal 에서 유저 정보를 받아와야 함
+        Long userId = 1L;
+
+        quizRoomCommandService.submitAnswer(request, userId);
+        return ResponseEntity.ok("답안이 제출되었습니다.");
     }
 }
