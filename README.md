@@ -138,8 +138,10 @@ Linkee는 사용자가 CS 관련 퀴즈에 참여하고 문제를 풀며 다른 
 
 - ### 🕖 WBS **(Work Breakdown Structure)**
 
+  WBS를 자세히 보려면 [여기](https://www.notion.so/28cedf2444d2802cb0e4dd3d5c2223a4?v=28cedf2444d28012915d000c570f6a05&source=copy_link)를 클릭하세요
+
   <details> <summary> WBS 이미지</summary>
-  <img width="980" height="550" alt="Image" src="https://github.com/user-attachments/assets/56357a72-10ef-49ef-94bb-0bf90ca148ab" />
+  <img width="1310" height="785" alt="Image" src="https://github.com/user-attachments/assets/e5bde1ad-5158-4867-93b5-dc5919ff4b2e" />
   </details>
   
 
@@ -192,11 +194,13 @@ Linkee는 사용자가 CS 관련 퀴즈에 참여하고 문제를 풀며 다른 
   </details>
 
   
-- ### 🗞️ 테스트 케이스 작성 및 테스트
-  테스트 코드를 자세히 보려면 db > domain 을 확인해주세요
-  
 - ### 🔁 통합테스트 시나리오 및 코드
   통합테스트 시나리오를 자세히 보려면 [여기](https://www.notion.so/26136d2af8f5802e914afbc54cf37e47?source=copy_link)를 클릭하세요  
+
+  <details> 
+  <summary> 테스트 시나리오 이미지</summary>
+  <img width="977" height="657" alt="Image" src="https://github.com/user-attachments/assets/646c91fc-f880-4ef9-bad9-bb53b60709ce" />
+  </details>
   
 ---
 ## ⚠️ 5. Trouble Shooting
@@ -613,7 +617,59 @@ Linkee는 사용자가 CS 관련 퀴즈에 참여하고 문제를 풀며 다른 
     - redirect-uri OAuth설정에 맞게 수정정
     </details>
 
-    <br>
+    <details>
+    <summary>실시간 채팅방 문제출제 동기화 문제</summary>
+
+      - **문제 상황:**
+      
+      사용자가 동시에 입장했을 때, 문제 출제 및 정답 반영이 실시간으로 반영되지 않는 현상 발생.
+      
+      특히 Socket.io를 통해 이벤트를 브로드캐스팅할 때 특정 사용자에게만 늦게 반영되거나 누락되는 문제가 있었음.
+      - **원인 분석:**
+      
+      클라이언트 단에서 `socket.emit()`과 `socket.on()` 간 이벤트 명칭 불일치 및 중복 리스너 등록으로 인한 충돌.
+      
+      또한 서버 측에서 room 단위로 namespace를 명확히 구분하지 않아 이벤트가 전체 유저에게 브로드캐스트됨.
+      
+    - **해결 방법:**
+      - 서버에서 `socket.join(roomId)`를 명확히 지정하고 `io.to(roomId).emit()`으로 이벤트 범위 한정.
+      - 클라이언트 측에서 `useEffect` 안에서 소켓 리스너 등록 시, cleanup 함수(`return () => socket.off(...)`)를 추가해 중복 리스너 제거.
+      - 이벤트 네이밍 통일 (`'submitAnswer'`, `'newQuestion'`, `'updateScore'` 등).
+    </details>
+
+    <details>
+    <summary>문제 등록 기능 버그(자율방 기능 관련)</summary>
+
+    - **문제 상황:**
+    
+    자율방에서 사용자가 문제를 등록했을 때, 동일한 문제가 중복 등록되거나 DB에 반영되지 않는 오류.
+    
+    - **원인 분석:**
+      - 프론트엔드에서 문제 등록 시 `axios.post()` 요청이 두 번 발생.
+      - 서버에서 비동기 처리 중 `await` 누락으로 인해 DB 반영 타이밍이 어긋남.
+    - **해결 방법:**
+      - Axios 요청에 대한 버튼 중복 클릭 방지 로직 추가 (`isSubmitting` 플래그 활용).
+      - 서버 컨트롤러에서 모든 DB 처리에 `await` 보장 및 트랜잭션 적용.
+      - 중복 문제 등록 방지를 위해 `(roomId, questionText)` 조합에 대해 unique index 설정.
+    </details>
+
+    <details>
+    <summary>채팅 및 문제 리스트 UI 겹침 현상</summary>
+
+    - **문제 상황:**
+    
+    자율방에서 채팅창과 문제 리스트가 동시에 열릴 때 화면이 겹쳐 UI 깨짐 발생.
+    
+    - **해결 방법:**
+      - 채팅 영역을 `z-index`와 `flex`로 분리하고, 문제 리스트를 슬라이드형 모달로 변경.
+      - Tailwind 기준 `absolute bottom-0 right-0` 정렬 방식으로 고정 UI 재설계.
+
+    </details>
+
+
+
+     <br>
+
 
   - 김진
     <details>
@@ -660,7 +716,80 @@ Linkee는 사용자가 CS 관련 퀴즈에 참여하고 문제를 풀며 다른 
 
   - 김명진
     <details>
-    <summary>-</summary>
+    <summary>STOMP CONNECT 직후 403/연결 끊김 문제</summary>
+
+    - 문제 상황 : 클라이언트가 connect직후 `Whoops! Lost connection` 또는 403 응답과 함께 소켓이 종료
+    - 원인 :  STOMP CONNECT 프레임(프론트)에 `Authorization: Bearer <JWT>` 헤더 누락 ,`ChannelInterceptor`에서 토큰 파싱/인증 주입 누락
+    - 해결 :
+    - 프론트에서 connect 시 헤더 추가
+        
+        stompClient.connect(
+        { Authorization: `Bearer ${token}` },
+        onConnected,
+        onError
+        );
+        
+    - 서버 `ChannelInterceptor`에서 CONNECT 처리
+
+        ```java
+
+        @Component
+        
+        @RequiredArgsConstructor
+        
+        public class StompAuthInterceptor implements ChannelInterceptor {
+        
+        private final JwtTokenProvider jwt;
+        
+        @Override
+        
+        public Message<?> preSend(Message<?> message, MessageChannel channel) {
+        
+        StompHeaderAccessor acc = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
+        
+        if (acc != null && StompCommand.CONNECT.equals(acc.getCommand())) {
+        
+        String token = resolveToken(acc); // Authorization 또는 X-ACCESS-TOKEN
+        
+        if (token == null || !jwt.validateToken(token)) {
+        
+        throw new AccessDeniedException("Invalid JWT in CONNECT");
+        
+        }
+        
+        CustomUser user = jwt.getUser(token);
+        
+        Authentication auth = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+        
+        acc.setUser(auth);
+        
+        }
+        
+        return message;
+        
+        }
+        
+        private String resolveToken(StompHeaderAccessor acc) {
+        
+        List<String> auth = acc.getNativeHeader("Authorization");
+        
+        if (auth != null && !auth.isEmpty()) {
+        
+        String h = auth.get(0);
+        
+        return h.startsWith("Bearer ") ? h.substring(7) : h;
+        
+        }
+        
+        List<String> alt = acc.getNativeHeader("X-ACCESS-TOKEN");
+        
+        return (alt != null && !alt.isEmpty()) ? alt.get(0) : null;
+        
+        }
+        
+        }
+        ```
+
     </details>
 
     <br>
