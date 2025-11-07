@@ -34,7 +34,7 @@ public class ChatRoom extends BaseTimeEntity {
     private Status isPrivate = Status.N;
 
     @Column(name = "room_code")
-    private int roomCode;
+    private Integer roomCode;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "room_owner", nullable = false, foreignKey = @ForeignKey(name = "FK_chatroom_owner"))

@@ -1,17 +1,9 @@
 package com.linkee.linkeeapi.chat.chat_command.chat_controller;
 
 import com.linkee.linkeeapi.chat.chat_command.chat_domain.dto.ChatMessageDto;
-import com.linkee.linkeeapi.chat.chat_command.chat_domain.entity.ChatMember;
 import com.linkee.linkeeapi.chat.chat_command.chat_domain.entity.ChatMessageMongo;
-import com.linkee.linkeeapi.chat.chat_command.chat_domain.entity.ChatRoom;
-import com.linkee.linkeeapi.chat.chat_command.chat_domain.entity.ChatRoomType;
-import com.linkee.linkeeapi.chat.chat_command.chat_repository.ChatMemberRepository;
 import com.linkee.linkeeapi.chat.chat_command.chat_repository.ChatMessageMongoRepository;
-import com.linkee.linkeeapi.chat.chat_command.chat_repository.ChatRoomRepository;
 import com.linkee.linkeeapi.chat.chat_command.chat_service.ChatRoomInOutService;
-import com.linkee.linkeeapi.chat.chat_command.chat_service.ChatService;
-import com.linkee.linkeeapi.common.exception.BusinessException;
-import com.linkee.linkeeapi.common.exception.ErrorCode;
 import com.linkee.linkeeapi.common.security.jwt.JwtTokenProvider;
 import com.linkee.linkeeapi.user.command.domain.entity.User;
 import com.linkee.linkeeapi.user.command.infrastructure.repository.UserRepository;
@@ -19,11 +11,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 
 @Controller
@@ -33,12 +24,13 @@ public class ChatWebSocketController {
     private final ChatMessageMongoRepository chatMessageMongoRepository;
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
-    private final ChatRoomInOutService chatService;
+    private final ChatRoomInOutService chatRoomInOutService;
+    private final SimpMessagingTemplate messagingTemplate;
+
     // 메시지 전송
     @MessageMapping("/chat.send")
-    @SendTo("/topic/chatroom")
-    public ChatMessageDto sendMessage(ChatMessageDto messageDto,
-                                      @Header("Authorization") String token) {
+    public void sendMessage(ChatMessageDto messageDto,
+                            @Header("Authorization") String token) {
 
         User sender = validateTokenAndGetUser(token);
 
@@ -54,26 +46,33 @@ public class ChatWebSocketController {
                 .sentAt(messageDto.getSentAt())
                 .build());
 
-        System.out.println(">>> 메시지 도착: " + messageDto.getMessage());
-        System.out.println(">>> 유저: " + sender.getUserNickname());
-
-        return messageDto;
+        // 방별 메시지 전송
+        messagingTemplate.convertAndSend(
+                "/topic/chatroom/" + messageDto.getRoomId(),
+                messageDto
+        );
     }
 
 
-
+    // 방입장
     @MessageMapping("/chat.join")
-    @SendTo("/topic/chatroom")
-    public ChatMessageDto joinRoom(@Header("roomId") Long roomId,
-                                   @Header("Authorization") String token) {
-        return chatService.joinRoom(roomId, token);
+    public void joinRoom(@Header("roomId") Long roomId,
+                         @Header("Authorization") String token,
+                         @Header(value = "roomCode", required = false) Integer roomCode) {
+
+        ChatMessageDto joinMessage = chatRoomInOutService.joinRoom(roomId, token, roomCode);
+
+        messagingTemplate.convertAndSend("/topic/chatroom/" + roomId, joinMessage);
     }
 
+    // 방 퇴장
     @MessageMapping("/chat.leave")
-    @SendTo("/topic/chatroom")
-    public ChatMessageDto leaveRoom(@Header("roomId") Long roomId,
-                                    @Header("Authorization") String token) {
-        return chatService.leaveRoom(roomId, token);
+    public void leaveRoom(@Header("roomId") Long roomId,
+                          @Header("Authorization") String token) {
+
+        ChatMessageDto leaveMessage = chatRoomInOutService.leaveRoom(roomId, token);
+
+        messagingTemplate.convertAndSend("/topic/chatroom/" + roomId, leaveMessage);
     }
 
 

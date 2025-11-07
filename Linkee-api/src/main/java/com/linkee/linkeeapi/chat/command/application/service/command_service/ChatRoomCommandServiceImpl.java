@@ -69,8 +69,9 @@ public class ChatRoomCommandServiceImpl implements ChatRoomCommandService {
                 .roomOwner(user)
                 .roomCapacity(capacity)
                 .roomStatus(Status.Y)
-                .joinedCount(1)
+                .joinedCount(0)
                 .build();
+
 
         chatRoomRepository.save(chatRoom);
         return chatRoom;
@@ -111,7 +112,7 @@ public class ChatRoomCommandServiceImpl implements ChatRoomCommandService {
             return roomCode;
         } else {
             // 공개방이면 코드값은 무조건 0으로 설정
-            return 0;
+            return null;
         }
     }
 

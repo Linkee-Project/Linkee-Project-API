@@ -75,15 +75,18 @@
 <ul id="rooms"></ul>
 
 <h3>채팅</h3>
+<div id="chat-container" style="position: relative; width: 600px; border: 1px solid #ccc; height: 400px; overflow-y: auto;">
 
-<!-- ✅ QnA 표시 영역 추가 -->
-<div id="qna-box">
-    <p><strong>🧩 현재 문제:</strong> <span id="current-question">-</span></p>
-    <p id="answer-section"><strong>✅ 정답:</strong> <span id="current-answer"></span></p>
-    <button id="reveal-btn" onclick="revealAnswer()">정답 공개</button>
+    <!-- QnA 영역 고정 -->
+    <div id="qna-box" style="position: sticky; top: 0; background: white; z-index: 10; padding: 5px; border-bottom: 1px solid #ccc;">
+        <p><strong>🧩 현재 문제:</strong> <span id="current-question">-</span></p>
+        <p id="answer-section"><strong>✅ 정답:</strong> <span id="current-answer"></span></p>
+        <button id="reveal-btn" onclick="revealAnswer()">정답 공개</button>
+    </div>
+
+    <!-- 메시지 영역 -->
+    <div id="chat" style="padding: 5px;"></div>
 </div>
-
-<div id="chat"></div>
 
 <input type="text" id="message" placeholder="메시지 입력">
 <button onclick="sendMessage()">전송</button>
@@ -172,11 +175,70 @@
         selectedRoomId = roomId;
         document.getElementById("chat").innerHTML = "";
         document.getElementById("qna-box").style.display = "none"
-        loadMessages();
 
-        stompClient.send("/app/chat.join", {'roomId': roomId, 'Authorization': token}, {});
-        subscribeRoom();
-        highlightSelectedRoom();
+        const roomLi = document.querySelector(`#rooms li[data-room-id='${roomId}']`);
+        const isPrivate = roomLi ? roomLi.textContent.includes("🔒") : false;
+
+        let roomCode = null;
+        if (isPrivate) {
+            roomCode = parseInt(prompt("비밀방 코드 입력:"));
+            if (!roomCode) {
+                alert("코드를 입력해야 입장할 수 있습니다.");
+                return;
+            }
+        }
+
+        stompClient.send("/app/chat.join", {
+            'roomId': roomId,
+            'Authorization': token,
+            'roomCode': roomCode
+        }, {});
+
+        if(currentSubscription) currentSubscription.unsubscribe();
+        currentSubscription = stompClient.subscribe('/topic/chatroom/' + roomId, function(messageOutput) {
+            const msg = JSON.parse(messageOutput.body);
+
+            if(msg.message === "비밀번호가 틀렸습니다.") {
+                alert(msg.message);
+                selectedRoomId = null;
+                document.getElementById("chat").innerHTML = "";
+                highlightSelectedRoom();
+                return;
+            }
+
+            // QnA 처리
+            if(msg.type === "QNA_QUESTION") {
+                document.getElementById("qna-box").style.display = "block";
+                document.getElementById("current-question").textContent = msg.question;
+                document.getElementById("answer-section").style.display = "none";
+                showMessage("🧩 새 문제가 등록되었습니다! 문제: " + msg.question, true);
+                return;
+            }
+
+            if(msg.type === "QNA_ANSWER") {
+                document.getElementById("answer-section").style.display = "block";
+                document.getElementById("current-answer").textContent = msg.answer;
+                showMessage("✅ 정답이 공개되었습니다! 정답: " + msg.answer, true);
+                return;
+            }
+
+            // 입장 성공 메시지 처리
+            if(msg.senderNickname === "SYSTEM" && msg.message.includes("님이 입장했습니다")) {
+                loadMessages(); // 성공 시에만 메시지 불러오기
+                highlightSelectedRoom();
+            }
+
+            // 기존 메시지 처리
+            showMessage(msg.senderNickname + ": " + msg.message, msg.senderNickname === "SYSTEM");
+
+
+        });
+        if(!isPrivate) {
+            loadMessages();
+            highlightSelectedRoom();
+        }
+
+
 
         // ✅ 현재 문제 조회
         fetch(`http://localhost:8080/chat/qna/${roomId}/current`, {
@@ -259,8 +321,7 @@
         stompClient.send("/app/chat.send", {'Authorization': token},
             JSON.stringify({roomId: parseInt(selectedRoomId), message: message})
         );
-        showMessage("나: " + message, false);
-        document.getElementById("message").value = "";
+
     }
 
     // ✅ 문제 등록
