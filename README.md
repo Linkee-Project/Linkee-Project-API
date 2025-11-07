@@ -137,10 +137,9 @@ Linkee는 사용자가 CS 관련 퀴즈에 참여하고 문제를 풀며 다른 
 ## 🗂️ 4. 프로젝트 산출물
 
 - ### 🕖 WBS **(Work Breakdown Structure)**
-  WBS를 자세히 보려면 [여기](https://www.notion.so/25b36d2af8f580fab019e6d2211cd7a5?v=25b36d2af8f5802b830b000cb9f5aefe&source=copy_link)를 클릭하세요
 
   <details> <summary> WBS 이미지</summary>
-  <img width="1400" height="800" alt="WBS" src="https://github.com/user-attachments/assets/770e5cfa-048a-4ac9-abba-0cd393c1c334" />
+  <img width="980" height="550" alt="Image" src="https://github.com/user-attachments/assets/56357a72-10ef-49ef-94bb-0bf90ca148ab" />
   </details>
   
 
