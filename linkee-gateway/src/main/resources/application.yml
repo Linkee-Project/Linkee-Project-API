@@ -1,0 +1,71 @@
+server:
+  port: 8000
+
+# Eureka
+eureka:
+
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+spring:
+  application:
+    name: linkee-gateway-server
+
+#  cloud:
+#    gateway:
+#      routes:
+#        - id: linkee-core-service
+#          uri: lb://LINKEE-CORE-SERVICE
+#          predicates:
+#            - Path=/api/v1/core-service/**
+#          filters:
+#            - RewritePath=/api/v1/core-service/(?<segment>.*), /${segment}
+
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: linkee-core-service
+              uri: lb://LINKEE-CORE-SERVICE
+              predicates:
+                - Path=/api/v1/core-service/**
+              filters:
+                - RewritePath=/api/v1/core-service/(?<segment>.*), /$\{segment}
+#                - name: CircuitBreaker
+#                  args:
+#                    name: userServiceCB
+#                    fallbackUri: forward:/fallback/user
+            - id: linkee-chat-service-api
+              uri: lb://LINKEE-CHAT-SERVICE
+              predicates:
+                - Path=/api/v1/chat-service/**
+              filters:
+                - RewritePath=/api/v1/chat-service/(?<segment>.*), /$\{segment}
+
+            # HTML 페이지 라우팅
+            - id: linkee-chat-service-page
+              uri: lb://LINKEE-CHAT-SERVICE
+              predicates:
+                - Path=/chat/**  # 브라우저에서 /chat/page 접근 가능
+              filters:
+                - RemoveRequestHeader=Cookie
+
+            - id: chat-websocket
+              uri: lb://LINKEE-CHAT-SERVICE
+              predicates:
+                - Path=/ws-chat/**
+jwt:
+  secret: rA/4r9fDxHVDBouXITwYw4nxNgmgshmA72NnxVpassNqZ038QCTpWznTn1UbekAwApd6oOA3/wixuu+4i0g2ww==
+  access-expiration: 600000      # 10\uBD84
+  refresh-expiration: 3600000    # 1\uC2DC\uAC04
+
+auth:
+  code:
+    expiration-millis: 300000
+
+
+
