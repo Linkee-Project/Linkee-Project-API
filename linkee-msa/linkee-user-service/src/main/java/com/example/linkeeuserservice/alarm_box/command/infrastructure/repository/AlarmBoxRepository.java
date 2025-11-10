@@ -1,0 +1,18 @@
+package com.example.linkeeuserservice.alarm_box.command.infrastructure.repository;
+
+
+import com.example.linkeeuserservice.alarm_box.command.domain.aggregate.entity.AlarmBox;
+import com.example.linkeeuserservice.common.enums.Status;
+import com.example.linkeeuserservice.user.command.domain.entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
+import java.util.Optional;
+
+public interface AlarmBoxRepository extends JpaRepository<AlarmBox,Long> {
+    Optional<AlarmBox> findFirstByUserAndAlarmBoxContentAndIsCheckedOrderByAlarmBoxIdDesc(User user, String alarmBoxContent, Status isChecked);
+
+    // 전체 알림 확인
+    List<AlarmBox> findByUserAndIsChecked(User user, Status isChecked);
+
+}
